@@ -1,0 +1,39 @@
+<?php
+/**
+ * @copyright  Copyright (c) 2009 Bespin Studios GmbH
+ * @license    See LICENSE file that is distributed with this source code
+ */
+
+namespace byteShard\Chart;
+
+use byteShard\Internal\Chart\ChartType;
+use byteShard\Internal\Chart\LabelLines;
+use byteShard\Internal\Chart\LabelOffset;
+use byteShard\Internal\Chart\PieChartType;
+use byteShard\Internal\Chart\Shadow;
+
+/** @API */
+class DonutChart extends PieChartType
+{
+    use LabelLines;
+    use LabelOffset;
+    use Shadow;
+
+    public function __construct(string $value)
+    {
+        parent::__construct(ChartType::DONUT, $value);
+    }
+
+    /**
+     * @return array<string,bool|null|string>
+     */
+    public function getView(): array
+    {
+        return $this->getFilteredView(
+            parent::getView(),
+            $this->getShadow(),
+            $this->getLabelLines(),
+            $this->getLabelOffset(),
+        );
+    }
+}

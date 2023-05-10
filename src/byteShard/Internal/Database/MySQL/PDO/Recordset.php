@@ -1,0 +1,345 @@
+<?php
+/**
+ * @copyright  Copyright (c) 2009 Bespin Studios GmbH
+ * @license    See LICENSE file that is distributed with this source code
+ */
+
+namespace byteShard\Internal\Database\MySQL\PDO;
+
+use byteShard\Database\Enum\ConnectionType;
+use byteShard\Exception;
+use byteShard\Internal\Database\BaseConnection;
+use byteShard\Internal\Database\DeleteInterface;
+use byteShard\Internal\Database\GetArrayInterface;
+use byteShard\Internal\Database\GetIndexArrayInterface;
+use byteShard\Internal\Database\GetMultidimensionalIndexArrayInterface;
+use byteShard\Internal\Database\GetSingleInterface;
+use byteShard\Internal\Database\InsertInterface;
+use byteShard\Internal\Database\UpdateInterface;
+use config;
+use PDO;
+use PDOException;
+use stdClass;
+
+/**
+ * Class Recordset
+ * @exceptionId 00002
+ * @package byteShard\Internal\Database\MySQL\MySQLi
+ */
+class Recordset implements GetArrayInterface, GetIndexArrayInterface, GetMultidimensionalIndexArrayInterface, GetSingleInterface, InsertInterface, DeleteInterface, UpdateInterface
+{
+    static private function utf8_decode_mix(mixed $input, bool $encode_keys = false): mixed
+    {
+        if (is_array($input)) {
+            $result = [];
+            if ($encode_keys === true) {
+                foreach ($input as $k => $v) {
+                    $result[utf8_decode($k)] = self::utf8_decode_mix($v, true);
+                }
+            } else {
+                foreach ($input as $k => $v) {
+                    $result[$k] = self::utf8_decode_mix($v);
+                }
+            }
+        } elseif (is_object($input)) {
+            $result = new stdClass();
+            if ($encode_keys === true) {
+                foreach ($input as $k => $v) {
+                    $result->{utf8_decode($k)} = self::utf8_decode_mix($v, true);
+                }
+            } else {
+                foreach ($input as $k => $v) {
+                    $result->{$k} = self::utf8_decode_mix($v);
+                }
+            }
+        } elseif ($input !== null) {
+            if (preg_match('//u', $input)) {
+                // output is already utf8
+                $result = $input;
+            } else {
+                $result = utf8_decode($input);
+            }
+        } else {
+            $result = null;
+        }
+        unset($input);
+        return $result;
+    }
+
+    /**
+     * if at least one record is found getArray will return an array of objects like
+     * <br>$result[0]->columnA
+     * <br>$result[0]->columnB
+     * <br>$result[1]->columnA
+     * <br>$result[1]->columnB
+     *
+     * @param string $query
+     * @param array $parameters
+     * @param BaseConnection|null $connection
+     * @return array
+     * @throws Exception
+     */
+    public static function getArray(string $query, array $parameters = [], BaseConnection $connection = null): array
+    {
+        $connectionObject = self::checkConnection($connection);
+        try {
+            $tempConnection = $connectionObject->getConnection();
+        } catch (PDOException $e) {
+            throw new Exception($e->getMessage(), 110320004);
+        }
+        try {
+            /** @var PDO $tempConnection */
+            $stmt = $tempConnection->prepare($query);
+            $stmt->execute($parameters);
+            $result = $stmt->fetchAll(PDO::FETCH_OBJ);
+            if (class_exists('\\config')) {
+                /** @noinspection PhpUndefinedClassInspection */
+                $config = new config();
+                if ($config->useDecodeUtf8()) {
+                    $result = self::utf8_decode_mix($result);
+                }
+            }
+        } catch (PDOException $e) {
+            throw new Exception($e->getMessage(), 110320005);
+        }
+        if ($connection === null) {
+            // closing the new connection which is opened in this call
+            $connectionObject->disconnect();
+        }
+        return $result;
+    }
+
+    public static function getColumn(string $query, array $parameters = [], BaseConnection $connection = null): array
+    {
+        $connectionObject = self::checkConnection($connection);
+        try {
+            $tempConnection = $connectionObject->getConnection();
+        } catch (PDOException $e) {
+            throw new Exception($e->getMessage(), 110320004);
+        }
+        try {
+            /** @var PDO $tempConnection */
+            $stmt = $tempConnection->prepare($query);
+            $stmt->execute($parameters);
+            $result = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        } catch (PDOException $e) {
+            throw new Exception($e->getMessage(), 110320005);
+        }
+        if ($connection === null) {
+            // closing the new connection which is opened in this call
+            $connectionObject->disconnect();
+        }
+        return $result;
+    }
+
+    /**
+     * if at least one record is found getArray will return an array of objects like
+     * <br>$result[columnValue1]->columnA
+     * <br>$result[columnValue1]->columnB
+     * <br>$result[columnValue2]->columnA
+     * <br>$result[columnValue2]->columnB
+     *
+     * @param string $query
+     * @param string $indexColumn
+     * @param array $parameters
+     * @param BaseConnection|null $connection
+     * @return array
+     * @throws Exception
+     */
+    public static function getIndexArray(string $query, string $indexColumn, array $parameters = [], BaseConnection $connection = null): array
+    {
+        $records = self::getArray($query, $parameters, $connection);
+        $result  = [];
+        foreach ($records as $record) {
+            $result[$record->{$indexColumn}] = $record;
+        }
+        return $result;
+    }
+
+    /**
+     * if at least one record is found getArray will return an array of objects like
+     * <br>$result[columnValue1][columnValue2]->columnA
+     * <br>$result[columnValue1][columnValue2]->columnB
+     *
+     * @param string $query
+     * @param array $indexColumns
+     * @param array $parameters
+     * @param BaseConnection|null $connection
+     * @return array
+     */
+    public static function getMultidimensionalIndexArray(string $query, array $indexColumns, array $parameters = [], BaseConnection $connection = null): array
+    {
+        return [];
+    }
+
+    /**
+     * if exactly one record is found getSingle will return an object like:
+     * <br>$result->dbfield1
+     * <br>$result->dbfield2
+     * @param string $query The SQL query to be executed
+     * @param array $parameters array of key-value pair where column name is key and column value is value
+     * @param BaseConnection|null $connection an existing connection can be passed to be reused for the query
+     * @return object|null if no record is found for the query null is returned
+     * @throws Exception
+     * @api
+     */
+    public static function getSingle(string $query, array $parameters = [], BaseConnection $connection = null): ?object
+    {
+        $connectionObject = self::checkConnection($connection);
+        try {
+            $tempConnection = $connectionObject->getConnection();
+        } catch (PDOException $e) {
+            throw new Exception($e->getMessage(), 110320001);
+        }
+        try {
+            /** @var PDO $tempConnection */
+            $stmt = $tempConnection->prepare($query);
+            $stmt->execute($parameters);
+            $result = $stmt->fetch(PDO::FETCH_OBJ);
+            if (class_exists('\\config')) {
+                /** @noinspection PhpUndefinedClassInspection */
+                $config = new config();
+                if ($config->useDecodeUtf8()) {
+                    $result = self::utf8_decode_mix($result);
+                }
+            }
+        } catch (PDOException $e) {
+            throw new Exception($e->getMessage(), 110320002);
+        }
+        if ($connection === null) {
+            // closing the new connection which is opened in this call
+            $connectionObject->disconnect();
+        }
+        // returning null when no record found
+        return is_object($result) ? $result : null;
+    }
+
+    /**
+     * @param string $query
+     * @param array $parameters
+     * @param BaseConnection|null $connection
+     * @return int|true
+     * @throws Exception
+     */
+    public static function insert(string $query, array $parameters = [], BaseConnection $connection = null): int|bool
+    {
+        $connectionObject = self::checkConnection($connection);
+        try {
+            $tempConnection = $connectionObject->getConnection();
+        } catch (PDOException $e) {
+            throw new Exception($e->getMessage(), 110320007);
+        }
+        try {
+            /** @var PDO $tempConnection */
+            $stmt = $tempConnection->prepare($query);
+            foreach ($parameters as $column => $value) {
+                if (is_bool($value)) {
+                    $stmt->bindValue($column, $value, PDO::PARAM_BOOL);
+                } elseif (is_int($value)) {
+                    $stmt->bindValue($column, $value, PDO::PARAM_INT);
+                } else {
+                    $stmt->bindValue($column, $value);
+                }
+            }
+            $stmt->execute();
+            try {
+                $id = (int)$tempConnection->lastInsertId();
+            } catch (PDOException $e) {
+                // throw new Exception($e->getMessage());
+                $id = true;
+            }
+        } catch (PDOException $e) {
+            throw new Exception($e->getMessage(), 110320008);
+        }
+        if ($connection === null) {
+            // closing the new connection which is opened in this call
+            $connectionObject->disconnect();
+        }
+        return $id;
+    }
+
+    /**
+     *  function to delete record from a table
+     * @param string $query
+     * @param array $parameters
+     * @param BaseConnection|null $connection
+     * @return int
+     * @throws Exception
+     */
+    public static function delete(string $query, array $parameters = [], BaseConnection $connection = null): int
+    {
+        $connectionObject = self::checkConnection($connection);
+        try {
+            $tempConnection = $connectionObject->getConnection();
+        } catch (PDOException $e) {
+            throw new Exception($e->getMessage(), 110320010);
+        }
+        try {
+            /** @var PDO $tempConnection */
+            $stmt = $tempConnection->prepare($query);
+        } catch (PDOException $e) {
+            throw new Exception($e->getMessage(), 110320011);
+        }
+        try {
+            $stmt->execute($parameters);
+            $affectedRows = $stmt->rowCount();
+        } catch (PDOException $e) {
+            throw new Exception($e->getMessage(), 110320016, 'byteShard\\Database::delete');
+        }
+        if ($connection === null) {
+            $connectionObject->disconnect();
+        }
+        return $affectedRows;
+    }
+
+    /**
+     * function to update record in a table
+     * @param string $query
+     * @param array $parameters
+     * @param BaseConnection|null $connection
+     * @return int
+     * @throws Exception
+     */
+    public static function update(string $query, array $parameters = [], Baseconnection $connection = null): int
+    {
+        $connectionObject = self::checkConnection($connection);
+        try {
+            $tempConnection = $connectionObject->getConnection();
+        } catch (PDOException $e) {
+            throw new Exception($e->getMessage(), 110320013);
+        }
+        try {
+            /** @var PDO $tempConnection */
+            $stmt = $tempConnection->prepare($query);
+            foreach ($parameters as $column => $value) {
+                if (is_bool($value)) {
+                    $stmt->bindValue($column, $value, PDO::PARAM_BOOL);
+                } elseif (is_int($value)) {
+                    $stmt->bindValue($column, $value, PDO::PARAM_INT);
+                } else {
+                    $stmt->bindValue($column, $value);
+                }
+            }
+            $stmt->execute();
+            $affectedRows = $stmt->rowCount();
+        } catch (PDOException $e) {
+            throw new Exception($e->getMessage(), 110320014);
+        }
+        if ($connection === null) {
+            $connectionObject->disconnect();
+        }
+        return $affectedRows;
+    }
+
+    /**
+     * @param BaseConnection|null $connection
+     * @return Connection
+     */
+    private static function checkConnection(BaseConnection $connection = null): Connection
+    {
+        if ($connection instanceof Connection) {
+            return $connection;
+        }
+        return new Connection(ConnectionType::READ);
+    }
+}
