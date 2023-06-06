@@ -1,3 +1,10 @@
+## [1.0.3](https://github.com/byteshard/core/compare/v1.0.2...v1.0.3) (2023-06-06)
+
+
+### Bug Fixes
+
+* lasttab: column name changed to lowercase: LastTab => lasttab ([15b75a9](https://github.com/byteshard/core/commit/15b75a92906e95dfef5b644f9b7a1592ff3345be))
+
 ## [1.0.2](https://github.com/byteshard/core/compare/v1.0.1...v1.0.2) (2023-05-10)
 
 
