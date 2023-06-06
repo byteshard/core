@@ -30,15 +30,15 @@ class Model implements DataModelInterface
             switch ($dbDriver) {
                 case Environment::DRIVER_PGSQL_PDO:
                 case Environment::DRIVER_MYSQL_PDO:
-                    $record = Database::getSingle('SELECT '.$schema->getFieldNameLastTab().' AS LastTab FROM '.$schema->getTableName().' WHERE '.$schema->getFieldNameUserId().'=:userId', ['userId' => $userId]);
+                    $record = Database::getSingle('SELECT '.$schema->getFieldNameLastTab().' AS lasttab FROM '.$schema->getTableName().' WHERE '.$schema->getFieldNameUserId().'=:userId', ['userId' => $userId]);
                     if ($record !== null) {
-                        return $record->LastTab ?? '';
+                        return $record->lasttab ?? '';
                     }
                     break;
                 default:
-                    $record = Database::getSingle('SELECT '.$schema->getFieldNameLastTab().' AS LastTab FROM '.$schema->getTableName().' WHERE '.$schema->getFieldNameUserId().'='.$schema->getEscapedUserID($userId));
+                    $record = Database::getSingle('SELECT '.$schema->getFieldNameLastTab().' AS lasttab FROM '.$schema->getTableName().' WHERE '.$schema->getFieldNameUserId().'='.$schema->getEscapedUserID($userId));
                     if ($record !== null) {
-                        return $record->LastTab ?? '';
+                        return $record->lasttab ?? '';
                     }
                     break;
             }
