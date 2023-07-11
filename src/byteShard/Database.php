@@ -170,6 +170,9 @@ class Database
 
     /**
      * function to insert record into a table
+     *
+     *  - returns `true` or `int` (id) in case of success
+     *  - returns `false` in case of error
      * @param string $query
      * @param array $parameters
      * @param BaseConnection|null $connection

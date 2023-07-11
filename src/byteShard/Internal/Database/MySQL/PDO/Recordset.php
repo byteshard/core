@@ -215,6 +215,10 @@ class Recordset implements GetArrayInterface, GetIndexArrayInterface, GetMultidi
     }
 
     /**
+     * function to insert record into a table
+     *
+     *  - returns `true` or `int` (id) in case of success
+     *  - returns `false` in case of error
      * @param string $query
      * @param array $parameters
      * @param BaseConnection|null $connection
@@ -243,6 +247,11 @@ class Recordset implements GetArrayInterface, GetIndexArrayInterface, GetMultidi
             }
             $stmt->execute();
             try {
+                /*
+                 * We try to get the inserted ID.
+                 * This only works in case the table has an auto increment.
+                 * Without auto increment an exception is thrown. In that case we return `true` to indicate success.
+                 */
                 $id = (int)$tempConnection->lastInsertId();
             } catch (PDOException $e) {
                 // throw new Exception($e->getMessage());
