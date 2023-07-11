@@ -9,14 +9,12 @@ namespace byteShard\Internal\Chart;
 abstract class View
 {
     private readonly ChartType $view;
-    private readonly string    $value;
+    private readonly ?string   $value;
 
     public function __construct(ChartType $view, ?string $value)
     {
-        $this->view = $view;
-        if ($value !== null) {
-            $this->value = $value;
-        }
+        $this->view  = $view;
+        $this->value = $value;
     }
 
     /** @return array<string,bool|int|null|string> */
