@@ -1,3 +1,10 @@
+## [1.0.4](https://github.com/byteshard/core/compare/v1.0.3...v1.0.4) (2023-07-19)
+
+
+### Bug Fixes
+
+* updated phpDoc parameter type ([3414ecc](https://github.com/byteshard/core/commit/3414ecc0f6ab69fa1b9b7f0a67165429f1918ad9))
+
 ## [1.0.3](https://github.com/byteshard/core/compare/v1.0.2...v1.0.3) (2023-06-06)
 
 
