@@ -42,7 +42,7 @@ class CallMethod extends Action
     /**
      * CallMethod constructor.
      * @param string $methodName
-     * @param null $methodParameter
+     * @param mixed $methodParameter
      */
     public function __construct(string $methodName, mixed $methodParameter = null)
     {
