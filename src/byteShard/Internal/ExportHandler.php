@@ -32,7 +32,7 @@ class ExportHandler
     private ErrorHandler           $errorHandler;
     private ?Cell                  $cell;
     private Export\ExportInterface $cellContent;
-    private int                    $timeout = 600;
+    private int                    $timeout       = 600;
     private string                 $appName;
     private ?string                $contentId;
     private ?ExportInterface       $exportAction  = null;
@@ -155,13 +155,12 @@ class ExportHandler
     {
         // return an error if the export time exceeds the predefined timeout
         if (time() - $_SESSION[self::SESSION_INDEX][$this->exportId]['start_time'] > $this->timeout) {
-            $response['state']       = self::ERROR;
-            $response['description'] = Locale::get('byteShard.bs_export.timeout');
-        } else {
-            $response['state'] = $_SESSION[self::SESSION_INDEX][$this->exportId]['state'];
-            if (isset($_SESSION[self::SESSION_INDEX][$this->exportId]['description'])) {
-                $response['description'] = $_SESSION[self::SESSION_INDEX][$this->exportId]['description'];
-            }
+            $this->displayClientError(Locale::get('byteShard.bs_export.timeout'));
+        }
+
+        $response['state'] = $_SESSION[self::SESSION_INDEX][$this->exportId]['state'];
+        if (isset($_SESSION[self::SESSION_INDEX][$this->exportId]['description'])) {
+            $response['description'] = $_SESSION[self::SESSION_INDEX][$this->exportId]['description'];
         }
 
         // if the file has been created or an error occurred, clean session info
@@ -172,14 +171,21 @@ class ExportHandler
         $httpResponse->printHTTPResponse();
     }
 
-    /**
-     * @throws Exception
-     */
+    private function displayClientError(string $message): never
+    {
+        $response['state']       = self::ERROR;
+        $response['description'] = $message;
+        $this->clearSession($response['state']);
+        $httpResponse = new HttpResponse(Enum\HttpResponseType::JSON);
+        $httpResponse->setResponseContent($response);
+        $httpResponse->printHTTPResponse();
+    }
+
     private function getFile(): void
     {
         $this->closeSession();
         $documentTitle  = $this->getComponentName();
-        $documentAuthor = $_SESSION[MAIN]->getUsername();
+        $documentAuthor = \byteShard\Session::getUsername() ?? '';
         switch ($this->exportType) {
             case Enum\Export\ExportType::XLS:
                 $this->getXLSExport($documentTitle, $documentAuthor);
@@ -284,7 +290,16 @@ class ExportHandler
     private function getCustomExport(): void
     {
         $cellContent = $this->getCellContent();
-        $result      = $cellContent->defineDownloadParent();
+        try {
+            $result = $cellContent->defineDownloadParent();
+        } catch (\byteShard\Exception $exception) {
+            \byteShard\Debug::error('Export failed: '.$exception->getMessage().' ('.$exception->getCode().')');
+            $this->displayClientError($exception->getClientMessage() ?? $exception->getMessage());
+        } catch (\Exception $exception) {
+            \byteShard\Debug::error('Export failed: '.$exception->getMessage().' ('.$exception->getCode().')');
+            $this->displayClientError($exception->getMessage());
+        }
+
         $this->updateSession(self::FINISHED);
         // TODO: pass the output buffer to the error handler
         global $output_buffer;
