@@ -6,6 +6,7 @@
 
 namespace byteShard\Internal\Export;
 
+use byteShard\Exception;
 use byteShard\File\FileInterface;
 use byteShard\Internal\ExportHandler;
 use byteShard\Internal\Struct\ClientData;
@@ -16,6 +17,9 @@ interface ExportInterface
 
     public function setProcessedClientData(?ClientData $clientData): void;
 
+    /**
+     * @throws Exception, \Exception
+     */
     public function defineDownloadParent(): FileInterface;
 
     public function getExportHandler(ExportHandler $exportHandler): ?HandlerInterface;
