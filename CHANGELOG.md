@@ -1,3 +1,10 @@
+## [1.0.5](https://github.com/byteshard/core/compare/v1.0.4...v1.0.5) (2023-08-15)
+
+
+### Bug Fixes
+
+* catch export exceptions and show error message in client ([ab7bfa1](https://github.com/byteshard/core/commit/ab7bfa169bc41d6abe4d67d52a90f9cd334e5d2c))
+
 ## [1.0.4](https://github.com/byteshard/core/compare/v1.0.3...v1.0.4) (2023-07-19)
 
 
