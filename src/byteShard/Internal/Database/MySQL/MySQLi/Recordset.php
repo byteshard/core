@@ -288,7 +288,7 @@ class Recordset extends BaseRecordset implements GetArrayInterface, GetIndexArra
         } else {
             $connectionClassName = static::getConnectionClassName();
             if (class_exists($connectionClassName) || is_subclass_of($connectionClassName, 'Connection')) {
-                $adHocConnection = new $connectionClassName('read');
+                $adHocConnection = new $connectionClassName();
             } else {
                 throw new Exception('No connection class defined', 1000020012);
             }
