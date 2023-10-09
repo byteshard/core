@@ -61,7 +61,8 @@ class Calendar extends Form\FormObject implements Form\InputWidthInterface, Form
      * db_column_type is empty string instead of null or specific type
      * this is intended, now the SharedParent will evaluate the default value in the framework object unless a specific type has been set
      */
-    protected ?string $dbColumnType = '';
+    // TODO: figure out a way how to handle default column types. Probably not needed anymore anyway due to the change of prepared statements in PDO vs mysqli
+    //protected ?Enum\DB\ColumnType $dbColumnType = '';
     protected string  $localization = 'de';
 
     public function __construct($id)
