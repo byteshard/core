@@ -14,16 +14,14 @@ use byteShard\Enum;
  */
 class Constraint
 {
-    public string $field;
-    public mixed  $value;
-    public string $type;
+    public string             $field;
+    public mixed              $value;
+    public Enum\DB\ColumnType $type;
 
-    public function __construct(string $field, mixed $value = null, string $type = Enum\DB\ColumnType::INT)
+    public function __construct(string $field, mixed $value = null, Enum\DB\ColumnType $type = Enum\DB\ColumnType::INT)
     {
         $this->field = $field;
         $this->value = $value;
-        if (Enum\DB\ColumnType::is_enum($type)) {
-            $this->type = $type;
-        }
+        $this->type  = $type;
     }
 }

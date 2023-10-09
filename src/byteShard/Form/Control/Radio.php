@@ -17,7 +17,7 @@ use byteShard\Internal\Form;
 class Radio extends Form\FormObject implements Form\OnlyReadInterface, EncryptedObjectValueInterface
 {
     protected string $type                     = 'radio';
-    protected ?string $dbColumnType           = Enum\DB\ColumnType::VARCHAR;
+    protected ?Enum\DB\ColumnType $dbColumnType           = Enum\DB\ColumnType::VARCHAR;
     protected string $displayedTextAttribute = 'label';
 
     use Form\Checked;

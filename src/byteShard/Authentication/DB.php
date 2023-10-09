@@ -77,7 +77,7 @@ class DB implements AuthenticationInterface
             $tmp = Database::getSingle(
                 'SELECT '.implode(', ', $columns).'
                 FROM '.$this->dbSchema->getTableName().'
-                WHERE '.$this->dbSchema->getFieldNameUserId().'='.((Enum\DB\ColumnType::is_string($this->dbSchema->getFieldTypeUserId()) === true) ? "'".$auth->user_ID."'" : $auth->user_ID)
+                WHERE '.$this->dbSchema->getFieldNameUserId().'='.((Enum\DB\ColumnType::is_string($this->dbSchema->getFieldTypeUserIdEnum()) === true) ? "'".$auth->user_ID."'" : $auth->user_ID)
             );
             // print password_hash($auth->password, self::$algorithm, ['cost' => self::$cost]);
             if ($tmp === null) {
@@ -171,7 +171,7 @@ class DB implements AuthenticationInterface
             switch ($dbDriver) {
                 case Environment::DRIVER_MySQL_mysqli:
                     $rs = Database::getRecordset($cn = Database::getConnection(Database\Enum\ConnectionType::WRITE));
-                    $rs->open("SELECT ".$this->dbSchema->getFieldNameLocalPassword().", ".$this->dbSchema->getFieldNameLocalPasswordLastChange()." FROM ".$this->dbSchema->getTableName()." WHERE ".$this->dbSchema->getFieldNameUserId()."=".((Enum\DB\ColumnType::is_string($this->dbSchema->getFieldTypeUserId()) === true) ? "'".$auth->user_ID."'" : $auth->user_ID));
+                    $rs->open("SELECT ".$this->dbSchema->getFieldNameLocalPassword().", ".$this->dbSchema->getFieldNameLocalPasswordLastChange()." FROM ".$this->dbSchema->getTableName()." WHERE ".$this->dbSchema->getFieldNameUserId()."=".((Enum\DB\ColumnType::is_string($this->dbSchema->getFieldTypeUserIdEnum()) === true) ? "'".$auth->user_ID."'" : $auth->user_ID));
                     if ($rs->recordcount() === 1) {
                         if ($rs->fields[$this->dbSchema->getFieldNameLocalPassword()] !== null) {
                             if ($rs->fields[$this->dbSchema->getFieldNameLocalPassword()] !== $new_password_hash) {

@@ -93,12 +93,12 @@ abstract class Environment implements ParametersInterface, JsonSerializable
     //TODO: client formats by locale
     protected string $client_timezone = 'GMT+2';
 
-    protected string $client_form_control_calendar_default_db_column_type = Enum\DB\ColumnType::DATETIME2;
-    protected string $client_grid_column_calendar_default_db_column_type  = Enum\DB\ColumnType::DATETIME2;
-    protected string $client_grid_column_date_default_db_column_type      = Enum\DB\ColumnType::DATETIME2;
-    protected string $db_meta_data_column_created_on_column_type          = Enum\DB\ColumnType::DATETIME2;
-    protected string $db_meta_data_column_modified_on_column_type         = Enum\DB\ColumnType::DATETIME2;
-    protected string $db_meta_data_column_archived_on_column_type         = Enum\DB\ColumnType::DATETIME2;
+    protected Enum\DB\ColumnType $client_form_control_calendar_default_db_column_type = Enum\DB\ColumnType::DATETIME2;
+    protected Enum\DB\ColumnType $client_grid_column_calendar_default_db_column_type  = Enum\DB\ColumnType::DATETIME2;
+    protected Enum\DB\ColumnType $client_grid_column_date_default_db_column_type      = Enum\DB\ColumnType::DATETIME2;
+    protected Enum\DB\ColumnType $db_meta_data_column_created_on_column_type          = Enum\DB\ColumnType::DATETIME2;
+    protected Enum\DB\ColumnType $db_meta_data_column_modified_on_column_type         = Enum\DB\ColumnType::DATETIME2;
+    protected Enum\DB\ColumnType $db_meta_data_column_archived_on_column_type         = Enum\DB\ColumnType::DATETIME2;
 
     protected string $db_timezone                        = 'UTC';
     protected string $db_column_date_format              = 'Y-m-d';

@@ -80,7 +80,7 @@ class Validate
                 }
             }
         }
-
+        $fieldType = Enum\DB\ColumnType::tryFrom($fieldType);
         if ($fieldType !== null) {
             switch ($fieldType) {
                 case Enum\DB\ColumnType::VARCHAR:

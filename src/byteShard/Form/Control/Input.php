@@ -5,6 +5,7 @@
  */
 
 namespace byteShard\Form\Control;
+
 use byteShard\Internal\Form;
 use byteShard\Enum;
 
@@ -14,9 +15,9 @@ use byteShard\Enum;
  */
 class Input extends Form\FormObject implements Form\InputWidthInterface, Form\OnlyReadInterface
 {
-    protected string $type        = 'input';
-    protected ?string $dbColumnType = Enum\DB\ColumnType::VARCHAR;
-    protected string $displayedTextAttribute = 'label';
+    protected string              $type                   = 'input';
+    protected ?Enum\DB\ColumnType $dbColumnType           = Enum\DB\ColumnType::VARCHAR;
+    protected string              $displayedTextAttribute = 'label';
 
     use Form\ClassName;
     use Form\Disabled;

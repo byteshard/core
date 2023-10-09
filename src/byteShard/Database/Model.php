@@ -186,7 +186,7 @@ class Model implements DataModelInterface
             Environment::DRIVER_MYSQL_PDO => Database::getSingle('SELECT '.$schema->getFieldNameServiceAccount().' FROM '.$schema->getTableName().'  WHERE '.$schema->getFieldNameUserId().'=:userId', [
                 'userId' => $userId
             ]),
-            default                       => Database::getSingle('SELECT '.$schema->getFieldNameServiceAccount().' FROM '.$schema->getTableName().' WHERE '.$schema->getFieldNameUserId().'='.((ColumnType::is_string($schema->getFieldTypeUserId()) === true) ? "'".$userId."'" : $userId)),
+            default                       => Database::getSingle('SELECT '.$schema->getFieldNameServiceAccount().' FROM '.$schema->getTableName().' WHERE '.$schema->getFieldNameUserId().'='.((ColumnType::is_string($schema->getFieldTypeUserIdEnum()) === true) ? "'".$userId."'" : $userId)),
         };
         return $record !== null && isset($record->{$schema->getFieldNameServiceAccount()}) && (bool)$record->{$schema->getFieldNameServiceAccount()} === true;
     }
@@ -267,7 +267,7 @@ class Model implements DataModelInterface
                 break;
             default:
                 $grantLogin = $schema->getFieldNameGrantLogin();
-                $query      = 'SELECT '.$schema->getFieldNameGrantLogin().' FROM '.$schema->getTableName().' WHERE '.$schema->getFieldNameUserId().'='.(ColumnType::is_string($schema->getFieldTypeUserId()) === true ? "'".$userId."'" : $userId);
+                $query      = 'SELECT '.$schema->getFieldNameGrantLogin().' FROM '.$schema->getTableName().' WHERE '.$schema->getFieldNameUserId().'='.(ColumnType::is_string($schema->getFieldTypeUserIdEnum()) === true ? "'".$userId."'" : $userId);
                 $tmp        = Database::getSingle($query);
                 break;
         }
@@ -285,7 +285,7 @@ class Model implements DataModelInterface
         $tmp = match ($dbDriver) {
             Environment::DRIVER_MYSQL_PDO,
             Environment::DRIVER_PGSQL_PDO => Database::getSingle('SELECT '.$schema->getFieldNameServiceAccount().' FROM '.$schema->getTableName().' WHERE '.$schema->getFieldNameUserId().':=userId', ['userId' => $userId]),
-            default                       => Database::getSingle('SELECT '.$schema->getFieldNameServiceAccount().' FROM '.$schema->getTableName().' WHERE '.$schema->getFieldNameUserId().'='.(ColumnType::is_string($schema->getFieldTypeUserId()) === true ? "'".$userId."'" : $userId)),
+            default                       => Database::getSingle('SELECT '.$schema->getFieldNameServiceAccount().' FROM '.$schema->getTableName().' WHERE '.$schema->getFieldNameUserId().'='.(ColumnType::is_string($schema->getFieldTypeUserIdEnum()) === true ? "'".$userId."'" : $userId)),
         };
         if ($tmp === null) {
             Debug::info(__METHOD__.': user not found');
@@ -302,7 +302,7 @@ class Model implements DataModelInterface
             $tmp = match ($dbDriver) {
                 Environment::DRIVER_MYSQL_PDO,
                 Environment::DRIVER_PGSQL_PDO => Database::getSingle('SELECT '.$schema->getFieldNameAccessControlTarget().' FROM '.$schema->getTableName().' WHERE '.$schema->getFieldNameUserId().':=userId', ['userId' => $userId]),
-                default                       => Database::getSingle('SELECT '.$schema->getFieldNameAccessControlTarget().' FROM '.$schema->getTableName().' WHERE '.$schema->getFieldNameUserId().'='.(ColumnType::is_string($schema->getFieldTypeUserId()) === true ? "'".$userId."'" : $userId)),
+                default                       => Database::getSingle('SELECT '.$schema->getFieldNameAccessControlTarget().' FROM '.$schema->getTableName().' WHERE '.$schema->getFieldNameUserId().'='.(ColumnType::is_string($schema->getFieldTypeUserIdEnum()) === true ? "'".$userId."'" : $userId)),
             };
             if ($tmp === null) {
                 Debug::info(__METHOD__.': user not found');
@@ -331,7 +331,7 @@ class Model implements DataModelInterface
             $tmp = match ($dbDriver) {
                 Environment::DRIVER_MYSQL_PDO,
                 Environment::DRIVER_PGSQL_PDO => Database::getSingle('SELECT '.$schema->getFieldNameAuthenticationTarget().' FROM '.$schema->getTableName().' WHERE '.$schema->getFieldNameUserId().':=userId', ['userId' => $userId]),
-                default                       => Database::getSingle('SELECT '.$schema->getFieldNameAuthenticationTarget().' FROM '.$schema->getTableName().' WHERE '.$schema->getFieldNameUserId().'='.(ColumnType::is_string($schema->getFieldTypeUserId()) === true ? "'".$userId."'" : $userId)),
+                default                       => Database::getSingle('SELECT '.$schema->getFieldNameAuthenticationTarget().' FROM '.$schema->getTableName().' WHERE '.$schema->getFieldNameUserId().'='.(ColumnType::is_string($schema->getFieldTypeUserIdEnum()) === true ? "'".$userId."'" : $userId)),
             };
             if ($tmp === null) {
                 Debug::info(__METHOD__.': user not found');
@@ -359,7 +359,7 @@ class Model implements DataModelInterface
             $tmp = match ($dbDriver) {
                 Environment::DRIVER_PGSQL_PDO,
                 Environment::DRIVER_MYSQL_PDO => Database::getSingle('SELECT '.$schema->getFieldNameUserId().' FROM '.$schema->getTableName().' WHERE '.$schema->getTableName().'.'.$schema->getFieldNameUsername().'=:userName', ['userName' => $username]),
-                default                       => Database::getSingle('SELECT '.$schema->getFieldNameUserId().' FROM '.$schema->getTableName().' WHERE '.$schema->getFieldNameUsername().'='.(ColumnType::is_string($schema->getFieldTypeUsername()) === true ? "'".$username."'" : $username)),
+                default                       => Database::getSingle('SELECT '.$schema->getFieldNameUserId().' FROM '.$schema->getTableName().' WHERE '.$schema->getFieldNameUsername().'='.(ColumnType::is_string($schema->getFieldTypeUsernameEnum()) === true ? "'".$username."'" : $username)),
             };
             if ($tmp === null) {
                 Debug::info(__METHOD__.': User not found');

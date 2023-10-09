@@ -5,6 +5,7 @@
  */
 
 namespace byteShard\Form\Control;
+
 use byteShard\Internal\Form;
 use byteShard\Enum;
 
@@ -14,9 +15,9 @@ use byteShard\Enum;
  */
 class Textarea extends Form\FormObject implements Form\InputWidthInterface, Form\OnlyReadInterface
 {
-    protected string $type        = 'input';
-    protected ?string $dbColumnType = Enum\DB\ColumnType::VARCHAR;
-    protected string $displayedTextAttribute = 'label';
+    protected string              $type                   = 'input';
+    protected ?Enum\DB\ColumnType $dbColumnType           = Enum\DB\ColumnType::VARCHAR;
+    protected string              $displayedTextAttribute = 'label';
     use Form\AutoHeight;
     use Form\AutoWidth;
     use Form\ClassName;
@@ -50,7 +51,8 @@ class Textarea extends Form\FormObject implements Form\InputWidthInterface, Form
     use Form\Value;
     use Form\Help;
 
-    public function __construct($id) {
+    public function __construct($id)
+    {
         parent::__construct($id);
         $this->setRows(3);
     }

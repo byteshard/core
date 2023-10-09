@@ -48,14 +48,14 @@ class Combo extends Form\FormObject implements Form\InputWidthInterface, Encrypt
     use Form\Validate;
     use Form\Value;
 
-    protected string  $type                   = 'combo';
-    protected string  $displayedTextAttribute = 'label';
-    protected ?string $dbColumnType           = Enum\DB\ColumnType::BSID_INT_MATCH;
-    private bool      $encryptOptionValues    = false;
-    private string    $comboClass             = '';
-    private bool      $allowNewEntries        = false;
-    private array     $comboParameters        = [];
-    private array     $selectedOption         = [];
+    protected string              $type                   = 'combo';
+    protected string              $displayedTextAttribute = 'label';
+    protected ?Enum\DB\ColumnType $dbColumnType           = Enum\DB\ColumnType::BSID_INT_MATCH;
+    private bool                  $encryptOptionValues    = false;
+    private string                $comboClass             = '';
+    private bool                  $allowNewEntries        = false;
+    private array                 $comboParameters        = [];
+    private array                 $selectedOption         = [];
     /**
      * used to store the currently selected if of a combo box. this is only updated if the onChange event is triggered
      * @var mixed

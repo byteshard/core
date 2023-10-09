@@ -15,9 +15,9 @@ use byteShard\Internal\Form;
  */
 class RadioAdvanced extends Form\FormObject implements Form\OnlyReadInterface
 {
-    protected string $type                     = 'radioAdvanced';
-    protected ?string $dbColumnType           = Enum\DB\ColumnType::VARCHAR;
-    protected string $displayedTextAttribute = 'label';
+    protected string              $type                   = 'radioAdvanced';
+    protected ?Enum\DB\ColumnType $dbColumnType           = Enum\DB\ColumnType::VARCHAR;
+    protected string              $displayedTextAttribute = 'label';
 
     use Form\Checked;
     use Form\ClassName;
