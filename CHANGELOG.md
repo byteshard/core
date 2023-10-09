@@ -1,3 +1,10 @@
+## [1.0.6](https://github.com/byteshard/core/compare/v1.0.5...v1.0.6) (2023-10-09)
+
+
+### Bug Fixes
+
+* mysql connection was trying to use string instead of enum ([c374cb4](https://github.com/byteshard/core/commit/c374cb4f3611a8e524506b58e37cf30088364337))
+
 ## [1.0.5](https://github.com/byteshard/core/compare/v1.0.4...v1.0.5) (2023-08-15)
 
 
