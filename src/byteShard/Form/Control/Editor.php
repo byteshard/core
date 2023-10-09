@@ -15,28 +15,29 @@ use byteShard\Enum;
  */
 class Editor extends Form\FormObject implements Form\InputWidthInterface
 {
-    const H1 = 'applyH1';
-    const H2 = 'applyH2';
-    const H3 = 'applyH3';
-    const H4 = 'applyH4';
-    const BOLD = 'applyBold';
-    const ITALIC = 'applyItalic';
-    const UNDERSCORE = 'applyUnderscore';
-    const STRIKETHROUGH = 'applyStrikethrough';
-    const LEFT = 'alignLeft';
-    const CENTER = 'alignCenter';
-    const RIGHT = 'alignRight';
-    const JUSTIFY = 'alignJustify';
-    const SUB = 'applySub';
-    const SUPER = 'applySuper';
-    const ORDERED_LIST = 'createNumList';
+    const H1             = 'applyH1';
+    const H2             = 'applyH2';
+    const H3             = 'applyH3';
+    const H4             = 'applyH4';
+    const BOLD           = 'applyBold';
+    const ITALIC         = 'applyItalic';
+    const UNDERSCORE     = 'applyUnderscore';
+    const STRIKETHROUGH  = 'applyStrikethrough';
+    const LEFT           = 'alignLeft';
+    const CENTER         = 'alignCenter';
+    const RIGHT          = 'alignRight';
+    const JUSTIFY        = 'alignJustify';
+    const SUB            = 'applySub';
+    const SUPER          = 'applySuper';
+    const ORDERED_LIST   = 'createNumList';
     const UNORDERED_LIST = 'createBulList';
-    const INDENT = 'increaseIndent';
-    const UNINDENT = 'decreaseIndent';
-    const CLEAR = 'clearFormatting';
-    protected string $type                     = 'editor';
-    protected ?string $dbColumnType           = Enum\DB\ColumnType::VARCHAR;
-    protected string $displayedTextAttribute = 'label';
+    const INDENT         = 'increaseIndent';
+    const UNINDENT       = 'decreaseIndent';
+    const CLEAR          = 'clearFormatting';
+
+    protected string              $type                   = 'editor';
+    protected ?Enum\DB\ColumnType $dbColumnType           = Enum\DB\ColumnType::VARCHAR;
+    protected string              $displayedTextAttribute = 'label';
     use Form\ClassName;
     use Form\Disabled;
 

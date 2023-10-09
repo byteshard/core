@@ -5,6 +5,7 @@
  */
 
 namespace byteShard\Form\Control;
+
 use byteShard\Internal\Form;
 use byteShard\Enum;
 
@@ -14,9 +15,9 @@ use byteShard\Enum;
  */
 class TagInput extends Form\FormObject implements Form\InputWidthInterface, Form\OnlyReadInterface
 {
-    protected string $type        = 'input';
-    protected ?string $dbColumnType = Enum\DB\ColumnType::VARCHAR;
-    protected string $displayedTextAttribute = 'label';
+    protected string              $type                   = 'input';
+    protected ?Enum\DB\ColumnType $dbColumnType           = Enum\DB\ColumnType::VARCHAR;
+    protected string              $displayedTextAttribute = 'label';
     use Form\ClassName;
     use Form\Disabled;
     use Form\Help;
@@ -47,7 +48,8 @@ class TagInput extends Form\FormObject implements Form\InputWidthInterface, Form
     use Form\Tooltip;
     use Form\Userdata;
 
-    public function __construct(?string $id, array $tags = []) {
+    public function __construct(?string $id, array $tags = [])
+    {
         parent::__construct($id);
         $this->setTags($tags);
     }

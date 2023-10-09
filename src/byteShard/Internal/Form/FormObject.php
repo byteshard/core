@@ -25,19 +25,19 @@ abstract class FormObject
 {
     use PermissionImplementation;
 
-    protected array   $attributes             = [];
-    protected array   $nestedControls         = [];
-    protected array   $note                   = [];
-    protected array   $parameters             = [];
-    protected array   $userdata               = [];
-    protected bool    $help                   = false;
-    protected ?string $dbColumnType           = null;
-    protected string  $displayedTextAttribute = '';
-    protected string  $fontWeight             = '';
-    protected string  $placeholder            = '';
-    protected string  $token                  = '';
-    protected string  $type                   = '';
-    protected ?Cell   $cell                   = null;
+    protected array               $attributes             = [];
+    protected array               $nestedControls         = [];
+    protected array               $note                   = [];
+    protected array               $parameters             = [];
+    protected array               $userdata               = [];
+    protected bool                $help                   = false;
+    protected ?Enum\DB\ColumnType $dbColumnType           = null;
+    protected string              $displayedTextAttribute = '';
+    protected string              $fontWeight             = '';
+    protected string              $placeholder            = '';
+    protected string              $token                  = '';
+    protected string              $type                   = '';
+    protected ?Cell               $cell                   = null;
 
     private array              $events             = [];
     private array              $localeReplacements = [];
@@ -134,10 +134,7 @@ abstract class FormObject
 
     public function getDBColumnType(): ?string
     {
-        if ($this->dbColumnType === '') {
-            return $_SESSION[MAIN]->getDefaultDBColumnType('form', $this->type);
-        }
-        return $this->dbColumnType;
+        return $this->dbColumnType?->value ?? null;
     }
 
     /**
@@ -274,22 +271,9 @@ abstract class FormObject
         return $this->events;
     }
 
-    /**
-     * @param $enum_DB_ColumnType
-     * @return $this
-     * @throws Exception
-     */
-    public function setDBColumnType($enum_DB_ColumnType): self
+    public function setDBColumnType(?Enum\DB\ColumnType $enumDBColumnType): self
     {
-        if ($enum_DB_ColumnType === null) {
-            $this->dbColumnType = null;
-        } elseif (Enum\DB\ColumnType::is_enum($enum_DB_ColumnType)) {
-            $this->dbColumnType = $enum_DB_ColumnType;
-        } else {
-            $e = new Exception(__METHOD__.": Method only accepts enums of type Enum\\DB\\ColumnType. Input was '".gettype($enum_DB_ColumnType)."'", 100008001);
-            $e->setLocaleToken('byteShard.form.invalidArgument.setDBColumnType.enum_DB_ColumnType');
-            throw $e;
-        }
+        $this->dbColumnType = $enumDBColumnType;
         return $this;
     }
 

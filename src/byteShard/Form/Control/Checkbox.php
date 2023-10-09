@@ -15,10 +15,10 @@ use byteShard\Enum;
  */
 class Checkbox extends Form\FormObject implements Form\OnlyReadInterface
 {
-    protected string           $type                   = 'checkbox';
-    protected string           $displayedTextAttribute = 'label';
-    protected ?string          $dbColumnType           = Enum\DB\ColumnType::BOOL;
-    protected static Enum\Cast $cast                   = Enum\Cast::BOOL;
+    protected string              $type                   = 'checkbox';
+    protected string              $displayedTextAttribute = 'label';
+    protected ?Enum\DB\ColumnType $dbColumnType           = Enum\DB\ColumnType::BOOL;
+    protected static Enum\Cast    $cast                   = Enum\Cast::BOOL;
     use Form\Checked;
     use Form\ClassName;
     use Form\Disabled;
@@ -43,4 +43,9 @@ class Checkbox extends Form\FormObject implements Form\OnlyReadInterface
     use Form\Tooltip;
     use Form\Userdata;
     use Form\Value;
+
+    public function __construct(?string $id)
+    {
+        parent::__construct($id);
+    }
 }

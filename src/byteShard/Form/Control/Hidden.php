@@ -5,6 +5,7 @@
  */
 
 namespace byteShard\Form\Control;
+
 use byteShard\Internal\Form;
 use byteShard\Enum;
 
@@ -14,13 +15,14 @@ use byteShard\Enum;
  */
 class Hidden extends Form\FormObject
 {
-    protected string $type        = 'hidden';
-    protected ?string $dbColumnType = Enum\DB\ColumnType::VARCHAR;
+    protected string              $type         = 'hidden';
+    protected ?Enum\DB\ColumnType $dbColumnType = Enum\DB\ColumnType::VARCHAR;
     use Form\Name;
     use Form\Userdata;
     use Form\Value;
 
-    public function __construct($name, $value) {
+    public function __construct($name, $value)
+    {
         parent::__construct($name);
         $this->setValue($value);
     }

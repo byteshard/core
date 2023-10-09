@@ -5,6 +5,7 @@
  */
 
 namespace byteShard\Form\Control;
+
 use byteShard\Internal\Form;
 use byteShard\Enum;
 
@@ -14,9 +15,9 @@ use byteShard\Enum;
  */
 class Password extends Form\FormObject implements Form\InputWidthInterface, Form\OnlyReadInterface
 {
-    protected string $type        = 'password';
-    protected ?string $dbColumnType = Enum\DB\ColumnType::VARCHAR;
-    protected string $displayedTextAttribute = 'label';
+    protected string              $type                   = 'password';
+    protected ?Enum\DB\ColumnType $dbColumnType           = Enum\DB\ColumnType::VARCHAR;
+    protected string              $displayedTextAttribute = 'label';
     use Form\ClassName;
     use Form\Disabled;
     use Form\Hidden;

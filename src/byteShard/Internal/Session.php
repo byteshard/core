@@ -494,11 +494,11 @@ class Session implements TabParentInterface, EncryptedIDStorageInterface
     }
 
     /**
-     * @param $client_form_control_calendar_default_db_column_type
-     * @param $client_grid_column_calendar_default_db_column_type
-     * @param $client_grid_column_date_default_db_column_type
+     * @param Enum\DB\ColumnType $client_form_control_calendar_default_db_column_type
+     * @param Enum\DB\ColumnType $client_grid_column_calendar_default_db_column_type
+     * @param Enum\DB\ColumnType $client_grid_column_date_default_db_column_type
      */
-    public function setClientFormats($client_form_control_calendar_default_db_column_type, $client_grid_column_calendar_default_db_column_type, $client_grid_column_date_default_db_column_type)
+    public function setClientFormats(Enum\DB\ColumnType $client_form_control_calendar_default_db_column_type, Enum\DB\ColumnType $client_grid_column_calendar_default_db_column_type, Enum\DB\ColumnType $client_grid_column_date_default_db_column_type)
     {
         $this->default_db_column_type['form']['calendar'] = $client_form_control_calendar_default_db_column_type;
         $this->default_db_column_type['grid']['calendar'] = $client_grid_column_calendar_default_db_column_type;
@@ -506,18 +506,18 @@ class Session implements TabParentInterface, EncryptedIDStorageInterface
     }
 
     /**
-     * @param $db_meta_data_column_created_on_column_type
-     * @param $db_meta_data_column_modified_on_column_type
-     * @param $db_meta_data_column_archived_on_column_type
+     * @param Enum\DB\ColumnType $db_meta_data_column_created_on_column_type
+     * @param Enum\DB\ColumnType $db_meta_data_column_modified_on_column_type
+     * @param Enum\DB\ColumnType $db_meta_data_column_archived_on_column_type
      */
-    public function setMetaColumnFormats($db_meta_data_column_created_on_column_type, $db_meta_data_column_modified_on_column_type, $db_meta_data_column_archived_on_column_type)
+    public function setMetaColumnFormats(Enum\DB\ColumnType $db_meta_data_column_created_on_column_type, Enum\DB\ColumnType $db_meta_data_column_modified_on_column_type, Enum\DB\ColumnType $db_meta_data_column_archived_on_column_type)
     {
         $this->meta_db_column_type['created_on']  = $db_meta_data_column_created_on_column_type;
         $this->meta_db_column_type['modified_on'] = $db_meta_data_column_modified_on_column_type;
         $this->meta_db_column_type['archived_on'] = $db_meta_data_column_archived_on_column_type;
     }
 
-    public function getDefaultDBColumnType($cell_content, $type)
+    public function getDefaultDBColumnType($cell_content, $type): Enum\DB\ColumnType
     {
         if (array_key_exists($cell_content, $this->default_db_column_type) && array_key_exists($type, $this->default_db_column_type[$cell_content])) {
             return $this->default_db_column_type[$cell_content][$type];
@@ -525,7 +525,7 @@ class Session implements TabParentInterface, EncryptedIDStorageInterface
         throw new Exception(__METHOD__.': Default DB Column Type for '.$cell_content.':'.$type.' has not been defined');
     }
 
-    public function getMetaDataDBColumnType($column)
+    public function getMetaDataDBColumnType($column): Enum\DB\ColumnType
     {
         if (array_key_exists($column, $this->meta_db_column_type)) {
             return $this->meta_db_column_type[$column];
@@ -541,7 +541,8 @@ class Session implements TabParentInterface, EncryptedIDStorageInterface
      */
     public function getDateTimeFormat(string $type): string
     {
-        switch ($type) {
+        $colType = Enum\DB\ColumnType::tryFrom($type);
+        switch ($colType) {
             case Enum\DB\ColumnType::DATE:
                 if (array_key_exists('db_column_date_format', $this->date)) {
                     return $this->date['db_column_date_format'];
@@ -582,50 +583,52 @@ class Session implements TabParentInterface, EncryptedIDStorageInterface
     }
 
     /**
-     * @param $type
+     * @param string $type
      * @return int
      */
     public function getDateTimePrecision(string $type): int
     {
-        $precision = 0;
+        $type = Enum\DB\ColumnType::tryFrom($type);
         switch ($type) {
             case Enum\DB\ColumnType::DATE:
                 if (array_key_exists('db_column_date_precision', $this->date)) {
-                    $precision = $this->date['db_column_date_precision'];
+                    return $this->date['db_column_date_precision'];
                 }
                 break;
             case Enum\DB\ColumnType::SMALLDATETIME:
                 if (array_key_exists('db_column_smalldatetime_precision', $this->date)) {
-                    $precision = $this->date['db_column_smalldatetime_precision'];
+                    return $this->date['db_column_smalldatetime_precision'];
                 }
                 break;
             case Enum\DB\ColumnType::DATETIME:
                 if (array_key_exists('db_column_datetime_precision', $this->date)) {
-                    $precision = $this->date['db_column_datetime_precision'];
+                    return $this->date['db_column_datetime_precision'];
                 }
                 break;
             case Enum\DB\ColumnType::DATETIME2:
                 if (array_key_exists('db_column_datetime2_precision', $this->date)) {
-                    $precision = $this->date['db_column_datetime2_precision'];
+                    return $this->date['db_column_datetime2_precision'];
                 }
                 break;
             case Enum\DB\ColumnType::DATETIMEOFFSET:
                 if (array_key_exists('db_column_datetimeoffset_precision', $this->date)) {
-                    $precision = $this->date['db_column_datetimeoffset_precision'];
+                    return $this->date['db_column_datetimeoffset_precision'];
                 }
                 break;
             case Enum\DB\ColumnType::BIGINT_DATE:
                 if (array_key_exists('db_column_bigintdate_precision', $this->date)) {
-                    $precision = $this->date['db_column_bigintdate_precision'];
+                    return $this->date['db_column_bigintdate_precision'];
                 }
                 break;
             case Enum\DB\ColumnType::TIME:
                 if (array_key_exists('db_column_time_precision', $this->date)) {
-                    $precision = $this->date['db_column_time_precision'];
+                    return $this->date['db_column_time_precision'];
                 }
                 break;
+            default:
+                return 0;
         }
-        return $precision;
+        return 0;
     }
 
     /**

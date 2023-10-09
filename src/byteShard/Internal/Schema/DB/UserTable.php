@@ -62,22 +62,22 @@ class UserTable
         };
     }
 
-    private string $tableName                              = 'tbl_User';
-    private string $fieldNameUsername                      = 'User';
-    private string $fieldTypeUsername                      = ColumnType::VARCHAR;
-    private string $fieldNameUserId                        = 'User_ID';
-    private string $fieldTypeUserId                        = ColumnType::INT;
-    private string $fieldNameAccessControlTarget           = '';
-    private string $fieldNameAuthenticationTarget          = 'AuthTarget';
-    private string $fieldNameGrantLogin                    = 'GrantLogin';
-    private string $fieldNameServiceAccount                = 'ServiceAccount';
-    private string $fieldNameLastTab                       = 'LastTab';
-    private string $fieldNameLastLogin                     = '';
-    private string $fieldNameLoginCount                    = '';
-    private string $fieldNameLocalPassword                 = 'Password';
-    private string $fieldNameLocalPasswordExpires          = '';
-    private string $fieldNameLocalPasswordLastChange       = '';
-    private string $fieldNameLocalPasswordExpiresAfterDays = '';
+    private string     $tableName                              = 'tbl_User';
+    private string     $fieldNameUsername                      = 'User';
+    private ColumnType $fieldTypeUsername                      = ColumnType::VARCHAR;
+    private string     $fieldNameUserId                        = 'User_ID';
+    private ColumnType $fieldTypeUserId                        = ColumnType::INT;
+    private string     $fieldNameAccessControlTarget           = '';
+    private string     $fieldNameAuthenticationTarget          = 'AuthTarget';
+    private string     $fieldNameGrantLogin                    = 'GrantLogin';
+    private string     $fieldNameServiceAccount                = 'ServiceAccount';
+    private string     $fieldNameLastTab                       = 'LastTab';
+    private string     $fieldNameLastLogin                     = '';
+    private string     $fieldNameLoginCount                    = '';
+    private string     $fieldNameLocalPassword                 = 'Password';
+    private string     $fieldNameLocalPasswordExpires          = '';
+    private string     $fieldNameLocalPasswordLastChange       = '';
+    private string     $fieldNameLocalPasswordExpiresAfterDays = '';
 
 
     public function __construct()
@@ -85,14 +85,14 @@ class UserTable
         global $dbDriver;
         switch ($dbDriver) {
             case Environment::DRIVER_PGSQL_PDO:
-                $this->tableName                              = 'tbl_user';
-                $this->fieldNameUsername                      = 'username';
-                $this->fieldNameUserId                        = 'user_id';
-                $this->fieldNameAuthenticationTarget          = 'authtarget';
-                $this->fieldNameGrantLogin                    = 'grantlogin';
-                $this->fieldNameServiceAccount                = 'serviceaccount';
-                $this->fieldNameLastTab                       = 'lasttab';
-                $this->fieldNameLocalPassword                 = 'password';
+                $this->tableName                     = 'tbl_user';
+                $this->fieldNameUsername             = 'username';
+                $this->fieldNameUserId               = 'user_id';
+                $this->fieldNameAuthenticationTarget = 'authtarget';
+                $this->fieldNameGrantLogin           = 'grantlogin';
+                $this->fieldNameServiceAccount       = 'serviceaccount';
+                $this->fieldNameLastTab              = 'lasttab';
+                $this->fieldNameLocalPassword        = 'password';
         }
     }
 
@@ -132,19 +132,24 @@ class UserTable
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getFieldTypeUsername(): string
+    public function getFieldTypeUsernameEnum(): ColumnType
     {
         return $this->fieldTypeUsername;
     }
 
     /**
-     * @param string $fieldTypeUsername
+     * @return string
+     */
+    public function getFieldTypeUsername(): string
+    {
+        return $this->fieldTypeUsername->value;
+    }
+
+    /**
+     * @param ColumnType $fieldTypeUsername
      * @return UserTable
      */
-    public function setFieldTypeUsername(string $fieldTypeUsername): UserTable
+    public function setFieldTypeUsername(ColumnType $fieldTypeUsername): UserTable
     {
         $this->fieldTypeUsername = $fieldTypeUsername;
         return $this;
@@ -173,14 +178,19 @@ class UserTable
      */
     public function getFieldTypeUserId(): string
     {
+        return $this->fieldTypeUserId->value();
+    }
+
+    public function getFieldTypeUserIdEnum(): ColumnType
+    {
         return $this->fieldTypeUserId;
     }
 
     /**
-     * @param string $fieldTypeUserId
+     * @param ColumnType $fieldTypeUserId
      * @return UserTable
      */
-    public function setFieldTypeUserId(string $fieldTypeUserId): UserTable
+    public function setFieldTypeUserId(ColumnType $fieldTypeUserId): UserTable
     {
         $this->fieldTypeUserId = $fieldTypeUserId;
         return $this;
