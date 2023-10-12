@@ -34,7 +34,7 @@ class Recordset implements GetArrayInterface, GetIndexArrayInterface, GetMultidi
             $result = [];
             if ($encode_keys === true) {
                 foreach ($input as $k => $v) {
-                    $result[utf8_decode($k)] = self::utf8_decode_mix($v, true);
+                    $result[mb_convert_encoding($k,  'ISO-8859-1', 'UTF-8')] = self::utf8_decode_mix($v, true);
                 }
             } else {
                 foreach ($input as $k => $v) {
@@ -45,7 +45,7 @@ class Recordset implements GetArrayInterface, GetIndexArrayInterface, GetMultidi
             $result = new stdClass();
             if ($encode_keys === true) {
                 foreach ($input as $k => $v) {
-                    $result->{utf8_decode($k)} = self::utf8_decode_mix($v, true);
+                    $result->{mb_convert_encoding($k,  'ISO-8859-1', 'UTF-8')} = self::utf8_decode_mix($v, true);
                 }
             } else {
                 foreach ($input as $k => $v) {
@@ -57,7 +57,7 @@ class Recordset implements GetArrayInterface, GetIndexArrayInterface, GetMultidi
                 // output is already utf8
                 $result = $input;
             } else {
-                $result = utf8_decode($input);
+                $result = mb_convert_encoding($input,  'ISO-8859-1', 'UTF-8');
             }
         } else {
             $result = null;
