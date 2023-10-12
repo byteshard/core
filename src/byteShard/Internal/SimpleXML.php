@@ -47,7 +47,7 @@ class SimpleXML
             $value = htmlspecialchars_decode($value);
             if (self::$decode === true) {
                 if (!preg_match("//u", $value)) {
-                    $value = utf8_encode($value);
+                    $value = mb_convert_encoding($value, 'UTF-8');
                 }
             }
         }

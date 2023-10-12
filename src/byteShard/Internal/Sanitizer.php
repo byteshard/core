@@ -52,7 +52,7 @@ class Sanitizer
     private static function sanitizeAndDecode(string $string): string
     {
         if (!preg_match("//u", $string)) {
-            return utf8_decode(htmlspecialchars($string, 16, 'UTF-8', false));
+            return mb_convert_encoding(htmlspecialchars($string, 16, 'UTF-8', false),  'ISO-8859-1', 'UTF-8');
         }
         return htmlspecialchars($string, 16, 'UTF-8', false);
     }

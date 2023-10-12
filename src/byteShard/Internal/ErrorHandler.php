@@ -423,7 +423,7 @@ class ErrorHandler
                 $filename     = $this->logDir.DIRECTORY_SEPARATOR.(($date !== false) ? date('YmdHis').'_' : '').$filename;
                 $insertScript = true;
                 if (preg_match('//u', $string)) {
-                    $string = utf8_decode($string);
+                    $string = mb_convert_encoding($string,  'ISO-8859-1', 'UTF-8');
                 }
 
                 if (is_writable($this->logDir)) {
@@ -449,7 +449,7 @@ class ErrorHandler
                 $filename .= '.log';
                 $filename = $this->logDir.DIRECTORY_SEPARATOR.(($date !== false) ? date('YmdHis').'_' : '').$filename;
                 if (preg_match('//u', $string)) {
-                    $string = utf8_decode($string);
+                    $string = mb_convert_encoding($string,  'ISO-8859-1', 'UTF-8');
                 }
                 if (is_writable($this->logDir)) {
                     $file_handle = fopen($filename, 'a+b');

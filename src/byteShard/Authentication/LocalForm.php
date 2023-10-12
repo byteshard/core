@@ -232,16 +232,16 @@ class LocalForm implements IdentityProviderInterface
             if (array_key_exists($this->loginFormSchema->button_password_change, $_POST)) {
                 $action                         = 'changePass';
                 $this->loginUser                = (strlen($_POST[$this->loginFormSchema->input_username]) > 0) ? $_POST[$this->loginFormSchema->input_username] : null;
-                $this->loginPassword            = (strlen($_POST[$this->loginFormSchema->input_password]) > 0) ? utf8_decode($_POST[$this->loginFormSchema->input_password]) : null;
-                $this->loginDomain              = (isset($_POST[$this->loginFormSchema->input_domain]) && strlen($_POST[$this->loginFormSchema->input_domain]) > 0) ? utf8_decode($_POST[$this->loginFormSchema->input_domain]) : null;
-                $this->loginNewPassword         = (strlen($_POST[$this->loginFormSchema->input_password_new]) > 0) ? utf8_decode($_POST[$this->loginFormSchema->input_password_new]) : null;
-                $this->loginNewPasswordRepeated = (strlen($_POST[$this->loginFormSchema->input_password_repeat]) > 0) ? utf8_decode($_POST[$this->loginFormSchema->input_password_repeat]) : null;
+                $this->loginPassword            = (strlen($_POST[$this->loginFormSchema->input_password]) > 0) ? mb_convert_encoding($_POST[$this->loginFormSchema->input_password],  'ISO-8859-1', 'UTF-8') : null;
+                $this->loginDomain              = (isset($_POST[$this->loginFormSchema->input_domain]) && strlen($_POST[$this->loginFormSchema->input_domain]) > 0) ? mb_convert_encoding($_POST[$this->loginFormSchema->input_domain],  'ISO-8859-1', 'UTF-8') : null;
+                $this->loginNewPassword         = (strlen($_POST[$this->loginFormSchema->input_password_new]) > 0) ? mb_convert_encoding($_POST[$this->loginFormSchema->input_password_new],  'ISO-8859-1', 'UTF-8') : null;
+                $this->loginNewPasswordRepeated = (strlen($_POST[$this->loginFormSchema->input_password_repeat]) > 0) ? mb_convert_encoding($_POST[$this->loginFormSchema->input_password_repeat],  'ISO-8859-1', 'UTF-8') : null;
             }
             if (array_key_exists($this->loginFormSchema->button_login, $_POST)) {
                 $action              = 'login';
                 $this->loginUser     = (strlen($_POST[$this->loginFormSchema->input_username]) > 0) ? $_POST[$this->loginFormSchema->input_username] : null;
                 $this->loginPassword = (strlen($_POST[$this->loginFormSchema->input_password]) > 0) ? $_POST[$this->loginFormSchema->input_password] : null;
-                $this->loginDomain   = isset($_POST[$this->loginFormSchema->input_domain]) && (strlen($_POST[$this->loginFormSchema->input_domain]) > 0) ? utf8_decode($_POST[$this->loginFormSchema->input_domain]) : null;
+                $this->loginDomain   = isset($_POST[$this->loginFormSchema->input_domain]) && (strlen($_POST[$this->loginFormSchema->input_domain]) > 0) ? mb_convert_encoding($_POST[$this->loginFormSchema->input_domain],  'ISO-8859-1', 'UTF-8') : null;
             }
         }
         if ($action !== '' && (empty($this->loginUser) || empty($this->loginPassword))) {

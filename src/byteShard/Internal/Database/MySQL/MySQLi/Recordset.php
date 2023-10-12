@@ -81,7 +81,7 @@ class Recordset extends BaseRecordset implements GetArrayInterface, GetIndexArra
             $query = $totQuery;
         }
         if (preg_match("//u", $query)) {
-            $query = utf8_decode($query);
+            $query = mb_convert_encoding($query,  'ISO-8859-1', 'UTF-8');
         }
         $query = str_ireplace('ISNULL', 'IFNULL', $query);
         $query = str_replace('AS VARCHAR', 'AS CHAR', $query);
@@ -94,7 +94,7 @@ class Recordset extends BaseRecordset implements GetArrayInterface, GetIndexArra
             $result = [];
             if ($encodeKeys === true) {
                 foreach ($input as $k => $v) {
-                    $result[utf8_decode($k)] = self::utf8_decode_mix($v, $encodeKeys);
+                    $result[mb_convert_encoding($k,  'ISO-8859-1', 'UTF-8')] = self::utf8_decode_mix($v, $encodeKeys);
                 }
             } else {
                 foreach ($input as $k => $v) {
@@ -105,7 +105,7 @@ class Recordset extends BaseRecordset implements GetArrayInterface, GetIndexArra
             $result = new stdClass();
             if ($encodeKeys === true) {
                 foreach ($input as $k => $v) {
-                    $result->{utf8_decode($k)} = self::utf8_decode_mix($v, $encodeKeys);
+                    $result->{mb_convert_encoding($k,  'ISO-8859-1', 'UTF-8')} = self::utf8_decode_mix($v, $encodeKeys);
                 }
             } else {
                 foreach ($input as $k => $v) {
@@ -117,7 +117,7 @@ class Recordset extends BaseRecordset implements GetArrayInterface, GetIndexArra
                 // output is already utf8
                 $result = $input;
             } else {
-                $result = utf8_decode($input);
+                $result = mb_convert_encoding($input,  'ISO-8859-1', 'UTF-8');
             }
         } else {
             $result = null;
