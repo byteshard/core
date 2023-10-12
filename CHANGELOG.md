@@ -1,3 +1,10 @@
+## [1.0.8](https://github.com/byteshard/core/compare/v1.0.7...v1.0.8) (2023-10-12)
+
+
+### Bug Fixes
+
+* replace utf8 encode/decode with mb_convert_encoding to remove deprecation warning ([4c3ab35](https://github.com/byteshard/core/commit/4c3ab354625f3181350f6ab3f5721179865758f4))
+
 ## [1.0.7](https://github.com/byteshard/core/compare/v1.0.6...v1.0.7) (2023-10-09)
 
 
