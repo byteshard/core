@@ -6,6 +6,7 @@
 
 namespace byteShard\Internal\Login;
 
+use byteShard\Internal\Server;
 use byteShard\Locale;
 use byteShard\Internal\Schema\LoginForm;
 
@@ -65,7 +66,7 @@ class Template
 
     private function getLoginContent(): array
     {
-        $content[] = '<form action="'.PHPSELFDIR.'" method="post" name="LoginForm">';
+        $content[] = '<form action="'.Server::getBaseUrl().'" method="post" name="LoginForm">';
         $content[] = '<div id="UsernameLabel"><span>'.Locale::get('byteShard.login.user').'</span></div>';
         $content[] = '<div id="LoginUsername"><input class="name" type="text" name="'.$this->schema->input_username.'" size="15" value=""></div>';
         $content[] = '<div id="PasswordLabel"><span>'.Locale::get('byteShard.login.password').'</span></div>';
@@ -73,7 +74,7 @@ class Template
         $content[] = '<div id="DomainLabel"><span>domain:</span></div>';
         $content[] = '<div id="LoginButton"><input class="button" type="submit" value="'.Locale::get('byteShard.login.login').'" name="'.$this->schema->button_login.'"></div>';
         $content[] = '</form>';
-        $content[] = '<form action="'.PHPSELFDIR.'" method="post" name="forgotPassForm">';
+        $content[] = '<form action="'.Server::getBaseUrl().'" method="post" name="forgotPassForm">';
         $content[] = '<div id="forgotPassButton"><input class="button" type="submit" value="'.Locale::get('byteShard.login.forgot').'" name="'.$this->schema->button_password_forgot.'"></div>';
         $content[] = '</form>';
         return $content;
