@@ -997,8 +997,8 @@ abstract class Environment implements ParametersInterface, JsonSerializable
 
         $this->initializeLogConstants($logLevel);
 
-        //TODO: refactor to Server class
-        define('PHPSELFDIR', Server::getProtocol().'://'.Server::getHost().((substr_count($_SERVER['PHP_SELF'], '/') > 1) ? dirname($_SERVER['PHP_SELF']).'/' : '/'));
+        //TODO: PHPSELFDIR is deprecated. use Server::getBaseUrl() instead
+        //define('PHPSELFDIR', Server::getBaseUrl());
 
         $this->initializeByteShardConstants();
 

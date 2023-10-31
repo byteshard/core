@@ -62,11 +62,15 @@ abstract class Config implements JsonSerializable
     protected bool            $useSVG                       = false;
     protected bool            $convertImageNamesToLowerCase = false;
     private array             $dbOptions                    = [];
+    private string            $realUrl;
 
     public function __construct()
     {
-        if ($this->url === null) {
-            $this->url = $this->getProtocol().'://'.$this->getHost();
+        if ($this->url !== null) {
+            $this->realUrl = $this->url;
+        } else {
+            Debug::warning('No URL set in config. Please define "protected ?string $url" otherwise this will be derived from unsafe headers');
+            $this->realUrl = Server::getProtocol().'://'.Server::getHost();
         }
         if ($this->url_context === null) {
             $this->url_context = $this->identifyUrlContext();
@@ -268,7 +272,7 @@ abstract class Config implements JsonSerializable
      */
     public function getUrl(): string
     {
-        return $this->url ?? '';
+        return $this->realUrl;
     }
 
     /**
