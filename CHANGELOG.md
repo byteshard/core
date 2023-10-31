@@ -1,3 +1,10 @@
+## [1.0.9](https://github.com/byteshard/core/compare/v1.0.8...v1.0.9) (2023-10-31)
+
+
+### Bug Fixes
+
+* possible Host Header injection in Login page is now fixed. ([4691e6d](https://github.com/byteshard/core/commit/4691e6dabdd1768055a60f9d888cf005a5c8ebd3))
+
 ## [1.0.8](https://github.com/byteshard/core/compare/v1.0.7...v1.0.8) (2023-10-12)
 
 
