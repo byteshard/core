@@ -17,6 +17,7 @@ use byteShard\Internal\ContentClassFactory;
 use byteShard\Internal\Form\FormObject;
 use byteShard\Internal\Form\FormObject\Proxy;
 use byteShard\Internal\PopupInterface;
+use byteShard\Internal\Request\EventType;
 use byteShard\Internal\Struct\ClientData;
 use byteShard\Internal\Struct\GetData;
 use byteShard\Locale;
@@ -145,6 +146,7 @@ class Confirmation implements PopupInterface
         $confirmButtonEventId = $this->getObjectId(new Button(self::BUTTON_ID));
 
         $getDataField = $this->getData !== null ? $this->getHiddenField(self::GET_DATA_FIELD, serialize($this->getData)) : '';
+        $eventType    = $this->eventType === '' ? EventType::OnClick->value : $this->eventType;
         $content      = '<?xml version="1.0" encoding="utf-8"?>
                 <items>
                     <item type="label" name="Message" label="'.$message.'" className="message_notice_label" position="label-left"/>
@@ -158,7 +160,7 @@ class Confirmation implements PopupInterface
                     '.$this->getHiddenField(self::CLIENT_DATA_FIELD, serialize($this->clientData)).'
                     '.$getDataField.'
                     '.$this->getHiddenField(self::ACTION_FIELD, $this->actionId, false).'
-                    '.$this->getHiddenField(self::EVENT_TYPE, $this->eventType, false).'
+                    '.$this->getHiddenField(self::EVENT_TYPE, $eventType, false).'
                     '.$this->getHiddenField(self::OBJECT_VALUE, $this->objectValue, false).'
                 </items>';
 
