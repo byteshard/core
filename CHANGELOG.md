@@ -1,3 +1,10 @@
+## [1.0.10](https://github.com/byteshard/core/compare/v1.0.9...v1.0.10) (2023-11-16)
+
+
+### Bug Fixes
+
+* if a confirmAction is returned as part of a callMethod or saveFormData action it can now work within the limits of the onClick event ([5fe9127](https://github.com/byteshard/core/commit/5fe9127a58421d05cd9ea386fb9961823ea86876))
+
 ## [1.0.9](https://github.com/byteshard/core/compare/v1.0.8...v1.0.9) (2023-10-31)
 
 
