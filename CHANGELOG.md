@@ -1,3 +1,15 @@
+# [1.2.0](https://github.com/byteshard/core/compare/v1.1.0...v1.2.0) (2023-11-24)
+
+
+### Bug Fixes
+
+* add value interface to check if the value trait is implemented in form objects ([0625311](https://github.com/byteshard/core/commit/0625311b5fa7cacc5906d91dda95b3d466dd2247))
+
+
+### Features
+
+* add additional user data to session in public class ([feb8071](https://github.com/byteshard/core/commit/feb8071d08f95909bf629fef7d1bb64eee7b1fcf))
+
 # [1.1.0](https://github.com/byteshard/core/compare/v1.0.10...v1.1.0) (2023-11-24)
 
 
