@@ -156,6 +156,11 @@ class Session
         return self::getSessionObject()?->getAdditionalUserData() ?? [];
     }
 
+    public static function setAdditionalUserData(array $userData): void
+    {
+        self::getSessionObject()?->setAdditionalUserData($userData);
+    }
+
     public static function setClientTimeZone(DateTimeZone $timeZone): void
     {
         self::getSessionObject()?->setClientTimeZone($timeZone);
