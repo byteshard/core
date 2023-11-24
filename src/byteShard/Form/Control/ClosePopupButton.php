@@ -11,7 +11,7 @@ use byteShard\Internal\Form;
  * Class ClosePopupButton
  * @package byteShard\Form\Control
  */
-class ClosePopupButton extends Form\FormObject implements Form\ButtonInterface
+class ClosePopupButton extends Form\FormObject implements Form\ButtonInterface, Form\ValueInterface
 {
     protected string $type = 'button';
     protected string $displayedTextAttribute = 'value';

@@ -13,7 +13,7 @@ use byteShard\Enum;
  * Class Input
  * @package byteShard\Form\Control
  */
-class Editor extends Form\FormObject implements Form\InputWidthInterface
+class Editor extends Form\FormObject implements Form\InputWidthInterface, Form\ValueInterface
 {
     const H1             = 'applyH1';
     const H2             = 'applyH2';

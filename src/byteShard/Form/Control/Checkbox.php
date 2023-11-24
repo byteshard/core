@@ -13,7 +13,7 @@ use byteShard\Enum;
  * Class Checkbox
  * @package byteShard\Form\Control
  */
-class Checkbox extends Form\FormObject implements Form\OnlyReadInterface
+class Checkbox extends Form\FormObject implements Form\OnlyReadInterface, Form\ValueInterface
 {
     protected string              $type                   = 'checkbox';
     protected string              $displayedTextAttribute = 'label';

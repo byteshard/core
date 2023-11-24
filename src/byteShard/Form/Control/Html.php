@@ -10,7 +10,7 @@ use byteShard\Internal\Form;
  * Class Html
  * @package byteShard\Form\Control
  */
-class Html extends Form\FormObject
+class Html extends Form\FormObject implements Form\ValueInterface
 {
     protected string $type = 'html';
     use Form\ClassName;

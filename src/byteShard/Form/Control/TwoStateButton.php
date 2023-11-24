@@ -11,7 +11,7 @@ use byteShard\Internal\Form;
  * Class TwoStateButton
  * @package byteShard\Form\Control
  */
-class TwoStateButton extends Form\FormObject implements Form\OnlyReadInterface
+class TwoStateButton extends Form\FormObject implements Form\OnlyReadInterface, Form\ValueInterface
 {
     protected string $type = 'btn2state';
     protected string $displayedTextAttribute = 'value';

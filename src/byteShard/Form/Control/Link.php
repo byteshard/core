@@ -13,7 +13,7 @@ use byteShard\Internal\Form;
  * Class Link
  * @package byteShard\Form\Control
  */
-class Link extends Form\FormObject implements Form\InputWidthInterface
+class Link extends Form\FormObject implements Form\InputWidthInterface, Form\ValueInterface
 {
     protected string $type                   = 'template';
     protected string $displayedTextAttribute = 'label';

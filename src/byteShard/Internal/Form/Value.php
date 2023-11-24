@@ -16,11 +16,10 @@ trait Value
     /**
      * the initial value of the Form Object
      * @param null|string|int|float $stringOrInt
-     * @return $this
-     * @noinspection PhpDocSignatureInspection
+     * @return static
      * @API
      */
-    public function setValue(null|string|int|float $stringOrInt): self
+    public function setValue(null|string|int|float $stringOrInt): static
     {
         if (isset($this->attributes)) {
             $this->attributes['value'] = $stringOrInt;

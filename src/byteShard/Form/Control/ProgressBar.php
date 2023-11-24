@@ -12,7 +12,7 @@ use byteShard\Internal\Form;
  * Class ProgressBar
  * @package byteShard\Form\Control
  */
-class ProgressBar extends Form\FormObject implements Form\OnlyReadInterface
+class ProgressBar extends Form\FormObject implements Form\OnlyReadInterface, Form\ValueInterface
 {
     protected string $type                   = 'progressbar';
     protected string $displayedTextAttribute = 'label';

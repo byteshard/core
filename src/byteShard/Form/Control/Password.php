@@ -13,7 +13,7 @@ use byteShard\Enum;
  * Class Password
  * @package byteShard\Form\Control
  */
-class Password extends Form\FormObject implements Form\InputWidthInterface, Form\OnlyReadInterface
+class Password extends Form\FormObject implements Form\InputWidthInterface, Form\OnlyReadInterface, Form\ValueInterface
 {
     protected string              $type                   = 'password';
     protected ?Enum\DB\ColumnType $dbColumnType           = Enum\DB\ColumnType::VARCHAR;

@@ -14,7 +14,7 @@ use byteShard\Internal\Form;
  * Class Radio
  * @package byteShard\Form\Control
  */
-class Radio extends Form\FormObject implements Form\OnlyReadInterface, EncryptedObjectValueInterface
+class Radio extends Form\FormObject implements Form\OnlyReadInterface, EncryptedObjectValueInterface, Form\ValueInterface
 {
     protected string $type                     = 'radio';
     protected ?Enum\DB\ColumnType $dbColumnType           = Enum\DB\ColumnType::VARCHAR;

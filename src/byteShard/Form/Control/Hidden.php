@@ -13,7 +13,7 @@ use byteShard\Enum;
  * Class Hidden
  * @package byteShard\Form\Control
  */
-class Hidden extends Form\FormObject
+class Hidden extends Form\FormObject implements Form\ValueInterface
 {
     protected string              $type         = 'hidden';
     protected ?Enum\DB\ColumnType $dbColumnType = Enum\DB\ColumnType::VARCHAR;
