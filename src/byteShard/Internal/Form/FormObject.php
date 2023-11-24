@@ -46,6 +46,7 @@ abstract class FormObject
     private bool               $bind               = true;
     protected static Enum\Cast $cast               = Enum\Cast::STRING;
     private string             $randomId;
+    private string             $objectId;
 
     /**
      * FormObject constructor.
@@ -53,7 +54,13 @@ abstract class FormObject
      */
     public function __construct(?string $id)
     {
+        $this->objectId                 = $id ?? '';
         $this->attributes['name'] = $id;
+    }
+
+    public function getFormObjectId(): string
+    {
+        return $this->objectId;
     }
 
     public static function getCast(): string
