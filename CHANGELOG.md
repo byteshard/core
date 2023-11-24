@@ -1,3 +1,11 @@
+# [1.1.0](https://github.com/byteshard/core/compare/v1.0.10...v1.1.0) (2023-11-24)
+
+
+### Features
+
+* defineDataBinding can now be used in forms ([9535ad4](https://github.com/byteshard/core/commit/9535ad4da6ca80c08056c1bcb81167d11fa7dadc))
+* defineDataBinding can now be used in forms ([bfe75ff](https://github.com/byteshard/core/commit/bfe75ff9189d811edf58be132b9562de1fc1ad21))
+
 ## [1.0.10](https://github.com/byteshard/core/compare/v1.0.9...v1.0.10) (2023-11-16)
 
 
