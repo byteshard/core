@@ -11,7 +11,7 @@ use byteShard\Internal\Form;
  * Class Image
  * @package byteShard\Form\Control
  */
-class Image extends Form\FormObject implements Form\OnlyReadInterface
+class Image extends Form\FormObject implements Form\OnlyReadInterface, Form\ValueInterface
 {
     protected string $type = 'image';
     use Form\Hidden;

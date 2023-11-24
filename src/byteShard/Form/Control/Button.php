@@ -12,7 +12,7 @@ use byteShard\Internal\Form;
  * Class Button
  * @package byteShard\Form\Control
  */
-class Button extends Form\FormObject implements Form\ButtonInterface
+class Button extends Form\FormObject implements Form\ButtonInterface, Form\ValueInterface
 {
     protected string $type                     = 'button';
     protected string $displayedTextAttribute = 'value';

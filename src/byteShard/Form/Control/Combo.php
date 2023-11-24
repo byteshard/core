@@ -16,7 +16,7 @@ use byteShard\Session;
  * Class Combo
  * @package byteShard\Form\Control
  */
-class Combo extends Form\FormObject implements Form\InputWidthInterface, EncryptedObjectValueInterface
+class Combo extends Form\FormObject implements Form\InputWidthInterface, EncryptedObjectValueInterface, Form\ValueInterface
 {
     use Form\ClassName;
     use Form\Connector;

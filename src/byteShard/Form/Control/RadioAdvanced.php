@@ -13,7 +13,7 @@ use byteShard\Internal\Form;
  * Class Radio
  * @package byteShard\Form\Control
  */
-class RadioAdvanced extends Form\FormObject implements Form\OnlyReadInterface
+class RadioAdvanced extends Form\FormObject implements Form\OnlyReadInterface, Form\ValueInterface
 {
     protected string              $type                   = 'radioAdvanced';
     protected ?Enum\DB\ColumnType $dbColumnType           = Enum\DB\ColumnType::VARCHAR;

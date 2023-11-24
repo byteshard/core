@@ -13,7 +13,7 @@ use byteShard\Enum;
  * Class Input
  * @package byteShard\Form\Control
  */
-class Input extends Form\FormObject implements Form\InputWidthInterface, Form\OnlyReadInterface
+class Input extends Form\FormObject implements Form\InputWidthInterface, Form\OnlyReadInterface, Form\ValueInterface
 {
     protected string              $type                   = 'input';
     protected ?Enum\DB\ColumnType $dbColumnType           = Enum\DB\ColumnType::VARCHAR;
