@@ -133,7 +133,7 @@ class Recordset extends BaseRecordset implements GetArrayInterface, GetIndexArra
      * @return object|null
      * @throws Exception
      */
-    public static function getSingle(string $query, array $parameters = [], BaseConnection $connection = null): ?object
+    public static function getSingle(string $query, array $parameters = [], BaseConnection $connection = null, string $classMap = null, bool $fetchPropsLate = false): ?object
     {
         $conn   = self::checkConnection($connection);
         $qy     = self::cleanQuery($query);
@@ -217,7 +217,7 @@ class Recordset extends BaseRecordset implements GetArrayInterface, GetIndexArra
      * @return array
      * @throws Exception
      */
-    public static function getArray(string $query, array $parameters = [], BaseConnection $connection = null): array
+    public static function getArray(string $query, array $parameters = [], BaseConnection $connection = null, string $classMap = null, bool $fetchPropsLate = false): array
     {
         $conn   = self::checkConnection($connection);
         $qy     = self::cleanQuery($query);
@@ -305,7 +305,7 @@ class Recordset extends BaseRecordset implements GetArrayInterface, GetIndexArra
      * @return array
      * @throws Exception
      */
-    public static function getIndexArray(string $query, string $indexColumn, array $parameters = [], BaseConnection $connection = null): array
+    public static function getIndexArray(string $query, string $indexColumn, array $parameters = [], BaseConnection $connection = null, string $classMap = null, bool $fetchPropsLate = false): array
     {
         $conn   = self::checkConnection($connection);
         $qy     = self::cleanQuery($query);

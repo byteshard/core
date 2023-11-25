@@ -23,7 +23,9 @@ interface GetIndexArrayInterface
      * @param string $indexColumn
      * @param array $parameters
      * @param BaseConnection|null $connection
+     * @param string|null $classMap
+     * @param bool $fetchPropsLate
      * @return array
      */
-    public static function getIndexArray(string $query, string $indexColumn, array $parameters = [], BaseConnection $connection = null): array;
+    public static function getIndexArray(string $query, string $indexColumn, array $parameters = [], BaseConnection $connection = null, string $classMap = null, bool $fetchPropsLate = false): array;
 }

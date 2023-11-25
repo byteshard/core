@@ -70,7 +70,7 @@ class Recordset implements GetArrayInterface, GetSingleInterface, InsertInterfac
      * @return object|null
      * @throws Exception
      */
-    public static function getSingle(string $query, array $parameters = [], BaseConnection $connection = null): ?object
+    public static function getSingle(string $query, array $parameters = [], BaseConnection $connection = null, string $classMap = null, bool $fetchPropsLate = false): ?object
     {
         //TODO: Implement encoding handling to deal column names with  umlauts
         $connectionObject = self::checkConnection($connection);
@@ -107,7 +107,7 @@ class Recordset implements GetArrayInterface, GetSingleInterface, InsertInterfac
      * @return array
      * @throws Exception
      */
-    public static function getArray(string $query, array $parameters = [], BaseConnection $connection = null): array
+    public static function getArray(string $query, array $parameters = [], BaseConnection $connection = null, string $classMap = null, bool $fetchPropsLate = false): array
     {
         //TODO: Implement encoding handling to deal column names with  umlauts
         $connectionObject = self::checkConnection($connection);
