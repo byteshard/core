@@ -79,7 +79,7 @@ class Recordset implements GetArrayInterface, GetIndexArrayInterface, GetMultidi
      * @return array
      * @throws Exception
      */
-    public static function getArray(string $query, array $parameters = [], BaseConnection $connection = null): array
+    public static function getArray(string $query, array $parameters = [], BaseConnection $connection = null, string $classMap = null, bool $fetchPropsLate = false): array
     {
         $connectionObject = self::checkConnection($connection);
         try {
@@ -91,7 +91,15 @@ class Recordset implements GetArrayInterface, GetIndexArrayInterface, GetMultidi
             /** @var PDO $tempConnection */
             $stmt = $tempConnection->prepare($query);
             $stmt->execute($parameters);
-            $result = $stmt->fetchAll(PDO::FETCH_OBJ);
+            if ($classMap !== null) {
+                if ($fetchPropsLate === true) {
+                    $result = $stmt->fetchAll(PDO::FETCH_CLASS|PDO::FETCH_PROPS_LATE, $classMap);
+                } else {
+                    $result = $stmt->fetchAll(PDO::FETCH_CLASS, $classMap);
+                }
+            } else {
+                $result = $stmt->fetchAll(PDO::FETCH_OBJ);
+            }
             if (class_exists('\\config')) {
                 /** @noinspection PhpUndefinedClassInspection */
                 $config = new config();
@@ -146,9 +154,9 @@ class Recordset implements GetArrayInterface, GetIndexArrayInterface, GetMultidi
      * @return array
      * @throws Exception
      */
-    public static function getIndexArray(string $query, string $indexColumn, array $parameters = [], BaseConnection $connection = null): array
+    public static function getIndexArray(string $query, string $indexColumn, array $parameters = [], BaseConnection $connection = null, string $classMap = null, bool $fetchPropsLate = false): array
     {
-        $records = self::getArray($query, $parameters, $connection);
+        $records = self::getArray($query, $parameters, $connection, $classMap, $fetchPropsLate);
         $result  = [];
         foreach ($records as $record) {
             $result[$record->{$indexColumn}] = $record;
@@ -183,7 +191,7 @@ class Recordset implements GetArrayInterface, GetIndexArrayInterface, GetMultidi
      * @throws Exception
      * @api
      */
-    public static function getSingle(string $query, array $parameters = [], BaseConnection $connection = null): ?object
+    public static function getSingle(string $query, array $parameters = [], BaseConnection $connection = null, string $classMap = null, bool $fetchPropsLate = false): ?object
     {
         $connectionObject = self::checkConnection($connection);
         try {
@@ -195,7 +203,16 @@ class Recordset implements GetArrayInterface, GetIndexArrayInterface, GetMultidi
             /** @var PDO $tempConnection */
             $stmt = $tempConnection->prepare($query);
             $stmt->execute($parameters);
-            $result = $stmt->fetch(PDO::FETCH_OBJ);
+            if ($classMap !== null) {
+                if ($fetchPropsLate === true) {
+                    $stmt->setFetchMode(PDO::FETCH_CLASS|PDO::FETCH_PROPS_LATE, $classMap);
+                } else {
+                    $stmt->setFetchMode(PDO::FETCH_CLASS, $classMap);
+                }
+                $result = $stmt->fetch();
+            } else {
+                $result = $stmt->fetch(PDO::FETCH_OBJ);
+            }
             if (class_exists('\\config')) {
                 /** @noinspection PhpUndefinedClassInspection */
                 $config = new config();

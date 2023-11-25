@@ -90,24 +90,20 @@ class Database
      * @param string $query
      * @param array $parameters
      * @param BaseConnection|null $connection
+     * @param string|null $classMap
+     * @param bool $fetchPropsLate
      * @return array
      * @throws Exception
      */
-    public static function getArray(string $query, array $parameters = [], BaseConnection $connection = null): array
+    public static function getArray(string $query, array $parameters = [], BaseConnection $connection = null, string $classMap = null, bool $fetchPropsLate = false): array
     {
         global $dbDriver;
-        switch ($dbDriver) {
-            case Environment::DRIVER_MySQL_mysqli:
-                return MySQL\MySQLi\Recordset::getArray($query, $parameters, $connection);
-            case Environment::DRIVER_MYSQL_PDO:
-                return MySQL\PDO\Recordset::getArray($query, $parameters, $connection);
-            case Environment::DRIVER_PGSQL_PDO:
-                return PGSQL\PDO\Recordset::getArray($query, $parameters, $connection);
-            default:
-                Debug::debug('No DB Driver specified');
-                break;
-        }
-        return [];
+        return match ($dbDriver) {
+            Environment::DRIVER_MySQL_mysqli => MySQL\MySQLi\Recordset::getArray($query, $parameters, $connection, $classMap, $fetchPropsLate),
+            Environment::DRIVER_MYSQL_PDO    => MySQL\PDO\Recordset::getArray($query, $parameters, $connection, $classMap, $fetchPropsLate),
+            Environment::DRIVER_PGSQL_PDO    => PGSQL\PDO\Recordset::getArray($query, $parameters, $connection, $classMap, $fetchPropsLate),
+            default                          => [],
+        };
     }
 
     public static function getColumn(string $query, array $parameters = [], BaseConnection $connection = null): array
@@ -129,24 +125,20 @@ class Database
      * @param string $indexColumn
      * @param array $parameters
      * @param BaseConnection|null $connection
+     * @param string|null $classMap
+     * @param bool $fetchPropsLate
      * @return array
      * @throws Exception
      */
-    public static function getIndexArray(string $query, string $indexColumn, array $parameters = [], BaseConnection $connection = null): array
+    public static function getIndexArray(string $query, string $indexColumn, array $parameters = [], BaseConnection $connection = null, string $classMap = null, bool $fetchPropsLate = false): array
     {
         global $dbDriver;
-        switch ($dbDriver) {
-            case Environment::DRIVER_MySQL_mysqli:
-                return MySQL\MySQLi\Recordset::getIndexArray($query, $indexColumn, $parameters, $connection);
-            case Environment::DRIVER_MYSQL_PDO:
-                return MySQL\PDO\Recordset::getIndexArray($query, $indexColumn, $parameters, $connection);
-            case Environment::DRIVER_PGSQL_PDO:
-                return PGSQL\PDO\Recordset::getArray($query, $parameters, $connection);
-            default:
-                Debug::debug('No DB Driver specified');
-                break;
-        }
-        return [];
+        return match ($dbDriver) {
+            Environment::DRIVER_MySQL_mysqli => MySQL\MySQLi\Recordset::getIndexArray($query, $indexColumn, $parameters, $connection, $classMap, $fetchPropsLate),
+            Environment::DRIVER_MYSQL_PDO    => MySQL\PDO\Recordset::getIndexArray($query, $indexColumn, $parameters, $connection, $classMap, $fetchPropsLate),
+            Environment::DRIVER_PGSQL_PDO    => PGSQL\PDO\Recordset::getArray($query, $parameters, $connection, $classMap, $fetchPropsLate),
+            default                          => [],
+        };
     }
 
     /**
@@ -154,16 +146,18 @@ class Database
      * @param string $query
      * @param array $parameters
      * @param BaseConnection|null $connection
+     * @param string|null $classMap
+     * @param bool $fetchPropsLate
      * @return object|null
      * @throws Exception
      */
-    public static function getSingle(string $query, array $parameters = [], BaseConnection $connection = null): ?object
+    public static function getSingle(string $query, array $parameters = [], BaseConnection $connection = null, string $classMap = null, bool $fetchPropsLate = false): ?object
     {
         global $dbDriver;
         return match ($dbDriver) {
-            Environment::DRIVER_MySQL_mysqli => MySQL\MySQLi\Recordset::getSingle($query, $parameters, $connection),
-            Environment::DRIVER_MYSQL_PDO    => MySQL\PDO\Recordset::getSingle($query, $parameters, $connection),
-            Environment::DRIVER_PGSQL_PDO    => PGSQL\PDO\Recordset::getSingle($query, $parameters, $connection),
+            Environment::DRIVER_MySQL_mysqli => MySQL\MySQLi\Recordset::getSingle($query, $parameters, $connection, $classMap, $fetchPropsLate),
+            Environment::DRIVER_MYSQL_PDO    => MySQL\PDO\Recordset::getSingle($query, $parameters, $connection, $classMap, $fetchPropsLate),
+            Environment::DRIVER_PGSQL_PDO    => PGSQL\PDO\Recordset::getSingle($query, $parameters, $connection, $classMap, $fetchPropsLate),
             default                          => null,
         };
     }
