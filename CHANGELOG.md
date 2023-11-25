@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/byteshard/core/compare/v1.2.0...v1.3.0) (2023-11-25)
+
+
+### Features
+
+* add class maps to mysql ([9b0d9e5](https://github.com/byteshard/core/commit/9b0d9e568b953a8579bd57239ae012e7f54e5f94))
+
 # [1.2.0](https://github.com/byteshard/core/compare/v1.1.0...v1.2.0) (2023-11-24)
 
 
