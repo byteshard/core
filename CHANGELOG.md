@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/byteshard/core/compare/v1.3.0...v1.3.1) (2023-12-01)
+
+
+### Bug Fixes
+
+* remove preceding slashes since get_called_class returns it without it ([eb2a312](https://github.com/byteshard/core/commit/eb2a312a46c9027ddb3e710ee7f89cbd33b0163f))
+
 # [1.3.0](https://github.com/byteshard/core/compare/v1.2.0...v1.3.0) (2023-11-25)
 
 
