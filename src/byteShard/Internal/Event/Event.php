@@ -70,18 +70,19 @@ abstract class Event
             }
         }
         if ($deprecatedCallIn !== '') {
+            // string references of classes are here because they are in theoretical sibling packages in the application and we can't reference them here without requiring them.
             $interface = match (get_called_class()) {
-                OnChange::class                                              => OnChangeInterface::class,
-                OnCheck::class, '\\byteShard\\Grid\\Event\\OnCheck'          => OnCheckInterface::class,
-                '\\byteShard\\Toolbar\\Event\\OnClick', OnButtonClick::class => OnClickInterface::class,
-                OnEmptyClick::class                                          => OnEmptyClickInterface::class,
-                '\\byteShard\\Toolbar\\Event\\OnEnter'                       => OnEnterInterface::class,
-                OnInputChange::class                                         => OnInputChangeInterface::class,
-                '\\byteShard\\Tree\\Event\\OnSelect', '\\byteShard\\Grid\\Event\\OnSelect'        => OnSelectInterface::class,
-                '\\byteShard\\Toolbar\\Event\\OnStateChange'                 => OnStateChangeInterface::class,
-                OnUnCheck::class                                             => OnUncheckInterface::class,
-                OnUploadFile::class                                          => OnUploadInterface::class,
-                default                                                      => 'INTERFACE NOT IMPLEMENTED ('.get_called_class().')',
+                OnChange::class                                                        => OnChangeInterface::class,
+                OnCheck::class, 'byteShard\\Grid\\Event\\OnCheck'                      => OnCheckInterface::class,
+                'byteShard\\Toolbar\\Event\\OnClick', OnButtonClick::class             => OnClickInterface::class,
+                OnEmptyClick::class                                                    => OnEmptyClickInterface::class,
+                'byteShard\\Toolbar\\Event\\OnEnter'                                   => OnEnterInterface::class,
+                OnInputChange::class                                                   => OnInputChangeInterface::class,
+                'byteShard\\Tree\\Event\\OnSelect', 'byteShard\\Grid\\Event\\OnSelect' => OnSelectInterface::class,
+                'byteShard\\Toolbar\\Event\\OnStateChange'                             => OnStateChangeInterface::class,
+                OnUnCheck::class                                                       => OnUncheckInterface::class,
+                OnUploadFile::class                                                    => OnUploadInterface::class,
+                default                                                                => 'INTERFACE NOT IMPLEMENTED ('.get_called_class().')',
             };
             trigger_error('Adding Actions which are not meant to be executed on the client is deprecated. Please implement '.$interface.' instead. Called in: '.$deprecatedCallIn.' Line:'.$line, E_USER_DEPRECATED);
         }
