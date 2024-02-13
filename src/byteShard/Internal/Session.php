@@ -207,8 +207,8 @@ class Session implements TabParentInterface, EncryptedIDStorageInterface
 
     /**
      * @param Cell $cell
-     * @param ?string $upload_control_name the name of the upload object that is declared in the form
-     * @param ?string $encrypted_client_name the encrypted upload_control_name
+     * @param ?string $uploadControlName the name of the upload object that is declared in the form
+     * @param ?string $encryptedClientName the encrypted upload_control_name
      * @param array $fileTypeArray
      * @param string $method
      * @param string $targetFilename
@@ -216,9 +216,9 @@ class Session implements TabParentInterface, EncryptedIDStorageInterface
      * @param bool $clearAfterUpload
      * @return null|string
      */
-    public function getUploadId(Cell $cell, ?string $upload_control_name, ?string $encrypted_client_name, array $fileTypeArray = [], string $method = '', string $targetFilename = '', string $targetPath = '', bool $clearAfterUpload = false): ?string
+    public function getUploadId(Cell $cell, ?string $uploadControlName, ?string $encryptedClientName, array $fileTypeArray = [], string $method = '', string $targetFilename = '', string $targetPath = '', bool $clearAfterUpload = false): ?string
     {
-        return $this->upload->getUploadId($cell, $upload_control_name, $encrypted_client_name, $fileTypeArray, $method, $targetFilename, $targetPath, $clearAfterUpload, self::getCryptoKey());
+        return $this->upload->getUploadId($cell, $uploadControlName, $encryptedClientName, $fileTypeArray, $method, $targetFilename, $targetPath, $clearAfterUpload);
     }
 
     public function setUploadFileData(string $upload_object_id, string $filename, string $path, string $client_name): void
