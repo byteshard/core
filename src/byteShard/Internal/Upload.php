@@ -111,14 +111,16 @@ class Upload
             $exception->setLocaleToken('byteShard.upload.generic.error');
             throw $exception;
         }
-        $fileTypes        = $requestData->{'!#f'} ?? [];
-        $targetPath       = $requestData->{'!#p'} ?? null;
-        $targetFileName   = $requestData->{'!#n'} ?? null;
-        $objectName       = $requestData->{'!#o'};
-        $method           = $requestData->{'!#m'} ?? null;
-        $clearAfterUpdate = $requestData->{'!#u'} ?? false;
-        $className        = $requestData->{'!#c'};
-        $cellId           = ID::decryptFinalImplementation($requestData->{'!#i'});
+        $fileTypes           = $requestData->{'!#f'} ?? [];
+        $targetPath          = $requestData->{'!#p'} ?? null;
+        $targetFileName      = $requestData->{'!#n'} ?? null;
+        $encryptedObjectName = $requestData->{'!#o'};
+        $decryptedObjectName = json_decode(Session::decrypt($encryptedObjectName));
+        $objectName          = $decryptedObjectName->{'i'};
+        $method              = $requestData->{'!#m'} ?? null; // deprecated
+        $clearAfterUpdate    = $requestData->{'!#u'} ?? false;
+        $className           = $requestData->{'!#c'};
+        $cellId              = ID::decryptFinalImplementation($requestData->{'!#i'});
         if (!empty($fileTypes)) {
             $sanitizer = new File($file, $fileTypes, $targetPath, $targetFileName);
             if ($sanitizer->hasErrors() === false) {
@@ -130,9 +132,9 @@ class Upload
                 ];
                 // this is currently used to delete temp files uploaded previously
                 Session::setUploadFileData($type, $sanitizer->getServerFilename(), $sanitizer->getServerFilepath(), $file['name']);
-                $cell  = Session::getCell($cellId);
-                $class = new $className($cell, null);
-                $extra = null;
+                $cell                = Session::getCell($cellId);
+                $class               = new $className($cell, null);
+                $extra               = null;
                 if (isset(class_implements($className)[OnUploadInterface::class])) {
                     $extra = $this->eventCallback($class, $cell, $objectName, $sanitizer->getServerFileFQFN(), $file['name']);
                 } elseif ($method !== null && method_exists($class, $method)) {
@@ -146,7 +148,7 @@ class Upload
                 $result['name']                  = urlencode(Session::encrypt($sanitizer->getServerFilename()));
                 $result['extra']['state']        = 2;
                 $result['extra']['clear']        = $clearAfterUpdate;
-                $result['extra']['uploaderName'] = $objectName;
+                $result['extra']['uploaderName'] = $encryptedObjectName;
                 $hidden                          = new Hidden(
                     '!#up='.json_encode(
                         [

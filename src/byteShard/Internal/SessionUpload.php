@@ -13,17 +13,15 @@ class SessionUpload
     private array $cells         = [];
     private array $uploadedFiles = [];
 
-    public function getUploadId(Cell $cell, ?string $uploadControlName, ?string $encrypted_client_name, array $fileTypeArray = [], string $method = '', string $targetFilename = '', string $targetPath = '', bool $clearAfterUpload = false, string $cryptoKey = ''): ?string
+    public function getUploadId(Cell $cell, ?string $uploadControlName, ?string $encryptedClientName, array $fileTypeArray = [], string $method = '', string $targetFilename = '', string $targetPath = '', bool $clearAfterUpload = false): ?string
     {
         //get ID
         $containerID = $cell->containerId();
         $cellID      = $cell->cellId();
-        // $id will be used in $_GET['type']
 
         $this->unlinkFilesFromPreviousRequest($containerID, $cellID, $uploadControlName);
 
-        $id = $this->getEncryptedId($cell, $uploadControlName, $clearAfterUpload, $fileTypeArray, $method, $targetFilename, $targetPath, $cryptoKey);
-        //$id                                                                           = md5($containerID.$cellID.$upload_control_name.date('YmdHis', time()));
+        $id = $this->getEncryptedId($cell, $encryptedClientName, $clearAfterUpload, $fileTypeArray, $method, $targetFilename, $targetPath);
         $this->cells[$containerID][$cellID][$uploadControlName] = $id;
         if (!isset($this->uploadedFiles[$id])) {
             $this->uploadedFiles[$id] = [];
@@ -48,7 +46,7 @@ class SessionUpload
         }
     }
 
-    private function getEncryptedId(Cell $cell, string $uploadControlName, bool $clearAfterUpload, array $fileTypeArray, string $method, string $targetFilename, string $targetPath, string $cryptoKey): string
+    private function getEncryptedId(Cell $cell, string $uploadControlName, bool $clearAfterUpload, array $fileTypeArray, string $method, string $targetFilename, string $targetPath): string
     {
 
         $message = [
