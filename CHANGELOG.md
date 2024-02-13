@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/byteshard/core/compare/v1.3.1...v1.3.2) (2024-02-13)
+
+
+### Bug Fixes
+
+* upload used incorrect id and the client crashed ([5fb9ee8](https://github.com/byteshard/core/commit/5fb9ee8faa745c81f03dfa0e7ea0335d52003a15))
+
 ## [1.3.1](https://github.com/byteshard/core/compare/v1.3.0...v1.3.1) (2023-12-01)
 
 
