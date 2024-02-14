@@ -141,16 +141,6 @@ class Session
         return self::getSessionObject()?->getSizeData($name) ?? [];
     }
 
-    public static function setUploadFileData(string $uploadObjectId, string $filename, string $path, string $clientName): void
-    {
-        self::getSessionObject()?->setUploadFileData($uploadObjectId, $filename, $path, $clientName);
-    }
-
-    public static function getUploadId(Cell $cell, ?string $uploadControlName, ?string $encryptedClientName, array $fileTypeArray = [], string $method = '', string $targetFilename = '', string $targetPath = '', bool $clearAfterUpload = false): ?string
-    {
-        return self::getSessionObject()?->getUploadId($cell, $uploadControlName, $encryptedClientName, $fileTypeArray, $method, $targetFilename, $targetPath, $clearAfterUpload);
-    }
-
     public static function getAdditionalUserdata(): array
     {
         return self::getSessionObject()?->getAdditionalUserData() ?? [];

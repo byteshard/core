@@ -243,7 +243,7 @@ class ErrorHandler
                     $this->printPopupContent(
                         ($e instanceof ExceptionInterface) ? $e->getClientMessage() : '',
                         ($e instanceof ExceptionInterface) ? $e->getCode() : '',
-                        '');
+                        ($e instanceof ExceptionInterface) ? $e->getUploadFileName() : '');
                     break;
                 case self::RESULT_OBJECT_HTML:
                     Template::printGenericExceptionTemplate($e->getMessage());

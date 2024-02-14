@@ -43,7 +43,6 @@ class Session implements TabParentInterface, EncryptedIDStorageInterface
     private SessionTabs   $tabs;
     private SessionPopups $popups;
     private SessionLocale $sessionLocale;
-    private SessionUpload $upload;
 
     /**
      * Session constructor.
@@ -56,7 +55,6 @@ class Session implements TabParentInterface, EncryptedIDStorageInterface
         $this->topLevelNonce = Crypto::randomBytes(24);
         $this->tabs          = new SessionTabs();
         $this->sessionLocale = new SessionLocale($locale);
-        $this->upload        = new SessionUpload();
         $this->popups        = new SessionPopups();
     }
 
@@ -203,27 +201,6 @@ class Session implements TabParentInterface, EncryptedIDStorageInterface
             }
         }
         return null;
-    }
-
-    /**
-     * @param Cell $cell
-     * @param ?string $uploadControlName the name of the upload object that is declared in the form
-     * @param ?string $encryptedClientName the encrypted upload_control_name
-     * @param array $fileTypeArray
-     * @param string $method
-     * @param string $targetFilename
-     * @param string $targetPath
-     * @param bool $clearAfterUpload
-     * @return null|string
-     */
-    public function getUploadId(Cell $cell, ?string $uploadControlName, ?string $encryptedClientName, array $fileTypeArray = [], string $method = '', string $targetFilename = '', string $targetPath = '', bool $clearAfterUpload = false): ?string
-    {
-        return $this->upload->getUploadId($cell, $uploadControlName, $encryptedClientName, $fileTypeArray, $method, $targetFilename, $targetPath, $clearAfterUpload);
-    }
-
-    public function setUploadFileData(string $upload_object_id, string $filename, string $path, string $client_name): void
-    {
-        $this->upload->setUploadFileData($upload_object_id, $filename, $path, $client_name);
     }
 
     public function encryptID(string $id, ?int $level = null): string

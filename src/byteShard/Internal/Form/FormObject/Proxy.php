@@ -12,6 +12,7 @@ use byteShard\Enum;
 use byteShard\Exception;
 use byteShard\Form;
 use byteShard\Form\Control;
+use byteShard\ID\UploadId;
 use byteShard\Internal\Action;
 use byteShard\Internal\Debug;
 use byteShard\Internal\Event\Event;
@@ -771,7 +772,7 @@ final class Proxy
             }
             if ($this->formObjectType === Control\Upload::class) {
                 $events[] = 'event_on_upload_file';
-                $uploadId = $cell->getUploadID($this->internalName, $this->clientName, $this->uploadFileTypes, $this->uploadMethod, $this->uploadTargetFilename, $this->uploadTargetPath, $this->uploadClearAfterUpload);
+                $uploadId = UploadId::getUploadId($cell, $this->clientName, $this->uploadFileTypes, $this->uploadMethod, $this->uploadTargetFilename, $this->uploadTargetPath, $this->uploadClearAfterUpload);
                 $this->setUploadUrlType($uploadId);
             }
             if (empty($this->options) && $this->formObjectType === Control\Combo::class) {

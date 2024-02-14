@@ -445,6 +445,7 @@ Please use the defined error codes and append incrementing numbers starting at `
 <tr><td>'byteshard\\internal\\toolbar\\valuemin'</td><td>'14320',</td></tr>
 <tr><td>'byteshard\\internal\\toolbar\\valuenow'</td><td>'14330',</td></tr>
 <tr><td>'byteshard\\internal\\toolbar\\width'</td><td>'14340',</td></tr>
+<tr><td>'byteshard\\internal\\upload'</td><td>'14345',</td></tr>
 <tr><td>'byteshard\\internal\\validate'</td><td>'14350',</td></tr>
 <tr><td>'byteshard\\internal\\validate\\form'</td><td>'14360',</td></tr>
 <tr><td>'byteshard\\internal\\validate\\grid'</td><td>'14370',</td></tr>
