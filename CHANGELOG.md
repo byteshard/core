@@ -1,3 +1,10 @@
+## [1.3.3](https://github.com/byteshard/core/compare/v1.3.2...v1.3.3) (2024-02-14)
+
+
+### Bug Fixes
+
+* use correct exception handling during upload ([71a70f7](https://github.com/byteshard/core/commit/71a70f7d9df4651961720948a0a9df37e2ef3d04))
+
 ## [1.3.2](https://github.com/byteshard/core/compare/v1.3.1...v1.3.2) (2024-02-13)
 
 
