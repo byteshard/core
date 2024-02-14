@@ -146,7 +146,7 @@ class File
     {
         $filename = Encoding::fixUTF8($filename);
         // replace invalid characters with underscores
-        $filename = preg_replace('/[^-öäüÖÄÜß0-9A-Z_.? #]/i', '_', $filename);
+        $filename = preg_replace('/[^a-zA-Z0-9_.-]/', '_', $filename);
         // replace underscore or blank repetitions
         return preg_replace('/([_ ])\1+/', '\1', $filename);
     }

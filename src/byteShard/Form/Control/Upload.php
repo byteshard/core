@@ -17,12 +17,12 @@ class Upload extends Form\FormObject implements Form\InputWidthInterface
 {
     protected string $type = 'upload';
     //TODO: refactor all parameters in the FormObject class and access them from the proxy class like all other parameters
-    protected array  $fileTypes        = [];
-    protected string $url              = 'bs/bs_upload.php';
-    protected string $method           = '';
-    protected string $targetFilename   = '';
-    protected string $targetPath       = '';
-    protected bool   $clearAfterUpload = false;
+    private array  $fileTypes        = [];
+    private string $url              = 'bs/bs_upload.php';
+    private string $method           = '';
+    private string $targetFilename   = '';
+    private string $targetPath       = '';
+    private bool   $clearAfterUpload = false;
     use Form\ClassName;
     use Form\Disabled;
     use Form\Hidden;
@@ -84,6 +84,7 @@ class Upload extends Form\FormObject implements Form\InputWidthInterface
      */
     public function setMethod(string $method): self
     {
+        trigger_error('Using setMethod on Form\Upload is deprecated. Use byteShard\Event\OnUploadInterface instead', E_USER_DEPRECATED);
         $this->method = $method;
         return $this;
     }

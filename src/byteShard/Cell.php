@@ -9,6 +9,7 @@ namespace byteShard;
 use byteShard\Form\Control\Upload;
 use byteShard\Form\FormInterface;
 use byteShard\ID\IDElement;
+use byteShard\ID\UploadId;
 use byteShard\Internal\Action;
 use byteShard\Internal\Cell\Storage;
 use byteShard\Internal\CellInterface;
@@ -1425,10 +1426,5 @@ class Cell implements CellInterface, EventStorageInterface, ContainerInterface, 
     public function getActionId(): string
     {
         return $this->actionId ?? '';
-    }
-
-    public function getUploadID(?string $upload_control_name, ?string $encrypted_client_name, array $fileTypeArray = [], string $method = '', string $targetFilename = '', string $targetPath = '', bool $clearAfterUpload = false): ?string
-    {
-        return \byteShard\Session::getUploadId($this, $upload_control_name, $encrypted_client_name, $fileTypeArray, $method, $targetFilename, $targetPath, $clearAfterUpload);
     }
 }

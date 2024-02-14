@@ -70,7 +70,6 @@ class Upload
         $cell->setActionId($objectId);
         $clientData = new ClientData();
         $row        = $clientData->addRow();
-        //TODO: file constructor throws exception, show error popup on client
         $row->addField($objectId, [new \byteShard\Upload\File($fqfn, $clientName)]);
         $class->setProcessedClientData($clientData);
         $eventResult   = $class->onUpload();
@@ -107,20 +106,29 @@ class Upload
         try {
             $requestData = json_decode(Session::decrypt(urldecode($type)));
         } catch (\Exception) {
-            $exception = new Exception('ID not registered in SESSION. Possible CSRF');
+            $exception = new Exception('ID not registered in SESSION. Possible CSRF', 14345001);
             $exception->setLocaleToken('byteShard.upload.generic.error');
+            $exception->setUploadFileName($file['name']);
             throw $exception;
         }
-        $fileTypes           = $requestData->{'!#f'} ?? [];
-        $targetPath          = $requestData->{'!#p'} ?? null;
-        $targetFileName      = $requestData->{'!#n'} ?? null;
-        $encryptedObjectName = $requestData->{'!#o'};
-        $decryptedObjectName = json_decode(Session::decrypt($encryptedObjectName));
-        $objectName          = $decryptedObjectName->{'i'};
-        $method              = $requestData->{'!#m'} ?? null; // deprecated
-        $clearAfterUpdate    = $requestData->{'!#u'} ?? false;
-        $className           = $requestData->{'!#c'};
-        $cellId              = ID::decryptFinalImplementation($requestData->{'!#i'});
+        try {
+            $fileTypes           = $requestData->{'!#f'} ?? [];
+            $targetPath          = $requestData->{'!#p'} ?? null;
+            $targetFileName      = $requestData->{'!#n'} ?? null;
+            $encryptedObjectName = $requestData->{'!#o'};
+            $decryptedObjectName = json_decode(Session::decrypt($encryptedObjectName));
+            $objectName          = $decryptedObjectName->{'i'};
+            $method              = $requestData->{'!#m'} ?? null; // deprecated
+            $clearAfterUpdate    = $requestData->{'!#u'} ?? false;
+            $className           = $requestData->{'!#c'};
+            $cellId              = ID::decryptFinalImplementation($requestData->{'!#i'});
+        } catch (\Exception) {
+            $exception = new Exception('Error with accessing object properties', 14345002);
+            $exception->setLocaleToken('byteShard.upload.generic.error');
+            $exception->setUploadFileName($file['name']);
+            throw $exception;
+        }
+
         if (!empty($fileTypes)) {
             $sanitizer = new File($file, $fileTypes, $targetPath, $targetFileName);
             if ($sanitizer->hasErrors() === false) {
@@ -130,57 +138,62 @@ class Upload
                     'fqfn' => $sanitizer->getServerFileFQFN(),
                     'id'   => $objectName
                 ];
-                // this is currently used to delete temp files uploaded previously
-                Session::setUploadFileData($type, $sanitizer->getServerFilename(), $sanitizer->getServerFilepath(), $file['name']);
-                $cell                = Session::getCell($cellId);
-                $class               = new $className($cell, null);
-                $extra               = null;
-                if (isset(class_implements($className)[OnUploadInterface::class])) {
-                    $extra = $this->eventCallback($class, $cell, $objectName, $sanitizer->getServerFileFQFN(), $file['name']);
-                } elseif ($method !== null && method_exists($class, $method)) {
-                    // old implementation
-                    $extra = $this->legacyEventCallback($class, $method, $fileInfo);
-                }
-                if (is_array($extra)) {
-                    $result['extra'] = $extra;
-                }
-                $result['state']                 = true;
-                $result['name']                  = urlencode(Session::encrypt($sanitizer->getServerFilename()));
-                $result['extra']['state']        = 2;
-                $result['extra']['clear']        = $clearAfterUpdate;
-                $result['extra']['uploaderName'] = $encryptedObjectName;
-                $hidden                          = new Hidden(
-                    '!#up='.json_encode(
-                        [
-                            'f' => $sanitizer->getServerFilename(),
-                            'p' => $sanitizer->getServerFilepath(),
-                            'c' => $file['name']
-                        ]), ''
-                );
+                try {
+                    $cell     = Session::getCell($cellId);
+                    $class    = new $className($cell, null);
+                    $extra    = null;
+                    if (isset(class_implements($className)[OnUploadInterface::class])) {
+                        $extra = $this->eventCallback($class, $cell, $objectName, $sanitizer->getServerFileFQFN(), $file['name']);
+                    } elseif ($method !== null && method_exists($class, $method)) {
+                        // old implementation
+                        $extra = $this->legacyEventCallback($class, $method, $fileInfo);
+                    }
+                    if (is_array($extra)) {
+                        $result['extra'] = $extra;
+                    }
+                    $result['state']                 = true;
+                    $result['name']                  = urlencode(Session::encrypt($sanitizer->getServerFilename()));
+                    $result['extra']['state']        = 2;
+                    $result['extra']['clear']        = $clearAfterUpdate;
+                    $result['extra']['uploaderName'] = $encryptedObjectName;
+                    $hidden                          = new Hidden(
+                        '!#up='.json_encode(
+                            [
+                                'f' => $sanitizer->getServerFilename(),
+                                'p' => $sanitizer->getServerFilepath(),
+                                'c' => $file['name']
+                            ]), ''
+                    );
 
-                $proxy = new Proxy($hidden, $cell, Enum\AccessType::R, null, $cell->getNonce());
-                $proxy->register($cell);
+                    $proxy = new Proxy($hidden, $cell, Enum\AccessType::R, null, $cell->getNonce());
+                    $proxy->register($cell);
 
-                $result['extra']['LCell'][$cell->containerId()][$cell->cellId()]['addItem'] = [
-                    'items'    => [
-                        $proxy->getJsonArray()
-                    ],
-                    'position' => null,
-                    'offset'   => 0
-                ];
-                if ($clearAfterUpdate === false) {
-                    Session::setUploadFileData($_GET['type'], $sanitizer->getServerFilename(), $sanitizer->getServerFilepath(), $file['name']);
-                } else {
-                    unlink(rtrim(rtrim($sanitizer->getServerFilepath(), '/'), '\\').DIRECTORY_SEPARATOR.$sanitizer->getServerFilename());
+                    $result['extra']['LCell'][$cell->containerId()][$cell->cellId()]['addItem'] = [
+                        'items'    => [
+                            $proxy->getJsonArray()
+                        ],
+                        'position' => null,
+                        'offset'   => 0
+                    ];
+                    if ($clearAfterUpdate === true) {
+                        unlink(rtrim(rtrim($sanitizer->getServerFilepath(), '/'), '\\').DIRECTORY_SEPARATOR.$sanitizer->getServerFilename());
+                    }
+                    return $result;
+                } catch (\Exception) {
+                    $exception = new Exception('Error while processing upload', 14345005);
+                    $exception->setLocaleToken('byteShard.upload.generic.error');
+                    $exception->setUploadFileName($file['name']);
+                    throw $exception;
                 }
-                return $result;
             }
-            $exception = new Exception('Sanitizer encountered an error');
+            $exception = new Exception('Sanitizer encountered an error', 14345004);
             $exception->setLocaleToken('byteShard.upload.sanitizer.error');
+            $exception->setUploadFileName($file['name']);
             throw $exception;
         }
-        $exception = new Exception('No allowed file types defined');
+        $exception = new Exception('No allowed file types defined', 14345003);
         $exception->setLocaleToken('byteShard.upload.fileType.notDefined');
+        $exception->setUploadFileName($file['name']);
         throw $exception;
     }
 }

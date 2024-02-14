@@ -41,7 +41,7 @@
     "byteshard/contracts": "^1.0",
     "byteshard/debug": "^1.0",
     "byteshard/locale": "^1.0",
-    "byteshard/exception": "^1.0",
+    "byteshard/exception": "^1.1",
     "byteshard/validate": "^1.0",
     "byteshard/auth": "^1.0",
     "byteshard/ldap": "^1.0"
