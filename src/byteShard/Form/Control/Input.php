@@ -45,6 +45,7 @@ class Input extends Form\FormObject implements Form\InputWidthInterface, Form\On
     use Form\OnlyRead;
     use Form\Required;
     use Form\Rows;
+    use Form\EncodeClientData;
     use Form\Style;
     use Form\Tooltip;
     use Form\Userdata;
