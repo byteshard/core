@@ -1,3 +1,15 @@
+# [1.4.0](https://github.com/byteshard/core/compare/v1.3.4...v1.4.0) (2024-03-15)
+
+
+### Bug Fixes
+
+* stop passing non-existing exception to function ([71fa0b4](https://github.com/byteshard/core/commit/71fa0b4fbba68f8f46e5a7c2f2f9a6de7e994fc2))
+
+
+### Features
+
+* support for rest api exception handling ([3abc94b](https://github.com/byteshard/core/commit/3abc94b9f76f346970ff390a47f8b943cd278ad3))
+
 ## [1.3.4](https://github.com/byteshard/core/compare/v1.3.3...v1.3.4) (2024-02-14)
 
 
