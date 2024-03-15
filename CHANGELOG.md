@@ -1,3 +1,17 @@
+# [1.5.0](https://github.com/byteshard/core/compare/v1.4.0...v1.5.0) (2024-03-15)
+
+
+### Bug Fixes
+
+* add exception message to log for better debugging experience ([dd9d01b](https://github.com/byteshard/core/commit/dd9d01bfda8bf741e05fc7c43e9c7fb8343bbaaf))
+* catch bubble exception ([f762e1a](https://github.com/byteshard/core/commit/f762e1a20747958b61483bfa124c99ee032945aa))
+
+
+### Features
+
+* add implicit events ([8d3265c](https://github.com/byteshard/core/commit/8d3265c9905010475c0ea2938931745a399afbe8))
+* add option to enable/disable autoremove on upload controls ([d7dfd95](https://github.com/byteshard/core/commit/d7dfd9556ce44ae97693e360c01b2bfc6b7f2f5a))
+
 # [1.4.0](https://github.com/byteshard/core/compare/v1.3.4...v1.4.0) (2024-03-15)
 
 
