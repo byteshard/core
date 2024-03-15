@@ -21,7 +21,6 @@ use byteShard\Internal\Event\EventMigrationInterface;
 use byteShard\Internal\Export\ExportInterface;
 use byteShard\Internal\Export\HandlerInterface;
 use byteShard\Internal\Permission\PermissionImplementation;
-use byteShard\Internal\Struct;
 use byteShard\Internal\Struct\ClientData;
 use byteShard\Internal\Struct\Navigation_ID;
 use byteShard\Locale;
@@ -45,22 +44,22 @@ abstract class CellContent implements ContainerInterface, ExportInterface
     }
 
     // overwrite in child:
-    protected string             $cellContentType;
-    protected Cell               $cell;
-    protected ?string            $filterValue   = null;
-    protected stdClass           $user;
-    protected ?int               $user_id;
-    protected ?string            $username;
-    protected ToolbarInterface   $toolbar;
-    private string               $outputCharset = 'UTF-8';
-    protected string             $locale;
-    private ?string              $cellHeader    = null;
-    private array                $idCache       = [];
-    private array                $events        = [];
-    protected ?Struct\ClientData $clientData;
-    protected ?ID\ID             $selectedID;
-    protected ?Struct\GetData    $getDataID;
-    private DateTimeZone         $clientTimeZone;
+    protected string           $cellContentType;
+    protected Cell             $cell;
+    protected ?string          $filterValue   = null;
+    protected stdClass         $user;
+    protected ?int             $user_id;
+    protected ?string          $username;
+    protected ToolbarInterface $toolbar;
+    private string             $outputCharset = 'UTF-8';
+    protected string           $locale;
+    private ?string            $cellHeader    = null;
+    private array              $idCache       = [];
+    private array              $events        = [];
+    protected ?ClientData      $clientData;
+    protected ?ID\ID           $selectedID;
+    protected ?Struct\GetData  $getDataID;
+    private DateTimeZone       $clientTimeZone;
 
     /**
      * TODO: OPTIMIZE: constructor too long... several actions create an instance of cell content and need only very few of it

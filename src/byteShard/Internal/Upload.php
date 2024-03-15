@@ -179,8 +179,8 @@ class Upload
                         unlink(rtrim(rtrim($sanitizer->getServerFilepath(), '/'), '\\').DIRECTORY_SEPARATOR.$sanitizer->getServerFilename());
                     }
                     return $result;
-                } catch (\Exception) {
-                    $exception = new Exception('Error while processing upload', 14345005);
+                } catch (\Exception $e) {
+                    $exception = new Exception($e->getMessage(), 14345005, __METHOD__, $e);
                     $exception->setLocaleToken('byteShard.upload.generic.error');
                     $exception->setUploadFileName($file['name']);
                     throw $exception;
