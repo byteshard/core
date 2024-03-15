@@ -27,6 +27,7 @@ class ErrorHandler
     const RESULT_OBJECT_HTML         = 'html';
     const RESULT_OBJECT_LOGIN        = 'login';
     const RESULT_OBJECT_EXPORT       = 'export';
+    const RESULT_OBJECT_REST         = 'rest';
 
     private ?string $resultObjectType = null;
     /** @var LoggerInterface[] */
@@ -257,6 +258,8 @@ class ErrorHandler
                         $_SESSION[$this->sessionIndexOfExports][$this->exportId]['description'] = 'An  error during export has occurred';
                     }
                     break;
+                case self::RESULT_OBJECT_REST:
+                    $this->printRestApiError($e);
                 case self::RESULT_OBJECT_LOGIN:
                 default:
                     $this->printLoginContent($file_access);
@@ -316,6 +319,8 @@ class ErrorHandler
                             $_SESSION[$this->sessionIndexOfExports][$this->exportId]['state'] = 0;
                         }
                         break;
+                    case self::RESULT_OBJECT_REST:
+                        $this->printRestApiError($e);
                     case self::RESULT_OBJECT_LOGIN:
                     default:
                         $this->printLoginContent($file_access);
@@ -326,6 +331,26 @@ class ErrorHandler
             // reroute output_buffer to file
             $this->printToFile($GLOBALS['output_buffer'], $this->printLogFilename);
         }
+    }
+
+    private function printRestApiError(?\Throwable $exception = null): never
+    {
+        if (!headers_sent()) {
+            header('Content-Type: application/json');
+        }
+        http_response_code(500);
+        $message = 'Internal Server Error';
+        if ($exception instanceof \ArgumentCountError) {
+            $message = 'Required paramter missing';
+            http_response_code(400);
+        } elseif ($exception instanceof \Error) {
+            if (str_starts_with($exception->getMessage(), 'Unknown named parameter')) {
+                http_response_code(400);
+                $message = 'Unknown parameter';
+            }
+        }
+        print $message;
+        exit;
     }
 
     /**
