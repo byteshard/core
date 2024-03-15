@@ -62,6 +62,8 @@ class Cell implements CellInterface, EventStorageInterface, ContainerInterface, 
     private ?Struct\GetData $getData = null;
     /** @var array */
     private array $event = [];
+    /** @var array<string, Event> */
+    private array $contentEvents = [];
     /** @var array */
     private array $confirmations = [];
     /** @var string */
@@ -425,18 +427,14 @@ class Cell implements CellInterface, EventStorageInterface, ContainerInterface, 
     /**
      * @param Event $event
      * @return $this
-     * @throws Exception
      */
     public function registerContentEvent(Event $event): self
     {
-        if (!isset($this->event['content'])) {
-            $this->event['content'] = [];
-        }
         $name = $event->getContentEventName();
-        if (array_key_exists($name, $this->event['content'])) {
-            $this->event['content'][$name]->addActions(...$event->getActionArray());
+        if (array_key_exists($name, $this->contentEvents)) {
+            $this->contentEvents[$name]->addActions(...$event->getActionArray());
         } else {
-            $this->event['content'][$name] = $event;
+            $this->contentEvents[$name] = $event;
         }
         return $this;
     }
@@ -447,8 +445,8 @@ class Cell implements CellInterface, EventStorageInterface, ContainerInterface, 
      */
     public function getContentActions(string $eventName): array
     {
-        if (isset($this->event['content'], $this->event['content'][$eventName])) {
-            $event = $this->event['content'][$eventName];
+        if (array_key_exists($eventName, $this->contentEvents)) {
+            $event = $this->contentEvents[$eventName];
             if ($event instanceof Event) {
                 return $event->getActionArray();
             }
