@@ -220,7 +220,11 @@ class Layout
                 $interfaces = class_implements($className);
                 if (isset($interfaces[Cell\Bubble::class])) {
                     $layoutCell = new $className(new Cell());
-                    $bubble     += $layoutCell->bubble();
+                    try {
+                        $bubble     += $layoutCell->bubble();
+                    } catch (\Exception) {
+                        //TODO: log error
+                    }
                 }
             }
         }
