@@ -39,6 +39,7 @@ class Upload extends Form\FormObject implements Form\InputWidthInterface
     //use FormObject_titleScreen;
     use Form\TitleText;
     use Form\AutoStart;
+    use Form\AutoRemove;
 
     //use FormObject_autoStart;
     //use FormObject_autoRemove;
