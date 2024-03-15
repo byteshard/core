@@ -6,6 +6,7 @@
 
 namespace byteShard\Internal;
 
+use ArgumentCountError;
 use byteShard\Enum\LogLevel;
 use byteShard\Enum\LogLocation;
 use byteShard\Internal\Exception\ExceptionInterface;
@@ -13,6 +14,7 @@ use byteShard\Locale;
 use byteShard\Internal\ErrorHandler\Template;
 use byteShard\Popup\Message;
 use byteShard\Exception;
+use Error;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
@@ -320,34 +322,32 @@ class ErrorHandler
                         }
                         break;
                     case self::RESULT_OBJECT_REST:
-                        $this->printRestApiError($e);
+                        $this->printRestApiError();
                     case self::RESULT_OBJECT_LOGIN:
                     default:
                         $this->printLoginContent($file_access);
                 }
             }
-        } elseif ($this->exception === false && isset($GLOBALS['output_buffer']) && !empty($GLOBALS['output_buffer'])) {
+        } elseif ($this->exception === false && !empty($GLOBALS['output_buffer'])) {
             // no exception was caught. Any print/echo/var_dump will be in output_buffer
             // reroute output_buffer to file
             $this->printToFile($GLOBALS['output_buffer'], $this->printLogFilename);
         }
     }
 
-    private function printRestApiError(?\Throwable $exception = null): never
+    private function printRestApiError(?Throwable $exception = null): never
     {
         if (!headers_sent()) {
             header('Content-Type: application/json');
         }
         http_response_code(500);
         $message = 'Internal Server Error';
-        if ($exception instanceof \ArgumentCountError) {
-            $message = 'Required paramter missing';
+        if ($exception instanceof ArgumentCountError) {
+            $message = 'Required parameter missing';
             http_response_code(400);
-        } elseif ($exception instanceof \Error) {
-            if (str_starts_with($exception->getMessage(), 'Unknown named parameter')) {
-                http_response_code(400);
-                $message = 'Unknown parameter';
-            }
+        } elseif ($exception instanceof Error && str_starts_with($exception->getMessage(), 'Unknown named parameter')) {
+            http_response_code(400);
+            $message = 'Unknown parameter';
         }
         print $message;
         exit;
