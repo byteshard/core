@@ -61,6 +61,9 @@ abstract class Config implements JsonSerializable
     protected bool            $developmentJavascriptFiles   = false;
     protected bool            $useSVG                       = false;
     protected bool            $convertImageNamesToLowerCase = false;
+    protected string          $jwtPrivateKeyPath;
+    protected string          $jwtPublicKeyPath;
+    protected int             $jwtAlgorithm                 = OPENSSL_ALGO_SHA256;
     private array             $dbOptions                    = [];
     private string            $realUrl;
 
@@ -78,6 +81,21 @@ abstract class Config implements JsonSerializable
         if ($this->log_path === null) {
             $this->log_path = BS_FILE_PRIVATE_ROOT.DIRECTORY_SEPARATOR.'log';
         }
+    }
+
+    public function getJwtPrivateKeyPath(): string
+    {
+        return $this->jwtPrivateKeyPath ?? '';
+    }
+
+    public function getJwtPublicKeyPath(): string
+    {
+        return $this->jwtPublicKeyPath ?? '';
+    }
+
+    public function getJwtAlgorithm(): int
+    {
+        return $this->jwtAlgorithm;
     }
 
     /**
