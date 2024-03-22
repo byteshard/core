@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/byteshard/core/compare/v1.5.0...v1.6.0) (2024-03-22)
+
+
+### Features
+
+* add simple jwt class ([5acca63](https://github.com/byteshard/core/commit/5acca63c1cf5eeb39f4440bb9b0f71286c105cc8))
+
 # [1.5.0](https://github.com/byteshard/core/compare/v1.4.0...v1.5.0) (2024-03-15)
 
 
