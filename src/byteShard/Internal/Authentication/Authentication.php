@@ -3,7 +3,7 @@
 namespace byteShard\Internal\Authentication;
 
 use BackedEnum;
-use byteShard\Authentication\OauthInterface;
+use byteShard\Config\OauthInterface;
 use byteShard\DataModelInterface;
 use byteShard\Environment;
 use byteShard\Internal\Authentication\Provider\Ldap;

@@ -1,6 +1,6 @@
 <?php
 
-namespace byteShard\Authentication;
+namespace byteShard\Config;
 
 use League\OAuth2\Client\Provider\AbstractProvider;
 
