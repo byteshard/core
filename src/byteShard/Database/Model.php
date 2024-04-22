@@ -6,12 +6,10 @@
 
 namespace byteShard\Database;
 
-use byteShard\Authentication\Enum\Target;
 use byteShard\Cell;
 use byteShard\Database;
 use byteShard\Database\Enum\ConnectionType;
 use byteShard\DataModelInterface;
-use byteShard\Enum\AccessControlTarget;
 use byteShard\Enum\DB\ColumnType;
 use byteShard\Environment;
 use byteShard\Exception;
@@ -22,21 +20,35 @@ use byteShard\Settings;
 
 class Model implements DataModelInterface
 {
-    /** @throws Exception */
-    public function getLastTab(int $userId, UserTable $schema): string
+    private UserTable $schema;
+    private string    $dbDriver;
+
+    public function __construct()
     {
-        if ($schema->getFieldNameLastTab() !== null && $schema->getTableName() !== null && $schema->getFieldNameUserId() !== null && $schema->getFieldTypeUserId() !== null) {
+        global $dbDriver;
+        $this->dbDriver = $dbDriver;
+    }
+
+    public function setUserTableSchema(UserTable $schema): void
+    {
+        $this->schema = $schema;
+    }
+
+    /** @throws Exception */
+    public function getLastTab(int $userId): string
+    {
+        if ($this->schema->getFieldNameLastTab() !== null && $this->schema->getTableName() !== null && $this->schema->getFieldNameUserId() !== null && $this->schema->getFieldTypeUserId() !== null) {
             global $dbDriver;
             switch ($dbDriver) {
                 case Environment::DRIVER_PGSQL_PDO:
                 case Environment::DRIVER_MYSQL_PDO:
-                    $record = Database::getSingle('SELECT '.$schema->getFieldNameLastTab().' AS lasttab FROM '.$schema->getTableName().' WHERE '.$schema->getFieldNameUserId().'=:userId', ['userId' => $userId]);
+                    $record = Database::getSingle('SELECT '.$this->schema->getFieldNameLastTab().' AS lasttab FROM '.$this->schema->getTableName().' WHERE '.$this->schema->getFieldNameUserId().'=:userId', ['userId' => $userId]);
                     if ($record !== null) {
                         return $record->lasttab ?? '';
                     }
                     break;
                 default:
-                    $record = Database::getSingle('SELECT '.$schema->getFieldNameLastTab().' AS lasttab FROM '.$schema->getTableName().' WHERE '.$schema->getFieldNameUserId().'='.$schema->getEscapedUserID($userId));
+                    $record = Database::getSingle('SELECT '.$this->schema->getFieldNameLastTab().' AS lasttab FROM '.$this->schema->getTableName().' WHERE '.$this->schema->getFieldNameUserId().'='.$this->schema->getEscapedUserID($userId));
                     if ($record !== null) {
                         return $record->lasttab ?? '';
                     }
@@ -46,15 +58,79 @@ class Model implements DataModelInterface
         return '';
     }
 
-    /** @throws Exception */
-    public function setLastTab(int $userId, string $lastTab, UserTable $schema): bool
+    public function getPasswordHash(string $username): ?string
     {
-        if ($schema->getFieldNameLastTab() !== null && $schema->getTableName() !== null && $schema->getFieldNameUserId() !== null && $schema->getFieldTypeUserId() !== null) {
-            $table         = $schema->getTableName();
-            $lastTabColumn = $schema->getFieldNameLastTab();
-            $userIdColumn  = $schema->getFieldNameUserId();
-            global $dbDriver;
-            switch ($dbDriver) {
+        $passwordColumnName = $this->schema->getFieldNameLocalPassword();
+        $query              = 'SELECT '.$passwordColumnName.' FROM '.$this->schema->getTableName().' WHERE '.$this->schema->getFieldNameUsername().'=:username';
+        $parameters         = ['username' => $username];
+        switch ($this->dbDriver) {
+            case Environment::DRIVER_PGSQL_PDO:
+                $record             = Database::getSingle(strtolower($query), $parameters);
+                $passwordColumnName = strtolower($passwordColumnName);
+                break;
+            case Environment::DRIVER_MYSQL_PDO:
+                $record = Database::getSingle($query, $parameters);
+                break;
+            default:
+                //TODO: implement
+                $record = null;
+        }
+        if ($record === null) {
+            return null;
+        }
+        return $record->{$passwordColumnName} ?? '';
+    }
+
+    // return null if password never expires
+    public function getPasswordExpiration(string $username): ?object
+    {
+        $expires = $this->schema->getFieldNameLocalPasswordExpires();
+        if (empty($expires)) {
+            return null;
+        }
+        $expiresAfterDays = $this->schema->getFieldNameLocalPasswordExpiresAfterDays();
+        $lastChange       = $this->schema->getFieldNameLocalPasswordLastChange();
+        if (empty($expiresAfterDays) || empty($lastChange)) {
+            throw new Exception('Password is supposed to expire but no columns for lastChange or expiresAfterDays have been defined');
+        }
+        $columns = [
+            $expires.' AS expires',
+            $expiresAfterDays.' AS expiresAfterDays',
+            $lastChange.' AS lastChange'
+        ];
+        return Database::getSingle('SELECT '.implode(', ', $columns).' FROM '.$this->schema->getTableName().' WHERE '.$this->schema->getFieldNameUsername().'=:username', ['username' => $username]);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function updatePasswordHash(string $username, string $hash): void
+    {
+        $query      = 'UPDATE '.$this->schema->getTableName().' SET '.$this->schema->getFieldNameLocalPassword().'=:hash WHERE '.$this->schema->getFieldNameUsername().'=:username';
+        $parameters = ['hash' => $hash, 'username' => $username];
+        switch ($this->dbDriver) {
+            case Environment::DRIVER_PGSQL_PDO:
+                Database::update(strtolower($query), $parameters);
+                break;
+            case Environment::DRIVER_MYSQL_PDO:
+                Database::update($query, $parameters);
+                break;
+            default:
+                // not prepared statement, but should be ok since the user already logged in so the username has to be a valid username and the password is generated by the php hashing function
+                $connection = Database::getConnection(ConnectionType::WRITE);
+                $connection->execute('UPDATE '.$this->schema->getTableName().' SET '.$this->schema->getFieldNameLocalPassword().'=\''.$hash.'\' WHERE '.$this->schema->getFieldNameUsername().'=\''.$username.'\'');
+                break;
+        }
+    }
+
+    /** @throws Exception */
+    public function setLastTab(int $userId, string $lastTab): bool
+    {
+        if ($this->schema->getFieldNameLastTab() !== null && $this->schema->getTableName() !== null && $this->schema->getFieldNameUserId() !== null && $this->schema->getFieldTypeUserId() !== null) {
+            $table         = $this->schema->getTableName();
+            $lastTabColumn = $this->schema->getFieldNameLastTab();
+            $userIdColumn  = $this->schema->getFieldNameUserId();
+            switch ($this->dbDriver) {
                 case Environment::DRIVER_PGSQL_PDO:
                     $rs = Database::getSingle(strtolower('SELECT '.$lastTabColumn.' as lasttab FROM '.$table.' WHERE '.$userIdColumn).'=:userId', ['userId' => $userId]);
                     if ($rs !== null && ($rs->lasttab === null || $rs->lasttab !== $lastTab)) {
@@ -74,7 +150,7 @@ class Model implements DataModelInterface
                     }
                     break;
                 default:
-                    $query = 'SELECT '.$lastTabColumn.' FROM '.$table.' WHERE '.$userIdColumn.'='.$schema->getEscapedUserID($userId);
+                    $query = 'SELECT '.$lastTabColumn.' FROM '.$table.' WHERE '.$userIdColumn.'='.$this->schema->getEscapedUserID($userId);
                     $rs    = Database::getRecordset($cn = Database::getConnection(ConnectionType::WRITE));
                     $rs->open($query);
                     if (($rs->fields[$lastTabColumn] === null || $rs->fields[$lastTabColumn] !== $lastTab) && $rs->recordcount() === 1) {
@@ -178,17 +254,17 @@ class Model implements DataModelInterface
     }
 
     /** @throws Exception */
-    public function isServiceAccount(int $userId, UserTable $schema = null): bool
+    public function isServiceAccount(int $userId): bool
     {
         global $dbDriver;
         $record = match ($dbDriver) {
             Environment::DRIVER_PGSQL_PDO,
-            Environment::DRIVER_MYSQL_PDO => Database::getSingle('SELECT '.$schema->getFieldNameServiceAccount().' FROM '.$schema->getTableName().'  WHERE '.$schema->getFieldNameUserId().'=:userId', [
+            Environment::DRIVER_MYSQL_PDO => Database::getSingle('SELECT '.$this->schema->getFieldNameServiceAccount().' FROM '.$this->schema->getTableName().'  WHERE '.$this->schema->getFieldNameUserId().'=:userId', [
                 'userId' => $userId
             ]),
-            default                       => Database::getSingle('SELECT '.$schema->getFieldNameServiceAccount().' FROM '.$schema->getTableName().' WHERE '.$schema->getFieldNameUserId().'='.((ColumnType::is_string($schema->getFieldTypeUserIdEnum()) === true) ? "'".$userId."'" : $userId)),
+            default                       => Database::getSingle('SELECT '.$this->schema->getFieldNameServiceAccount().' FROM '.$this->schema->getTableName().' WHERE '.$this->schema->getFieldNameUserId().'='.((ColumnType::is_string($this->schema->getFieldTypeUserIdEnum()) === true) ? "'".$userId."'" : $userId)),
         };
-        return $record !== null && isset($record->{$schema->getFieldNameServiceAccount()}) && (bool)$record->{$schema->getFieldNameServiceAccount()} === true;
+        return $record !== null && isset($record->{$this->schema->getFieldNameServiceAccount()}) && (bool)$record->{$this->schema->getFieldNameServiceAccount()} === true;
     }
 
     /** @throws Exception */
@@ -204,14 +280,14 @@ class Model implements DataModelInterface
     }
 
     /** @throws Exception */
-    public function successfulLoginCallback(int $userId, UserTable $schema = null): bool
+    public function successfulLoginCallback(int $userId): bool
     {
         $fields = [];
-        if ($schema->getFieldNameLastLogin() !== '') {
-            $fields[] = $schema->getFieldNameLastLogin();
+        if ($this->schema->getFieldNameLastLogin() !== '') {
+            $fields[] = $this->schema->getFieldNameLastLogin();
         }
-        if ($schema->getFieldNameLoginCount() !== '') {
-            $fields[] = $schema->getFieldNameLoginCount();
+        if ($this->schema->getFieldNameLoginCount() !== '') {
+            $fields[] = $this->schema->getFieldNameLoginCount();
         }
         if (!empty($fields)) {
             global $dbDriver;
@@ -220,28 +296,28 @@ class Model implements DataModelInterface
                 case Environment::DRIVER_PGSQL_PDO:
                     $set        = [];
                     $parameters = [];
-                    if ($schema->getFieldNameLastLogin() !== '') {
-                        $set[]                                        = $schema->getFieldNameLastLogin().'=:'.$schema->getFieldNameLastLogin();
-                        $parameters[$schema->getFieldNameLastLogin()] = date('YmdHis', time());
+                    if ($this->schema->getFieldNameLastLogin() !== '') {
+                        $set[]                                              = $this->schema->getFieldNameLastLogin().'=:'.$this->schema->getFieldNameLastLogin();
+                        $parameters[$this->schema->getFieldNameLastLogin()] = date('YmdHis', time());
                     }
-                    if ($schema->getFieldNameLoginCount() !== '') {
-                        $set[] = $schema->getFieldNameLoginCount().'='.$schema->getFieldNameLoginCount().' + 1';
+                    if ($this->schema->getFieldNameLoginCount() !== '') {
+                        $set[] = $this->schema->getFieldNameLoginCount().'='.$this->schema->getFieldNameLoginCount().' + 1';
                     }
                     $parameters['userId'] = $userId;
-                    Database::update('UPDATE '.$schema->getTableName().' SET '.implode(', ', $set).' WHERE '.$schema->getFieldNameUserId().'=:userId', $parameters);
+                    Database::update('UPDATE '.$this->schema->getTableName().' SET '.implode(', ', $set).' WHERE '.$this->schema->getFieldNameUserId().'=:userId', $parameters);
                     break;
                 default:
                     $rs = Database::getRecordset($cn = Database::getConnection(ConnectionType::WRITE));
-                    $rs->open('SELECT '.implode(',', $fields).' FROM '.$schema->getTableName().' WHERE '.$schema->getFieldNameUserId().'='.$userId);
+                    $rs->open('SELECT '.implode(',', $fields).' FROM '.$this->schema->getTableName().' WHERE '.$this->schema->getFieldNameUserId().'='.$userId);
                     if ($rs->recordcount() === 1) {
-                        if ($schema->getFieldNameLastLogin() !== null) {
-                            $rs->fields[$schema->getFieldNameLastLogin()] = date('YmdHis', time());
+                        if ($this->schema->getFieldNameLastLogin() !== null) {
+                            $rs->fields[$this->schema->getFieldNameLastLogin()] = date('YmdHis', time());
                         }
-                        if ($schema->getFieldNameLoginCount() !== null) {
-                            if ($rs->fields[$schema->getFieldNameLoginCount()] === null) {
-                                $rs->fields[$schema->getFieldNameLoginCount()] = 1;
+                        if ($this->schema->getFieldNameLoginCount() !== null) {
+                            if ($rs->fields[$this->schema->getFieldNameLoginCount()] === null) {
+                                $rs->fields[$this->schema->getFieldNameLoginCount()] = 1;
                             } else {
-                                $rs->fields[$schema->getFieldNameLoginCount()] += 1;
+                                $rs->fields[$this->schema->getFieldNameLoginCount()] += 1;
                             }
                         }
                         $rs->update();
@@ -255,19 +331,19 @@ class Model implements DataModelInterface
     }
 
     /** @throws Exception */
-    public function checkGrantLogin(int|string $userId, UserTable $schema): bool
+    public function checkGrantLogin(int $userId): bool
     {
         global $dbDriver;
         switch ($dbDriver) {
             case Environment::DRIVER_MYSQL_PDO:
             case Environment::DRIVER_PGSQL_PDO:
-                $grantLogin = strtolower($schema->getFieldNameGrantLogin());
-                $query      = 'SELECT '.$grantLogin.' FROM '.$schema->getTableName().' WHERE '.$schema->getFieldNameUserId().'=:UserId';
+                $grantLogin = strtolower($this->schema->getFieldNameGrantLogin());
+                $query      = 'SELECT '.$grantLogin.' FROM '.$this->schema->getTableName().' WHERE '.$this->schema->getFieldNameUserId().'=:UserId';
                 $tmp        = Database::getSingle($query, ['UserId' => $userId]);
                 break;
             default:
-                $grantLogin = $schema->getFieldNameGrantLogin();
-                $query      = 'SELECT '.$schema->getFieldNameGrantLogin().' FROM '.$schema->getTableName().' WHERE '.$schema->getFieldNameUserId().'='.(ColumnType::is_string($schema->getFieldTypeUserIdEnum()) === true ? "'".$userId."'" : $userId);
+                $grantLogin = $this->schema->getFieldNameGrantLogin();
+                $query      = 'SELECT '.$this->schema->getFieldNameGrantLogin().' FROM '.$this->schema->getTableName().' WHERE '.$this->schema->getFieldNameUserId().'='.(ColumnType::is_string($this->schema->getFieldTypeUserIdEnum()) === true ? "'".$userId."'" : $userId);
                 $tmp        = Database::getSingle($query);
                 break;
         }
@@ -279,102 +355,45 @@ class Model implements DataModelInterface
     }
 
     /** @throws Exception|\Exception */
-    public function checkServiceAccount(int|string $userId, UserTable $schema): bool
+    public function checkServiceAccount(int $userId): bool
     {
         global $dbDriver;
         $tmp = match ($dbDriver) {
             Environment::DRIVER_MYSQL_PDO,
-            Environment::DRIVER_PGSQL_PDO => Database::getSingle('SELECT '.$schema->getFieldNameServiceAccount().' FROM '.$schema->getTableName().' WHERE '.$schema->getFieldNameUserId().':=userId', ['userId' => $userId]),
-            default                       => Database::getSingle('SELECT '.$schema->getFieldNameServiceAccount().' FROM '.$schema->getTableName().' WHERE '.$schema->getFieldNameUserId().'='.(ColumnType::is_string($schema->getFieldTypeUserIdEnum()) === true ? "'".$userId."'" : $userId)),
+            Environment::DRIVER_PGSQL_PDO => Database::getSingle('SELECT '.$this->schema->getFieldNameServiceAccount().' FROM '.$this->schema->getTableName().' WHERE '.$this->schema->getFieldNameUserId().':=userId', ['userId' => $userId]),
+            default                       => Database::getSingle('SELECT '.$this->schema->getFieldNameServiceAccount().' FROM '.$this->schema->getTableName().' WHERE '.$this->schema->getFieldNameUserId().'='.(ColumnType::is_string($this->schema->getFieldTypeUserIdEnum()) === true ? "'".$userId."'" : $userId)),
         };
         if ($tmp === null) {
             Debug::info(__METHOD__.': user not found');
             return false;
         }
-        return (bool)$tmp->{$schema->getFieldNameServiceAccount()};
+        return (bool)$tmp->{$this->schema->getFieldNameServiceAccount()};
     }
 
     /** @throws Exception|\Exception */
-    public function getAccessControlTarget(int|string $userId, UserTable $schema): ?AccessControlTarget
+    public function getUserId(string $username): ?int
     {
-        if ($schema->getFieldNameAccessControlTarget() !== null) {
-            global $dbDriver;
-            $tmp = match ($dbDriver) {
-                Environment::DRIVER_MYSQL_PDO,
-                Environment::DRIVER_PGSQL_PDO => Database::getSingle('SELECT '.$schema->getFieldNameAccessControlTarget().' FROM '.$schema->getTableName().' WHERE '.$schema->getFieldNameUserId().':=userId', ['userId' => $userId]),
-                default                       => Database::getSingle('SELECT '.$schema->getFieldNameAccessControlTarget().' FROM '.$schema->getTableName().' WHERE '.$schema->getFieldNameUserId().'='.(ColumnType::is_string($schema->getFieldTypeUserIdEnum()) === true ? "'".$userId."'" : $userId)),
-            };
-            if ($tmp === null) {
-                Debug::info(__METHOD__.': user not found');
-                return null;
-            }
-            $target = AccessControlTarget::tryFrom($tmp->{$schema->getFieldNameAccessControlTarget()});
-            if ($target === null) {
-                Debug::info(__METHOD__.': Value in column "'.$schema->getFieldNameAccessControlTarget().'" table "'.$schema->getTableName().'" must be of Enum::BSAccessControlTarget');
-                return null;
-            }
-            if ($target === AccessControlTarget::ACCESS_CONTROL_DEFINED_ON_DB) {
-                // circular reference
-                Debug::info(__METHOD__.': Value in column "'.$schema->getFieldNameAccessControlTarget().'" table "'.$schema->getTableName().'" must NOT be '.AccessControlTarget::ACCESS_CONTROL_DEFINED_ON_DB->value);
-                return null;
-            }
-            return $target;
-        }
-        throw new \Exception(__METHOD__.': Access control target is set to ACCESS_CONTROL_DEFINED_ON_DB but getFieldNameAccessControlTarget is undefined in Schema\DB\UserTable');
-    }
-
-    /** @throws Exception|\Exception */
-    public function getAuthenticationTarget(int|string $userId, UserTable $schema): ?Target
-    {
-        if ($schema->getFieldNameAuthenticationTarget() !== null) {
-            global $dbDriver;
-            $tmp = match ($dbDriver) {
-                Environment::DRIVER_MYSQL_PDO,
-                Environment::DRIVER_PGSQL_PDO => Database::getSingle('SELECT '.$schema->getFieldNameAuthenticationTarget().' FROM '.$schema->getTableName().' WHERE '.$schema->getFieldNameUserId().':=userId', ['userId' => $userId]),
-                default                       => Database::getSingle('SELECT '.$schema->getFieldNameAuthenticationTarget().' FROM '.$schema->getTableName().' WHERE '.$schema->getFieldNameUserId().'='.(ColumnType::is_string($schema->getFieldTypeUserIdEnum()) === true ? "'".$userId."'" : $userId)),
-            };
-            if ($tmp === null) {
-                Debug::info(__METHOD__.': user not found');
-                return null;
-            }
-            $target = Target::tryFrom($tmp->{$schema->getFieldNameAuthenticationTarget()});
-            if ($target === null) {
-                Debug::info(__METHOD__.': Value in column "'.$schema->getFieldNameAuthenticationTarget().'" table "'.$schema->getTableName().'" must be of Enum::Authentication\Enum\Target');
-                return null;
-            } elseif ($target === Target::AUTH_TARGET_DEFINED_ON_DB) {
-                Debug::info(__METHOD__.': Value in column "'.$schema->getFieldNameAuthenticationTarget().'" table "'.$schema->getTableName().'" must NOT be '.Target::AUTH_TARGET_DEFINED_ON_DB->value);
-                return null;
-            } else {
-                return $target;
-            }
-        }
-        throw new \Exception(__METHOD__.': Authentication Target is set to AUTH_TARGET_DEFINED_ON_DB but getFieldNameAuthenticationTarget is undefined in Schema\DB\UserTable');
-    }
-
-    /** @throws Exception|\Exception */
-    public function getUserId(string $username, UserTable $schema): ?int
-    {
-        if ($schema->getFieldNameUsername() !== null && $schema->getFieldTypeUsername() !== null && $schema->getTableName() !== null && $schema->getFieldNameUserId() !== null) {
+        if ($this->schema->getFieldNameUsername() !== null && $this->schema->getFieldTypeUsername() !== null && $this->schema->getTableName() !== null && $this->schema->getFieldNameUserId() !== null) {
             global $dbDriver;
             $tmp = match ($dbDriver) {
                 Environment::DRIVER_PGSQL_PDO,
-                Environment::DRIVER_MYSQL_PDO => Database::getSingle('SELECT '.$schema->getFieldNameUserId().' FROM '.$schema->getTableName().' WHERE '.$schema->getTableName().'.'.$schema->getFieldNameUsername().'=:userName', ['userName' => $username]),
-                default                       => Database::getSingle('SELECT '.$schema->getFieldNameUserId().' FROM '.$schema->getTableName().' WHERE '.$schema->getFieldNameUsername().'='.(ColumnType::is_string($schema->getFieldTypeUsernameEnum()) === true ? "'".$username."'" : $username)),
+                Environment::DRIVER_MYSQL_PDO => Database::getSingle('SELECT '.$this->schema->getFieldNameUserId().' FROM '.$this->schema->getTableName().' WHERE '.$this->schema->getTableName().'.'.$this->schema->getFieldNameUsername().'=:userName', ['userName' => $username]),
+                default                       => Database::getSingle('SELECT '.$this->schema->getFieldNameUserId().' FROM '.$this->schema->getTableName().' WHERE '.$this->schema->getFieldNameUsername().'='.(ColumnType::is_string($this->schema->getFieldTypeUsernameEnum()) === true ? "'".$username."'" : $username)),
             };
             if ($tmp === null) {
                 Debug::info(__METHOD__.': User not found');
                 return null;
             } else {
-                return (int)$tmp->{$schema->getFieldNameUserId()};
+                return (int)$tmp->{$this->schema->getFieldNameUserId()};
             }
         }
-        if ($schema->getFieldNameUsername() === null) {
+        if ($this->schema->getFieldNameUsername() === null) {
             throw new \Exception(__METHOD__.': getFieldNameUsername is undefined in Schema\DB\UserTable');
         }
-        if ($schema->getFieldNameUsername() === null) {
+        if ($this->schema->getFieldNameUsername() === null) {
             throw new \Exception(__METHOD__.': getFieldNameUsername is undefined in Schema\DB\UserTable');
         }
-        if ($schema->getFieldNameUserId() === null) {
+        if ($this->schema->getFieldNameUserId() === null) {
             throw new \Exception(__METHOD__.': getFieldNameUserId is undefined in Schema\DB\UserTable');
         }
         throw new \Exception(__METHOD__.': getTableName is undefined in Schema\DB\UserTable');
