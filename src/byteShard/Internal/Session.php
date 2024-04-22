@@ -220,7 +220,7 @@ class Session implements TabParentInterface, EncryptedIDStorageInterface
         return array('id' => $this->encrypted_id, 'navigation_level' => $this->encrypted_navigation_id);
     }
 
-    public function setUserdata(int $userId, string $userName, string $lastTabName = '', bool $serviceAccount = false): void
+    public function setUserdata(int $userId, string $userName, string $lastTabName = ''): void
     {
         $this->url                           = BS_WEB_ROOT_DIR;
         $this->user['LoggedIn']              = true;
@@ -228,7 +228,6 @@ class Session implements TabParentInterface, EncryptedIDStorageInterface
         $this->user['User_ID']               = $userId;
         $this->user['Username']              = $userName;
         $this->user['access']                = true;
-        $this->user['serviceAccount']        = $serviceAccount;
         $this->user['timeOfLastUserRequest'] = time();
         $this->user['AdditionalData']        = [];
         $this->tabs->setSelectedTab($lastTabName);
@@ -286,25 +285,6 @@ class Session implements TabParentInterface, EncryptedIDStorageInterface
             return true;
         }
         return false;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isServiceAccount(): bool
-    {
-        if (isset($this->user['serviceAccount']) && $this->user['serviceAccount'] === true) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     *
-     */
-    public function setServiceAccount(): void
-    {
-        $this->user['serviceAccount'] = true;
     }
 
     /**
