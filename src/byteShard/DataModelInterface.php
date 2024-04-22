@@ -16,7 +16,7 @@ interface DataModelInterface
 
     public function deleteUserSetting(string $tabName, string $cellName, string $type, string $item, int $userId): bool;
 
-    public function isServiceAccount(int $userId, UserTable $schema = null): bool;
+    public function isServiceAccount(int $userId): bool;
 
     /**
      * @param int $userId
@@ -29,19 +29,22 @@ interface DataModelInterface
      */
     public function getCellSize(int $userId): array;
 
-    public function successfulLoginCallback(int $userId, UserTable $schema = null): bool;
+    public function successfulLoginCallback(int $userId): bool;
 
-    public function getLastTab(int $userId, UserTable $schema): string;
+    public function getLastTab(int $userId): string;
 
-    public function setLastTab(int $userId, string $lastTab, UserTable $schema): bool;
+    public function setLastTab(int $userId, string $lastTab): bool;
 
-    public function checkGrantLogin(int|string $userId, UserTable $schema): bool;
+    public function checkGrantLogin(int $userId): bool;
 
-    public function checkServiceAccount(int|string $userId, UserTable $schema): bool;
+    public function checkServiceAccount(int $userId): bool;
 
-    public function getAccessControlTarget(int|string $userId, UserTable $schema): ?AccessControlTarget;
+    public function getUserId(string $username): ?int;
 
-    public function getAuthenticationTarget(int|string $userId, UserTable $schema): ?Target;
+    /** return null in case user is not found, empty string if no password is set or password hash */
+    public function getPasswordHash(string $username): ?string;
 
-    public function getUserId(string $username, UserTable $schema): ?int;
+    public function updatePasswordHash(string $username, string $password): void;
+
+    public function getPasswordExpiration(string $username): ?object;
 }
