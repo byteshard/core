@@ -3,6 +3,7 @@
 namespace byteShard\Internal\Authentication;
 
 use BackedEnum;
+use byteShard\Authentication\OauthInterface;
 use byteShard\DataModelInterface;
 use byteShard\Environment;
 use byteShard\Internal\Authentication\Provider\Ldap;
@@ -40,8 +41,11 @@ class Authentication
                         self::setAuthenticationProviderCookie(Providers::LDAP);
                         return new Ldap(authenticationObject: $this->environment->getLdapProvider());
                     case Providers::OAUTH:
-                        self::setAuthenticationProviderCookie(Providers::OAUTH);
-                        return new Oauth(provider: $this->environment->getOauthProvider(), certPath: $this->environment->getJwksCertPath());
+                        if ($this->environment instanceof OauthInterface) {
+                            self::setAuthenticationProviderCookie(Providers::OAUTH);
+                            return new Oauth(provider: $this->environment->getOauthProvider(), certPath: $this->environment->getJwksCertPath());
+                        }
+                        return null;
                 }
             }
             //TODO: forget pass, change pass etc
@@ -55,7 +59,10 @@ class Authentication
                 case Providers::LDAP:
                     return new Ldap();
                 case Providers::OAUTH:
-                    return new Oauth(certPath: $this->environment->getJwksCertPath());
+                    if ($this->environment instanceof OauthInterface) {
+                        return new Oauth(certPath: $this->environment->getJwksCertPath());
+                    }
+                    return null;
             }
         }
         return null;
