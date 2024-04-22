@@ -42,7 +42,7 @@ interface DataModelInterface
     /** return null in case user is not found, empty string if no password is set or password hash */
     public function getPasswordHash(string $username): ?string;
 
-    public function updatePasswordHash(string $username, string $password): void;
+    public function updatePasswordHash(string $username, string $hash): void;
 
     public function getPasswordExpiration(string $username): ?object;
 }
