@@ -37,8 +37,6 @@ interface DataModelInterface
 
     public function checkGrantLogin(int $userId): bool;
 
-    public function checkServiceAccount(int $userId): bool;
-
     public function getUserId(string $username): ?int;
 
     /** return null in case user is not found, empty string if no password is set or password hash */

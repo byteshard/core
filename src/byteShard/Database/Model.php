@@ -259,10 +259,10 @@ class Model implements DataModelInterface
         global $dbDriver;
         $record = match ($dbDriver) {
             Environment::DRIVER_PGSQL_PDO,
-            Environment::DRIVER_MYSQL_PDO => Database::getSingle('SELECT '.$this->schema->getFieldNameServiceAccount().' FROM '.$this->schema->getTableName().'  WHERE '.$this->schema->getFieldNameUserId().'=:userId', [
+            Environment::DRIVER_MYSQL_PDO => Database::getSingle('SELECT '.$this->schema->getFieldNameServiceAccount().' FROM '.$this->schema->getTableName().' WHERE '.$this->schema->getFieldNameUserId().'=:userId', [
                 'userId' => $userId
             ]),
-            default                       => Database::getSingle('SELECT '.$this->schema->getFieldNameServiceAccount().' FROM '.$this->schema->getTableName().' WHERE '.$this->schema->getFieldNameUserId().'='.((ColumnType::is_string($this->schema->getFieldTypeUserIdEnum()) === true) ? "'".$userId."'" : $userId)),
+            default                       => Database::getSingle('SELECT '.$this->schema->getFieldNameServiceAccount().' FROM '.$this->schema->getTableName().' WHERE '.$this->schema->getFieldNameUserId().'='.(ColumnType::is_string($this->schema->getFieldTypeUserIdEnum()) === true ? "'".$userId."'" : $userId)),
         };
         return $record !== null && isset($record->{$this->schema->getFieldNameServiceAccount()}) && (bool)$record->{$this->schema->getFieldNameServiceAccount()} === true;
     }
@@ -352,22 +352,6 @@ class Model implements DataModelInterface
             return false;
         }
         return (bool)$tmp->{$grantLogin};
-    }
-
-    /** @throws Exception|\Exception */
-    public function checkServiceAccount(int $userId): bool
-    {
-        global $dbDriver;
-        $tmp = match ($dbDriver) {
-            Environment::DRIVER_MYSQL_PDO,
-            Environment::DRIVER_PGSQL_PDO => Database::getSingle('SELECT '.$this->schema->getFieldNameServiceAccount().' FROM '.$this->schema->getTableName().' WHERE '.$this->schema->getFieldNameUserId().':=userId', ['userId' => $userId]),
-            default                       => Database::getSingle('SELECT '.$this->schema->getFieldNameServiceAccount().' FROM '.$this->schema->getTableName().' WHERE '.$this->schema->getFieldNameUserId().'='.(ColumnType::is_string($this->schema->getFieldTypeUserIdEnum()) === true ? "'".$userId."'" : $userId)),
-        };
-        if ($tmp === null) {
-            Debug::info(__METHOD__.': user not found');
-            return false;
-        }
-        return (bool)$tmp->{$this->schema->getFieldNameServiceAccount()};
     }
 
     /** @throws Exception|\Exception */
