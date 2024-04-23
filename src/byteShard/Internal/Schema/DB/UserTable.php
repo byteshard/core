@@ -394,15 +394,6 @@ class UserTable
         return $this;
     }
 
-
-    public function getLastTabQuery(string|int $user_id): string
-    {
-        if (isset($this->fieldNameLastTab, $this->tableName, $this->fieldNameUserId, $this->fieldTypeUserId)) {
-            return 'SELECT '.$this->fieldNameLastTab.' FROM '.$this->tableName.' WHERE '.$this->fieldNameUserId.'='.$this->getEscapedUserID($user_id);
-        }
-        return '';
-    }
-
     public function getEscapedUserID(string|int $userId): string
     {
         return ColumnType::is_numeric($this->fieldTypeUserId) === true ? (string)$userId : "'".$userId."'";
