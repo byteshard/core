@@ -26,20 +26,20 @@ use byteShard\Exception;
  */
 class Session implements TabParentInterface, EncryptedIDStorageInterface
 {
-    private array         $meta                    = [];
-    private array         $cell_size               = [];
-    private array         $encrypted_id            = [];
-    private array         $encrypted_navigation_id = [];
-    private array         $user                    = [];
-    private array         $date                    = [];
-    private array         $default_db_column_type  = [];
-    private array         $meta_db_column_type     = [];
-    private array         $cells                   = [];
-    private bool          $enable_test_methods     = false;
+    private array         $meta                  = [];
+    private array         $cellSize              = [];
+    private array         $encryptedId           = [];
+    private array         $encryptedNavigationId = [];
+    private array         $user                  = [];
+    private array         $date                  = [];
+    private array         $defaultDbColumnType   = [];
+    private array         $metaDbColumnType      = [];
+    private array         $cells                 = [];
+    private bool          $enableTestMethods     = false;
     private ?string       $url;
     private string        $cryptoKey;
     private string        $topLevelNonce;
-    private ?Permission   $permissions             = null;
+    private ?Permission   $permissions           = null;
     private SessionTabs   $tabs;
     private SessionPopups $popups;
     private SessionLocale $sessionLocale;
@@ -84,21 +84,21 @@ class Session implements TabParentInterface, EncryptedIDStorageInterface
     /**
      * enable the ability to set the user ID during runtime
      */
-    public function enableTestMethods()
+    public function enableTestMethods(): void
     {
-        $this->enable_test_methods = true;
+        $this->enableTestMethods = true;
     }
 
-    public function setUserID($user_id)
+    public function setUserID($userId): void
     {
-        if ($this->enable_test_methods === true) {
-            $this->user['User_ID'] = $user_id;
+        if ($this->enableTestMethods === true) {
+            $this->user['User_ID'] = $userId;
         }
     }
 
-    public function setUsername($username)
+    public function setUsername($username): void
     {
-        if ($this->enable_test_methods === true) {
+        if ($this->enableTestMethods === true) {
             $this->user['Username'] = $username;
         }
     }
@@ -205,19 +205,19 @@ class Session implements TabParentInterface, EncryptedIDStorageInterface
 
     public function encryptID(string $id, ?int $level = null): string
     {
-        if (array_key_exists($id, $this->encrypted_id)) {
-            return $this->encrypted_id[$id];
+        if (array_key_exists($id, $this->encryptedId)) {
+            return $this->encryptedId[$id];
         }
-        $this->encrypted_id[$id] = Encrypt::encrypt($id);
+        $this->encryptedId[$id] = Encrypt::encrypt($id);
         if ($level !== null) {
-            $this->encrypted_navigation_id[$this->encrypted_id[$id]] = $level;
+            $this->encryptedNavigationId[$this->encryptedId[$id]] = $level;
         }
-        return $this->encrypted_id[$id];
+        return $this->encryptedId[$id];
     }
 
     public function getEncryptedIDs(): array
     {
-        return array('id' => $this->encrypted_id, 'navigation_level' => $this->encrypted_navigation_id);
+        return array('id' => $this->encryptedId, 'navigation_level' => $this->encryptedNavigationId);
     }
 
     public function setUserdata(int $userId, string $userName, string $lastTabName = ''): void
@@ -306,57 +306,41 @@ class Session implements TabParentInterface, EncryptedIDStorageInterface
         $this->user['timeOfLastUserRequest'] = time();
     }
 
-    /**
-     * @param bool|null $bool
-     * @return bool|null
-     */
-    public function permissionsAreInitialized(?bool $bool = null): ?bool
+
+    public function arePermissionsInitialized(): bool
     {
-        if ($bool === null) {
-            if (isset($this->user['permissionsAreInitialized']) && $this->user['permissionsAreInitialized'] === true) {
-                return true;
-            }
-            return false;
+        if (isset($this->user['permissionsAreInitialized']) && $this->user['permissionsAreInitialized'] === true) {
+            return true;
         }
-        $this->user['permissionsAreInitialized'] = $bool;
-        return null;
+        return false;
     }
 
-    /**
-     * @param null|bool $bool
-     * @return bool|null
-     */
-    public function tabsAreInitialized(?bool $bool = null): ?bool
+    public function setPermissionsAreInitialized(): void
     {
-        if ($bool === null) {
-            if (isset($this->user['tabsAreInitialized']) && $this->user['tabsAreInitialized'] === true) {
-                return true;
-            }
-            return false;
-        }
-        $this->user['tabsAreInitialized'] = $bool;
-        return null;
+        $this->user['permissionsAreInitialized'] = true;
     }
 
-    /**
-     * @param bool|null $bool
-     * @return bool|null
-     */
-    public function cellSizesAreLoaded(?bool $bool = null): ?bool
+    public function areTabsInitialized(): bool
     {
-        if ($bool === null) {
-            if (isset($this->user['cellSizesAreLoaded']) && $this->user['cellSizesAreLoaded'] === true) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            $this->user['cellSizesAreLoaded'] = $bool;
-        }
-        return null;
+        return isset($this->user['tabsAreInitialized']) && $this->user['tabsAreInitialized'] === true;
     }
 
-    public function setPermissionObject(Permission $permissionObject): void
+    public function setTabsAreInitialized(): void
+    {
+        $this->user['tabsAreInitialized'] = true;
+    }
+
+    public function areCellSizesLoaded(): bool
+    {
+        return isset($this->user['cellSizesAreLoaded']) && $this->user['cellSizesAreLoaded'] === true;
+    }
+
+    public function setCellSizesAreLoaded(): void
+    {
+        $this->user['cellSizesAreLoaded'] = true;
+    }
+
+    public function setPermissionObject(?Permission $permissionObject): void
     {
         $this->permissions = $permissionObject;
     }
@@ -457,9 +441,9 @@ class Session implements TabParentInterface, EncryptedIDStorageInterface
      */
     public function setClientFormats(Enum\DB\ColumnType $client_form_control_calendar_default_db_column_type, Enum\DB\ColumnType $client_grid_column_calendar_default_db_column_type, Enum\DB\ColumnType $client_grid_column_date_default_db_column_type)
     {
-        $this->default_db_column_type['form']['calendar'] = $client_form_control_calendar_default_db_column_type;
-        $this->default_db_column_type['grid']['calendar'] = $client_grid_column_calendar_default_db_column_type;
-        $this->default_db_column_type['grid']['date']     = $client_grid_column_date_default_db_column_type;
+        $this->defaultDbColumnType['form']['calendar'] = $client_form_control_calendar_default_db_column_type;
+        $this->defaultDbColumnType['grid']['calendar'] = $client_grid_column_calendar_default_db_column_type;
+        $this->defaultDbColumnType['grid']['date']     = $client_grid_column_date_default_db_column_type;
     }
 
     /**
@@ -469,23 +453,23 @@ class Session implements TabParentInterface, EncryptedIDStorageInterface
      */
     public function setMetaColumnFormats(Enum\DB\ColumnType $db_meta_data_column_created_on_column_type, Enum\DB\ColumnType $db_meta_data_column_modified_on_column_type, Enum\DB\ColumnType $db_meta_data_column_archived_on_column_type)
     {
-        $this->meta_db_column_type['created_on']  = $db_meta_data_column_created_on_column_type;
-        $this->meta_db_column_type['modified_on'] = $db_meta_data_column_modified_on_column_type;
-        $this->meta_db_column_type['archived_on'] = $db_meta_data_column_archived_on_column_type;
+        $this->metaDbColumnType['created_on']  = $db_meta_data_column_created_on_column_type;
+        $this->metaDbColumnType['modified_on'] = $db_meta_data_column_modified_on_column_type;
+        $this->metaDbColumnType['archived_on'] = $db_meta_data_column_archived_on_column_type;
     }
 
     public function getDefaultDBColumnType($cell_content, $type): Enum\DB\ColumnType
     {
-        if (array_key_exists($cell_content, $this->default_db_column_type) && array_key_exists($type, $this->default_db_column_type[$cell_content])) {
-            return $this->default_db_column_type[$cell_content][$type];
+        if (array_key_exists($cell_content, $this->defaultDbColumnType) && array_key_exists($type, $this->defaultDbColumnType[$cell_content])) {
+            return $this->defaultDbColumnType[$cell_content][$type];
         }
         throw new Exception(__METHOD__.': Default DB Column Type for '.$cell_content.':'.$type.' has not been defined');
     }
 
     public function getMetaDataDBColumnType($column): Enum\DB\ColumnType
     {
-        if (array_key_exists($column, $this->meta_db_column_type)) {
-            return $this->meta_db_column_type[$column];
+        if (array_key_exists($column, $this->metaDbColumnType)) {
+            return $this->metaDbColumnType[$column];
         }
         throw new Exception(__METHOD__.': Column Type for Meta Data column "'.$column.'" has not been defined');
     }
@@ -714,19 +698,19 @@ class Session implements TabParentInterface, EncryptedIDStorageInterface
 
     public function getSizeData(string $name): array
     {
-        if (array_key_exists($name, $this->cell_size)) {
-            return $this->cell_size[$name];
+        if (array_key_exists($name, $this->cellSize)) {
+            return $this->cellSize[$name];
         }
         return [];
     }
 
     public function setSavedCellSize(string $cell, string $type, int $dimension): void
     {
-        $this->cell_size[$cell][$type] = $dimension;
+        $this->cellSize[$cell][$type] = $dimension;
     }
 
     public function setSavedCellCollapse(string $cell): void
     {
-        $this->cell_size[$cell][Cell::COLLAPSED] = true;
+        $this->cellSize[$cell][Cell::COLLAPSED] = true;
     }
 }
