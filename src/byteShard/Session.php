@@ -273,13 +273,22 @@ class Session
         return Symmetric::checkNonce($message, $nonce);
     }
 
-    public static function setUserData(UserDataInterface $userData, string $lastTab): void
+    public static function setUserData(int $userId, string $username, string $lastTab): void
     {
         $session = self::getSessionObject();
-        if ($session !== null) {
-            $serviceAccount = $userData->isServiceAccount();
-            $session->setUserdata($userData->getUserId(), $userData->getUsername(), $lastTab, $serviceAccount);
-        }
+        $session?->setUserdata($userId, $username, $lastTab);
+    }
+
+    public static function getLoginState(): bool
+    {
+        $session = self::getSessionObject();
+        return $session?->getLoginState() ?? false;
+    }
+    
+    public static function getTimeOfLastUserRequest(): ?int
+    {
+        $session = self::getSessionObject();
+        return $session?->getTimeOfLastUserRequest() ?? null;
     }
 
     public static function getClientTimeZone(): DateTimeZone
