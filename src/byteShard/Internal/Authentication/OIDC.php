@@ -6,10 +6,11 @@ use Exception;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
+use League\OAuth2\Client\Token\AccessTokenInterface;
 
 class OIDC
 {
-    private ?AccessToken $token = null;
+    private ?AccessTokenInterface $token = null;
 
     public function __construct(
         private readonly AbstractProvider $provider
@@ -49,7 +50,7 @@ class OIDC
         }
     }
 
-    private function getAccessToken(string $code): AccessToken
+    private function getAccessToken(string $code): AccessTokenInterface
     {
         try {
             return $this->provider->getAccessToken('authorization_code', [
