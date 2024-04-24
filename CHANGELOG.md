@@ -1,3 +1,17 @@
+# [1.7.0](https://github.com/byteshard/core/compare/v1.6.0...v1.7.0) (2024-04-24)
+
+
+### Bug Fixes
+
+* Access to an undefined property UserTable ([b45eb36](https://github.com/byteshard/core/commit/b45eb36b0d6f9d6fefee10a3387913f09914784b))
+* incorrect return type in oidc ([a0135b9](https://github.com/byteshard/core/commit/a0135b9740c529c074790f8de83e3909a8fc54b2))
+* show previous error in pdo to help debug classMap type exceptions ([f97b14e](https://github.com/byteshard/core/commit/f97b14ec052dcd160dade1cdd4b2ad341d2dd895))
+
+
+### Features
+
+* oauth support ([e49f705](https://github.com/byteshard/core/commit/e49f70571c8f9b15d7e9b8bd3c8b137dfe01ffcb))
+
 # [1.6.0](https://github.com/byteshard/core/compare/v1.5.0...v1.6.0) (2024-03-22)
 
 
