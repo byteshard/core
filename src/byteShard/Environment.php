@@ -492,7 +492,6 @@ abstract class Environment implements ParametersInterface, JsonSerializable
     {
         $this->environment = $config->getEnvironment();
         $this->initializeFrameworkGlobals($config->getLogLevel(), $config->getUrlContext());
-        $this->user_table_schema   = new UserTable();
         $this->db_parameters_admin = $config->getDbParameters(ConnectionType::ADMIN);
         $this->db_parameters_login = $config->getDbParameters(ConnectionType::LOGIN);
         $this->db_parameters_read  = $config->getDbParameters(ConnectionType::READ);
