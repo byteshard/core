@@ -6,10 +6,6 @@
 
 namespace byteShard;
 
-use byteShard\Authentication\Enum\Target;
-use byteShard\Enum\AccessControlTarget;
-use byteShard\Internal\Schema\DB\UserTable;
-
 interface DataModelInterface
 {
     public function storeUserSetting(string $tabName, string $cellName, string $type, string $item, int $userId, $value): bool;

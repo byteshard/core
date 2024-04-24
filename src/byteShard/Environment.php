@@ -209,13 +209,7 @@ abstract class Environment implements ParametersInterface, JsonSerializable
     protected bool $debug_id = false;
 
     protected string $logoffButtonName = 'logoff';
-
-    /**
-     * this will control how the user credentials are challenged
-     * @var Authentication\Enum\Target
-     */
-    protected \byteShard\Authentication\Enum\Target $authentication_target = \byteShard\Authentication\Enum\Target::AUTH_TARGET_DB;
-
+    
     /**
      * setting this parameter will change the behavior how the application determines if a user is allowed to log in
      * this is necessary since there might be many records in the user table which are not actually users but user data used for a different purpose
