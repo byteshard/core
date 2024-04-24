@@ -208,14 +208,14 @@ class ErrorHandler
     {
         global $output_buffer;
         // process exit before eof without triggering an error beforehand
-        $file_access = true;
+        $phpCanWriteToLog = true;
         if ($output_buffer === null) {
             $output_buffer = ob_get_clean();
         }
         if (!empty($output_buffer)) {
-            $file_access = $this->printToFile($output_buffer, $this->printLogFilename);
+            $phpCanWriteToLog = $this->printToFile($output_buffer, $this->printLogFilename);
         }
-        if ($file_access === true) {
+        if ($phpCanWriteToLog === true) {
             if ($e instanceof ExceptionInterface) {
                 $channel = $e->getLogChannel();
                 if (!array_key_exists($channel, $this->loggers)) {
@@ -264,7 +264,7 @@ class ErrorHandler
                     $this->printRestApiError($e);
                 case self::RESULT_OBJECT_LOGIN:
                 default:
-                    $this->printLoginContent($file_access);
+                    $this->printLoginContent($phpCanWriteToLog);
             }
         }
     }
@@ -291,7 +291,7 @@ class ErrorHandler
             if ($this->debugBacktrace === true) {
                 $error[] = debug_backtrace();
             }
-            $file_access = $this->printToFile('Shutdown - '.print_r($error, true), $this->errorLogFilename);
+            $phpCanWriteToLog = $this->printToFile('Shutdown - '.print_r($error, true), $this->errorLogFilename);
             if ($this->resultObjectType !== null) {
                 $message = '';
                 if (is_array($error) && array_key_exists('file', $error) && array_key_exists('message', $error)) {
@@ -325,7 +325,7 @@ class ErrorHandler
                         $this->printRestApiError();
                     case self::RESULT_OBJECT_LOGIN:
                     default:
-                        $this->printLoginContent($file_access);
+                        $this->printLoginContent($phpCanWriteToLog);
                 }
             }
         } elseif ($this->exception === false && !empty($GLOBALS['output_buffer'])) {
@@ -409,9 +409,9 @@ class ErrorHandler
     }
 
     /**
-     * @param bool $file_access
+     * @param bool $phpCanWriteToLog
      */
-    private function printLoginContent(bool $file_access): never
+    private function printLoginContent(bool $phpCanWriteToLog): never
     {
         // if an error occurs before the byteShard framework is loaded, the user will be redirected to the login page, ERROR = true is saved in the session to be evaluated by the login form
         if ($this->appUrl !== '') {
@@ -423,11 +423,10 @@ class ErrorHandler
             session_unset();
             session_destroy();
         }
-        session_start();
-        $_SESSION['ERROR']       = true;
-        $_SESSION['FILE_ACCESS'] = $file_access;
+        //TODO: check if some cookies have to be unset
         if (!headers_sent()) {
-            header('Location: '.$path.'index.php');
+            $parameter = $phpCanWriteToLog ? '' : '/?error=nolog';
+            header('Location: '.$path.'login'.$parameter);
         }
         exit;
     }
@@ -441,7 +440,6 @@ class ErrorHandler
      */
     private function printToFile(string $string, string $filename, bool $date = true, bool $reformat = true): bool
     {
-        // this function
         if ($this->logLocation === LogLocation::FILE) {
             if ($reformat === true) {
                 $filename     .= '.html';
@@ -468,7 +466,7 @@ class ErrorHandler
                         fwrite($file_handle, $this->formatString($string, $insertScript));
                         fclose($file_handle);
                     }
-                    return true;
+                    return true; // log file is writable
                 }
             } else {
                 $filename .= '.log';
@@ -482,18 +480,15 @@ class ErrorHandler
                         fwrite($file_handle, $string."\n");
                         fclose($file_handle);
                     }
-                    return true;
+                    return true; // log file is writable
                 }
             }
 
         } elseif ($this->logLocation === LogLocation::STDERR) {
             $this->sendMessageToLogger('default', LogLevel::NOTICE, $string);
-            /*$std_err = fopen('php://stderr', 'w+b');
-            fwrite($std_err, $string);
-            fclose($std_err);*/
-            return true;
+            return true; // we can always write to stderr
         }
-        return false;
+        return false; // log file is NOT writable
     }
 
     /**

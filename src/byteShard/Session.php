@@ -6,12 +6,12 @@
 
 namespace byteShard;
 
-use byteShard\Authentication\UserDataInterface;
 use byteShard\Crypto\Symmetric;
 use byteShard\ID\CellIDElement;
 use byteShard\ID\TabIDElement;
 use byteShard\Internal\LayoutContainer;
 use byteShard\Internal\PopupInterface;
+use byteShard\Internal\Server;
 use byteShard\Internal\Session as InternalSession;
 use DateTimeZone;
 use JetBrains\PhpStorm\Pure;
@@ -29,7 +29,6 @@ class Session
         return self::getSessionObject()?->getNavigationArray($debug, $dhtmlxCssImagePath) ?? [];
     }
 
-    #[Pure]
     public static function getCryptoKey(): string
     {
         return self::getSessionObject()?->getCryptoKey() ?? '';
@@ -233,7 +232,6 @@ class Session
         return $id;
     }
 
-    #[Pure]
     public static function getEncryptedIDs(): array
     {
         $session = self::getSessionObject();
@@ -273,13 +271,56 @@ class Session
         return Symmetric::checkNonce($message, $nonce);
     }
 
-    public static function setUserData(UserDataInterface $userData, string $lastTab): void
+    public static function setUserData(int $userId, string $username, string $lastTab): void
     {
-        $session = self::getSessionObject();
-        if ($session !== null) {
-            $serviceAccount = $userData->isServiceAccount();
-            $session->setUserdata($userData->getUserId(), $userData->getUsername(), $lastTab, $serviceAccount);
-        }
+        self::getSessionObject()?->setUserdata($userId, $username, $lastTab);
+    }
+
+    public static function getLoginState(): bool
+    {
+        return self::getSessionObject()?->getLoginState() ?? false;
+    }
+
+    public static function getTimeOfLastUserRequest(): ?int
+    {
+        return self::getSessionObject()?->getTimeOfLastUserRequest() ?? null;
+    }
+
+    public static function setTimeOfLastUserRequest(): void
+    {
+        self::getSessionObject()?->setTimeOfLastUserRequest();
+    }
+
+    public static function arePermissionsInitialized(): bool
+    {
+        return self::getSessionObject()?->arePermissionsInitialized();
+    }
+
+    public static function setPermissionsAreInitialized(): void
+    {
+        self::getSessionObject()?->setPermissionsAreInitialized();
+    }
+
+    public static function setPermissionObject(?Permission $permissionObject): void
+    {
+        self::getSessionObject()?->setPermissionObject($permissionObject);
+    }
+
+    public static function areCellSizesLoaded(): bool
+    {
+        return self::getSessionObject()?->areCellSizesLoaded();
+    }
+
+    public static function setCellSizesAreLoaded(): void
+    {
+        self::getSessionObject()?->setCellSizesAreLoaded();
+    }
+
+    public static function areTabsInitialized(): bool {
+        return self::getSessionObject()?->areTabsInitialized();
+    }
+    public static function setTabsAreInitialized(): void {
+        self::getSessionObject()?->setTabsAreInitialized();
     }
 
     public static function getClientTimeZone(): DateTimeZone
@@ -287,11 +328,40 @@ class Session
         return self::getSessionObject()?->getClientTimeZone() ?? new DateTimeZone('UTC');
     }
 
-    private static function getSessionObject(): ?InternalSession
+    public static function createSession(string $locale, bool $requireSSL): InternalSession
     {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            ini_set('session.use_only_cookies', 1);
+            if ($requireSSL === true || Server::getProtocol() === 'https') {
+                ini_set('session.cookie_secure', 1);
+            }
+            ini_set('session.cookie_httponly', 1);
+            session_cache_limiter('nocache');
+            session_start();
+        }
+        if (!isset($_SESSION[MAIN]) || !($_SESSION[MAIN] instanceof InternalSession)) {
+            self::$session = new InternalSession($locale);
+            $_SESSION[MAIN] = self::$session;
+            return self::$session;
+        }
+        if (isset(self::$session)) {
+            return self::$session;
+        }
+        self::$session = $_SESSION[MAIN];
+        return self::$session;
+    }
+
+    public static function getSessionObject(): ?InternalSession
+    {
+        if (isset(self::$session)) {
+            return self::$session;
+        }
         if (isset($_SESSION[MAIN]) && $_SESSION[MAIN] instanceof InternalSession) {
-            return $_SESSION[MAIN];
+            self::$session = $_SESSION[MAIN];
+            return self::$session;
         }
         return null;
     }
+
+    private static InternalSession $session;
 }

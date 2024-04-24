@@ -108,6 +108,10 @@ class Recordset implements GetArrayInterface, GetIndexArrayInterface, GetMultidi
                 }
             }
         } catch (PDOException $e) {
+            $previous = $e->getPrevious();
+            if ($previous !== null) {
+                throw new Exception($e->getMessage().'; '.$previous->getMessage(), 110320005);
+            }
             throw new Exception($e->getMessage(), 110320005);
         }
         if ($connection === null) {
@@ -221,6 +225,10 @@ class Recordset implements GetArrayInterface, GetIndexArrayInterface, GetMultidi
                 }
             }
         } catch (PDOException $e) {
+            $previous = $e->getPrevious();
+            if ($previous !== null) {
+                throw new Exception($e->getMessage().'; '.$previous->getMessage(), 110320002);
+            }
             throw new Exception($e->getMessage(), 110320002);
         }
         if ($connection === null) {

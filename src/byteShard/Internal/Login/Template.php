@@ -21,7 +21,7 @@ class Template
         private readonly string    $version = ''
     ) {}
 
-    public function printLoginForm(): void
+    public function printLoginForm(string $target = ''): void
     {
         $html[] = '<!DOCTYPE html>';
         $html[] = '<html>';
@@ -32,7 +32,7 @@ class Template
         $html[] = '<div id="LoginFrame" class="loginPage">';
         $html[] = '<div id="LoginTop"></div>';
         $html[] = '<div id="LoginContent">';
-        array_push($html, ...$this->getLoginContent());
+        array_push($html, ...$this->getLoginContent($target));
         $html[] = '</div>';
         array_push($html, ...$this->getServiceModeContent());
         array_push($html, ...$this->getLoginFailedContent());
@@ -64,9 +64,10 @@ class Template
         return $head;
     }
 
-    private function getLoginContent(): array
+    private function getLoginContent(string $target): array
     {
-        $content[] = '<form action="'.Server::getBaseUrl().'" method="post" name="LoginForm">';
+        $target = $target === '' ? Server::getBaseUrl() : $target;
+        $content[] = '<form action="'.$target.'" method="post" name="LoginForm">';
         $content[] = '<div id="UsernameLabel"><span>'.Locale::get('byteShard.login.user').'</span></div>';
         $content[] = '<div id="LoginUsername"><input class="name" type="text" name="'.$this->schema->input_username.'" size="15" value=""></div>';
         $content[] = '<div id="PasswordLabel"><span>'.Locale::get('byteShard.login.password').'</span></div>';
@@ -76,6 +77,9 @@ class Template
         $content[] = '</form>';
         $content[] = '<form action="'.Server::getBaseUrl().'" method="post" name="forgotPassForm">';
         $content[] = '<div id="forgotPassButton"><input class="button" type="submit" value="'.Locale::get('byteShard.login.forgot').'" name="'.$this->schema->button_password_forgot.'"></div>';
+        $content[] = '</form>';
+        $content[] = '<form action="'.$target.'?submit=oauth" method="post" name="LoginForm">';
+        $content[] = '<div id="LoginOauthButton"><input class="button" type="submit" value="Oauth Login" name="oauth"></div>';
         $content[] = '</form>';
         return $content;
     }

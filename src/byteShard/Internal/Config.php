@@ -37,6 +37,12 @@ abstract class Config implements JsonSerializable
     protected string          $ldap_url                     = '';
     protected int             $ldap_port;
     protected array|string    $ldap_domains                 = '';
+    protected string          $ldap_bind_dn                 = '';
+    protected string          $ldap_bind_user               = '';
+    protected string          $ldap_bind_pass               = '';
+    protected string          $ldap_uid                     = 'uid';
+    protected string          $ldap_base_dn                 = '';
+    protected string          $ldap_method                  = '';
     protected bool            $show_ldap_domains            = true;
     protected string          $application_name             = 'byteShard application';
     protected string          $application_version          = '1.0';
@@ -129,6 +135,7 @@ abstract class Config implements JsonSerializable
             'bs/bs_locale.php',
             'bs/bs_queue.php',
             'bs/bs_upload.php',
+            'login/index.php',
             'index.php',
             'setup.php',
             'bs/bs_async.php',
@@ -317,6 +324,36 @@ abstract class Config implements JsonSerializable
     public function getLdapPort(): ?int
     {
         return $this->ldap_port ?? null;
+    }
+
+    public function getLdapBindDn(): string
+    {
+        return $this->ldap_bind_dn;
+    }
+
+    public function getLdapBindUser(): string
+    {
+        return $this->ldap_bind_user;
+    }
+
+    public function getLdapBindPass(): string
+    {
+        return $this->ldap_bind_pass;
+    }
+
+    public function getLdapUid(): string
+    {
+        return $this->ldap_uid;
+    }
+
+    public function getLdapBaseDn(): string
+    {
+        return $this->ldap_base_dn;
+    }
+
+    public function getLdapMethod(): string
+    {
+        return $this->ldap_method;
     }
 
     /**
