@@ -209,7 +209,7 @@ abstract class Environment implements ParametersInterface, JsonSerializable
     protected bool $debug_id = false;
 
     protected string $logoffButtonName = 'logoff';
-    
+
     /**
      * setting this parameter will change the behavior how the application determines if a user is allowed to log in
      * this is necessary since there might be many records in the user table which are not actually users but user data used for a different purpose
@@ -398,12 +398,12 @@ abstract class Environment implements ParametersInterface, JsonSerializable
     // override in app config
     protected function defineLoginTemplate(): LoginFormInterface
     {
-        return new Login\UnifiedTemplate(
-            favicon    : $this->favicon,
-            appName    : $this->getAppName(),
-            javaScripts: $this->getJavascripts(['login.js'], '', '/bs'),
-            css        : $this->getCss(['login.css'], '', '/bs')
-        );
+        return new Login\UnifiedTemplate();
+    }
+
+    public function getFaviconPath(): string
+    {
+        return $this->favicon ?? '';
     }
 
     public function getLoginTemplate(): LoginFormInterface

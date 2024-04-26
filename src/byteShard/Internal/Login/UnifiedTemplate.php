@@ -6,9 +6,11 @@
 
 namespace byteShard\Internal\Login;
 
+use byteShard\Internal\Authentication\AuthenticationError;
 use byteShard\Internal\Authentication\Providers;
+use byteShard\Internal\ByteShard\Css;
+use byteShard\Internal\ByteShard\Javascript;
 use byteShard\Internal\Login\Struct\Credentials;
-use byteShard\Internal\Server;
 use byteShard\Locale;
 use byteShard\LoginFormInterface;
 
@@ -23,45 +25,24 @@ class UnifiedTemplate implements LoginFormInterface
     private const INPUT_NEW_PASSWORD        = 'new_password';
     private const INPUT_NEW_PASSWORD_REPEAT = 'new_password_repeat';
 
-    private string $baseUrl;
-
-    public function __construct(
-        private readonly string $favicon,
-        private readonly string $appName,
-        private readonly array  $javaScripts = [],
-        private readonly array  $css = [],
-        private readonly string $version = ''
-    )
-    {
-        $this->baseUrl = Server::getBaseUrl();
-    }
-
-    public function setBaseUrl(string $url): void
-    {
-        $this->baseUrl = $url;
-    }
-
-    public function printLoginForm(string $target = ''): void
+    public function printLoginForm(string $actionTarget, string $appName, string $faviconPath): void
     {
         $html[] = '<!DOCTYPE html>';
         $html[] = '<html>';
-        array_push($html, ...$this->getHead());
+        array_push($html, ...$this->getHead($appName, $faviconPath));
         $html[] = '<body>';
         $html[] = '<div id="ContentFrame">';
         $html[] = '<div id="LoginContainer">';
         $html[] = '<div id="LoginFrame" class="loginPage">';
         $html[] = '<div id="LoginTop"></div>';
         $html[] = '<div id="LoginContent">';
-        array_push($html, ...$this->getLoginContent($target));
+        array_push($html, ...$this->getLoginContent($actionTarget));
         $html[] = '</div>';
         array_push($html, ...$this->getServiceModeContent());
         array_push($html, ...$this->getLoginFailedContent());
         array_push($html, ...$this->getSessionTimeoutContent());
         array_push($html, ...$this->getErrorContent());
         array_push($html, ...$this->getLoggedOutContent());
-        if ($this->version !== '') {
-            $html[] = '<div id="LoginBottom"><span>v'.$this->version.'</span></div>';
-        }
         $html[] = '<div class="chglogButtonNext_deakt"></div>';
         $html[] = '</div>';
         array_push($html, ...$this->getChangelog());
@@ -72,22 +53,31 @@ class UnifiedTemplate implements LoginFormInterface
         print implode('', $html);
     }
 
-    private function getHead(): array
+    private function getHead(string $appName, string $faviconPath): array
     {
         $head[] = '<head>';
         $head[] = '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">';
-        $head[] = '<title>'.$this->appName.'</title>';
-        array_push($head, ...$this->javaScripts);
-        array_push($head, ...$this->css);
-        $head[] = '<link rel="SHORTCUT ICON" href="'.$this->favicon.'">';
+        $head[] = '<title>'.$appName.'</title>';
+        $js     = new Javascript('js');
+        $css    = new Css('css');
+        array_push($head, ...$js->includeJavascripts(['login.js'], '', '/bs'));
+        array_push($head, ...$css->includeCss(['login.css'], '', '/bs'));
+        $head[] = '<link rel="SHORTCUT ICON" href="'.$faviconPath.'">';
         $head[] = '</head>';
         return $head;
     }
 
-    private function getLoginContent(string $target): array
+    protected function getAuthenticationError(): ?AuthenticationError
     {
+        if (array_key_exists('error', $_GET)) {
+            return AuthenticationError::tryFrom($_GET['error']);
+        }
+        return null;
+    }
 
-        $content[] = '<form action="'.$this->baseUrl.'" method="post" name="LoginForm">';
+    private function getLoginContent(string $actionTarget): array
+    {
+        $content[] = '<form action="'.$actionTarget.'" method="post" name="LoginForm">';
         $content[] = '<div id="UsernameLabel"><span>'.Locale::get('byteShard.login.user').'</span></div>';
         $content[] = '<div id="LoginUsername"><input class="name" type="text" name="'.self::INPUT_USERNAME.'" size="15" value=""></div>';
         $content[] = '<div id="PasswordLabel"><span>'.Locale::get('byteShard.login.password').'</span></div>';
@@ -96,10 +86,10 @@ class UnifiedTemplate implements LoginFormInterface
         $content[] = '<div id="LoginButton"><button class="button" type="submit" value="'.Providers::LOCAL->value.'" name="'.self::BUTTON_LOGIN.'">'.Locale::get('byteShard.login.login').'</button></div>';
         $content[] = '<div id="LoginButton2"><button class="button" type="submit" value="'.Providers::LDAP->value.'" name="'.self::BUTTON_LOGIN.'">LDAP</button></div>';
         $content[] = '</form>';
-        $content[] = '<form action="'.$this->baseUrl.'" method="post" name="forgotPassForm">';
+        $content[] = '<form action="'.$actionTarget.'" method="post" name="forgotPassForm">';
         $content[] = '<div id="forgotPassButton"><button class="button" type="submit" value="'.self::BUTTON_FORGOT.'" name="'.self::BUTTON_FORGOT.'">'.Locale::get('byteShard.login.forgot').'</div>';
         $content[] = '</form>';
-        $content[] = '<form action="'.$this->baseUrl.'" method="post" name="LoginForm">';
+        $content[] = '<form action="'.$actionTarget.'" method="post" name="LoginForm">';
         $content[] = '<div id="LoginOauthButton"><button class="button" type="submit" value="'.Providers::OAUTH->value.'" name="'.self::BUTTON_LOGIN.'">OAuth</button></div>';
         $content[] = '</form>';
         return $content;
@@ -122,11 +112,10 @@ class UnifiedTemplate implements LoginFormInterface
 
     private function getErrorContent(): array
     {
-        if (array_key_exists('error', $_GET)) {
-            switch ($_GET['error']) {
-                case 'nolog':
-                    return ['Foo'];
-            }
+        $error = $this->getAuthenticationError();
+        switch ($error) {
+            case AuthenticationError::INVALID_CREDENTIALS:
+                return [];
         }
         return [];
     }
@@ -145,7 +134,6 @@ class UnifiedTemplate implements LoginFormInterface
     {
         $credentials = new Credentials();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $loginUser = (strlen($_POST[self::INPUT_USERNAME]) > 0) ? $_POST[self::INPUT_USERNAME] : null;
             $credentials->setUsername(array_key_exists(self::INPUT_USERNAME, $_POST) && strlen($_POST[self::INPUT_USERNAME]) > 0 ? $_POST[self::INPUT_USERNAME] : null);
             $credentials->setPassword(array_key_exists(self::INPUT_PASSWORD, $_POST) && strlen($_POST[self::INPUT_PASSWORD]) > 0 ? mb_convert_encoding($_POST[self::INPUT_PASSWORD], 'ISO-8859-1', 'UTF-8') : null);
             $credentials->setDomain(array_key_exists(self::INPUT_DOMAIN, $_POST) && strlen($_POST[self::INPUT_DOMAIN]) > 0 ? mb_convert_encoding($_POST[self::INPUT_DOMAIN], 'ISO-8859-1', 'UTF-8') : null);
@@ -162,16 +150,11 @@ class UnifiedTemplate implements LoginFormInterface
                 $credentials->setAction('');
             }
         }
-        /*if ($this->useLowerCaseUserName === true && $this->loginUser !== null) {
-            $this->loginUser = strtolower($this->loginUser);
-        }*/
         return $credentials;
     }
 
-    public function getLoginButtonName(): string
+    public function getSelectedAuthenticationProvider(): ?Providers
     {
-        return self::BUTTON_LOGIN;
+        return Providers::tryFrom($_POST[self::BUTTON_LOGIN]);
     }
-
-
 }
