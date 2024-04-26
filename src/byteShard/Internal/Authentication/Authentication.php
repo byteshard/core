@@ -32,8 +32,9 @@ class Authentication
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && str_contains($referer, '/login/')) {
             $loginTemplate = $this->environment->getLoginTemplate();
             // login button was clicked on the login page
-            if (array_key_exists($loginTemplate->getLoginButtonName(), $_POST)) {
-                switch (Providers::tryFrom($_POST[$loginTemplate->getLoginButtonName()])) {
+            $provider = $loginTemplate->getSelectedAuthenticationProvider();
+            if ($provider !== null) {
+                switch ($provider) {
                     case Providers::LOCAL:
                         self::setAuthenticationProviderCookie(Providers::LOCAL);
                         return new Local(dataModel: $this->dataModel, authenticationObject: $this->environment->getLocalProvider());
