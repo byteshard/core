@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/byteshard/core/compare/v1.7.0...v1.8.0) (2024-04-26)
+
+
+### Features
+
+* encapsulated login template. Less magic ([1a6c05e](https://github.com/byteshard/core/commit/1a6c05e277a57abf7ae89058a8be4c9d334304e3))
+
 # [1.7.0](https://github.com/byteshard/core/compare/v1.6.0...v1.7.0) (2024-04-24)
 
 
