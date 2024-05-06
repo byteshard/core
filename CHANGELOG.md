@@ -1,3 +1,10 @@
+## [1.8.1](https://github.com/byteshard/core/compare/v1.8.0...v1.8.1) (2024-05-06)
+
+
+### Bug Fixes
+
+* give AuthenticationActions a proper name and add logout param ([416e279](https://github.com/byteshard/core/commit/416e2790c83f5d577172a29bbed0546e84ba7707))
+
 # [1.8.0](https://github.com/byteshard/core/compare/v1.7.0...v1.8.0) (2024-04-26)
 
 
