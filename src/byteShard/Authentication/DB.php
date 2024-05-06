@@ -61,12 +61,12 @@ class DB implements AuthenticationInterface
                 $date = new DateTime(date('Ymd'));
                 $date->modify('-'.$expiration->expiresAfterDays.'days');
                 if ($date->format('Ymd') > $expiration->lastChange) {
-                    $result->setError(AuthenticationAction::CHANGE_PASSWORD);
+                    $result->setAction(AuthenticationAction::CHANGE_PASSWORD);
                 }
             }
             return $result;
         } else {
-            $result->setError(AuthenticationAction::INVALID_CREDENTIALS);
+            $result->setAction(AuthenticationAction::INVALID_CREDENTIALS);
         }
         return $result;
     }

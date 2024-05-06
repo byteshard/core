@@ -41,7 +41,7 @@ class UnifiedTemplate implements LoginFormInterface
         array_push($html, ...$this->getServiceModeContent());
         array_push($html, ...$this->getLoginFailedContent());
         array_push($html, ...$this->getSessionTimeoutContent());
-        array_push($html, ...$this->getErrorContent());
+        array_push($html, ...$this->getActionContent());
         array_push($html, ...$this->getLoggedOutContent());
         $html[] = '<div class="chglogButtonNext_deakt"></div>';
         $html[] = '</div>';
@@ -67,12 +67,9 @@ class UnifiedTemplate implements LoginFormInterface
         return $head;
     }
 
-    protected function getAuthenticationError(): ?AuthenticationAction
+    protected function getAuthenticationAction(): ?AuthenticationAction
     {
-        if (array_key_exists('error', $_GET)) {
-            return AuthenticationAction::tryFrom($_GET['error']);
-        }
-        return null;
+        return AuthenticationAction::getAction();
     }
 
     private function getLoginContent(string $actionTarget): array
@@ -110,10 +107,10 @@ class UnifiedTemplate implements LoginFormInterface
         return [];
     }
 
-    private function getErrorContent(): array
+    private function getActionContent(): array
     {
-        $error = $this->getAuthenticationError();
-        switch ($error) {
+        $action = $this->getAuthenticationAction();
+        switch ($action) {
             case AuthenticationAction::INVALID_CREDENTIALS:
                 return [];
         }

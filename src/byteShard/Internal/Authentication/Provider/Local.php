@@ -28,8 +28,8 @@ class Local implements ProviderInterface
     {
         //TODO: GrantLogin check
         if ($credentials === null) {
-            $error = AuthenticationAction::INVALID_CREDENTIALS;
-            $error->processError($this);
+            $invalidCredentialsAction = AuthenticationAction::INVALID_CREDENTIALS;
+            $invalidCredentialsAction->processAction($this);
         }
         if (!$this->authenticationObject instanceof DB) {
             $result = $this->authenticateAgainstDefaultProvider($credentials);
@@ -40,11 +40,11 @@ class Local implements ProviderInterface
             $this->username = $credentials->getUsername();
             return true;
         }
-        $error = $result->getError();
-        if ($error === null) {
-            $error = AuthenticationAction::UNEXPECTED_ERROR;
+        $action = $result->getAction();
+        if ($action === null) {
+            $action = AuthenticationAction::UNEXPECTED_ERROR;
         }
-        $error->processError($this);
+        $action->processAction($this);
     }
 
     private function authenticateAgainstDefaultProvider(Credentials $credentials): AuthenticationResult
@@ -69,31 +69,31 @@ class Local implements ProviderInterface
             switch ($authenticationResult->action) {
                 case Action::OLD_PASSWORD_WRONG:
                 case Action::INVALID_CREDENTIALS:
-                    $result->setError(AuthenticationAction::INVALID_CREDENTIALS);
+                    $result->setAction(AuthenticationAction::INVALID_CREDENTIALS);
                     break;
                 case Action::CHANGE_PASSWORD:
-                    $result->setError(AuthenticationAction::CHANGE_PASSWORD);
+                    $result->setAction(AuthenticationAction::CHANGE_PASSWORD);
                     break;
                 case Action::DISPLAY_TOO_MANY_FAILED_ATTEMPS:
-                    $result->setError(AuthenticationAction::DISPLAY_TOO_MANY_FAILED_ATTEMPTS);
+                    $result->setAction(AuthenticationAction::DISPLAY_TOO_MANY_FAILED_ATTEMPTS);
                     break;
                 case Action::NEW_PASSWORD_REPEAT_FAILED:
-                    $result->setError(AuthenticationAction::NEW_PASSWORD_REPEAT_FAILED);
+                    $result->setAction(AuthenticationAction::NEW_PASSWORD_REPEAT_FAILED);
                     break;
                 case Action::NEW_PASSWORD_USED_IN_PAST:
-                    $result->setError(AuthenticationAction::NEW_PASSWORD_USED_IN_PAST);
+                    $result->setAction(AuthenticationAction::NEW_PASSWORD_USED_IN_PAST);
                     break;
                 case Action::NEW_PASSWORD_DOESNT_MATCH_POLICY:
-                    $result->setError(AuthenticationAction::NEW_PASSWORD_DOESNT_MATCH_POLICY);
+                    $result->setAction(AuthenticationAction::NEW_PASSWORD_DOESNT_MATCH_POLICY);
                     break;
                 case Action::PASSWORD_EXPIRED:
-                    $result->setError(AuthenticationAction::PASSWORD_EXPIRED);
+                    $result->setAction(AuthenticationAction::PASSWORD_EXPIRED);
                     break;
                 case Action::AUTHENTICATION_TARGET_UNREACHABLE:
-                    $result->setError(AuthenticationAction::AUTHENTICATION_TARGET_UNREACHABLE);
+                    $result->setAction(AuthenticationAction::AUTHENTICATION_TARGET_UNREACHABLE);
                     break;
                 default:
-                    $result->setError(AuthenticationAction::UNEXPECTED_ERROR);
+                    $result->setAction(AuthenticationAction::UNEXPECTED_ERROR);
                     break;
             }
         }

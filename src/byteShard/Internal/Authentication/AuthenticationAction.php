@@ -17,8 +17,23 @@ enum AuthenticationAction: string
     case LOGOUT                            = 'logout';
     case SESSION_EXPIRED                   = 'session_expired';
 
-    public function processError(?ProviderInterface $provider): never
+    private const ACTION_KEY = 'action';
+
+    public function processAction(?ProviderInterface $provider): never
     {
-        Authentication::logout($provider, ['error' => $this->value]);
+        Authentication::logout($provider, $this);
+    }
+
+    public function getParameter(): array
+    {
+        return [self::ACTION_KEY => $this->value];
+    }
+
+    public static function getAction(): ?AuthenticationAction
+    {
+        if (array_key_exists(self::ACTION_KEY, $_GET)) {
+            return AuthenticationAction::tryFrom($_GET[self::ACTION_KEY]);
+        }
+        return null;
     }
 }

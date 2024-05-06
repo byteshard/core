@@ -41,10 +41,10 @@ use byteShard\Internal\TabParentInterface;
  */
 abstract class Environment implements ParametersInterface, JsonSerializable
 {
-    const DRIVER_MySQL_mysqli   = 'mysql_mysqli';
-    const DRIVER_MYSQL_PDO      = 'mysql_pdo';
-    const DRIVER_PGSQL_PDO      = 'pgsql_pdo';
-    const DRIVER_MSSQL_ado      = 'mssql_ado';
+    const DRIVER_MySQL_mysqli = 'mysql_mysqli';
+    const DRIVER_MYSQL_PDO = 'mysql_pdo';
+    const DRIVER_PGSQL_PDO = 'pgsql_pdo';
+    const DRIVER_MSSQL_ado = 'mssql_ado';
     const DRIVER_SQLITE_sqlite3 = 'sqlite_sqlite3';
 
     /* Example:
@@ -695,7 +695,7 @@ abstract class Environment implements ParametersInterface, JsonSerializable
             // we can safely redirect with no local user here since the user already logged in successfully with the IDP
             // but the user doesn't exist in the local database.
             // usually we have to insert the user if it doesn't exist during the call to fetch the userId: $this->getByteShardDataModel()->getUserId($username);
-            Authentication::logout(parameters: ['error' => AuthenticationAction::NO_LOCAL_USER]);
+            Authentication::logout(action: AuthenticationAction::NO_LOCAL_USER);
         }
 
         // change of privilege, regenerate session id to prevent session fixation attacks
