@@ -22,8 +22,7 @@ class Authentication
         private readonly int                $sessionTimeoutInMinutes,
         private readonly string             $logoffButtonName,
         private readonly DataModelInterface $dataModel
-    )
-    {
+    ) {
     }
 
     private function getIdentityProvider(): ?ProviderInterface
@@ -77,7 +76,7 @@ class Authentication
             self::logout();
         }
         if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === $this->logoffButtonName) {
-            self::logout($identityProvider);
+            self::logout($identityProvider, ['action' => AuthenticationAction::LOGOUT]);
         }
 
         $activeSession = $identityProvider->userHasValidAndNotExpiredSession($this->sessionTimeoutInMinutes);
@@ -98,7 +97,7 @@ class Authentication
             self::logout($identityProvider);
         }
         if ($activeSession === false) {
-            self::logout($identityProvider);
+            self::logout($identityProvider, ['action' => AuthenticationAction::SESSION_EXPIRED]);
         }
 
         $this->environment->initializeUserCallback();

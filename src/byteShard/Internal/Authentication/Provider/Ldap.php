@@ -3,7 +3,7 @@
 namespace byteShard\Internal\Authentication\Provider;
 
 use byteShard\Internal\Authentication\Authentication;
-use byteShard\Internal\Authentication\AuthenticationError;
+use byteShard\Internal\Authentication\AuthenticationAction;
 use byteShard\Internal\Authentication\LdapProviderInterface;
 use byteShard\Internal\Authentication\ProviderInterface;
 use byteShard\Internal\Login\Struct\Credentials;
@@ -25,7 +25,7 @@ class Ldap implements ProviderInterface
     public function authenticate(?Credentials $credentials = null): bool
     {
         if ($credentials === null) {
-            $error = AuthenticationError::INVALID_CREDENTIALS;
+            $error = AuthenticationAction::INVALID_CREDENTIALS;
             $error->processError($this);
         }
         if ($this->authenticationObject !== null) {
@@ -86,7 +86,7 @@ class Ldap implements ProviderInterface
         }
         $error = $result->getError();
         if ($error === null) {
-            $error = AuthenticationError::UNEXPECTED_ERROR;
+            $error = AuthenticationAction::UNEXPECTED_ERROR;
         }
         $error->processError($this);
     }

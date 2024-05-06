@@ -8,7 +8,7 @@ namespace byteShard\Authentication;
 
 use byteShard\DataModelInterface;
 use byteShard\Exception;
-use byteShard\Internal\Authentication\AuthenticationError;
+use byteShard\Internal\Authentication\AuthenticationAction;
 use byteShard\Internal\Authentication\AuthenticationResult;
 use byteShard\Internal\Debug;
 use DateTime;
@@ -61,12 +61,12 @@ class DB implements AuthenticationInterface
                 $date = new DateTime(date('Ymd'));
                 $date->modify('-'.$expiration->expiresAfterDays.'days');
                 if ($date->format('Ymd') > $expiration->lastChange) {
-                    $result->setError(AuthenticationError::CHANGE_PASSWORD);
+                    $result->setError(AuthenticationAction::CHANGE_PASSWORD);
                 }
             }
             return $result;
         } else {
-            $result->setError(AuthenticationError::INVALID_CREDENTIALS);
+            $result->setError(AuthenticationAction::INVALID_CREDENTIALS);
         }
         return $result;
     }

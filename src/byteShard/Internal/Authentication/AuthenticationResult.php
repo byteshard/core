@@ -4,7 +4,7 @@ namespace byteShard\Internal\Authentication;
 
 class AuthenticationResult
 {
-    public function __construct(private bool $success = false, private ?AuthenticationError $error = null)
+    public function __construct(private bool $success = false, private ?AuthenticationAction $error = null)
     {
 
     }
@@ -19,12 +19,12 @@ class AuthenticationResult
         $this->success = $success;
     }
 
-    public function getError(): ?AuthenticationError
+    public function getError(): ?AuthenticationAction
     {
         return $this->error;
     }
 
-    public function setError(?AuthenticationError $error): void
+    public function setError(?AuthenticationAction $error): void
     {
         $this->error = $error;
     }

@@ -15,7 +15,7 @@ use byteShard\Enum\LogLevel;
 use byteShard\Form\Enum\Label\Position;
 use byteShard\Form\Settings;
 use byteShard\Internal\Authentication\Authentication;
-use byteShard\Internal\Authentication\AuthenticationError;
+use byteShard\Internal\Authentication\AuthenticationAction;
 use byteShard\Internal\Authentication\AuthenticationInterface;
 use byteShard\Internal\Authentication\DeprecatedLdapProviderWrapper;
 use byteShard\Internal\Authentication\LdapProviderInterface;
@@ -695,7 +695,7 @@ abstract class Environment implements ParametersInterface, JsonSerializable
             // we can safely redirect with no local user here since the user already logged in successfully with the IDP
             // but the user doesn't exist in the local database.
             // usually we have to insert the user if it doesn't exist during the call to fetch the userId: $this->getByteShardDataModel()->getUserId($username);
-            Authentication::logout(parameters: ['error' => AuthenticationError::NO_LOCAL_USER]);
+            Authentication::logout(parameters: ['error' => AuthenticationAction::NO_LOCAL_USER]);
         }
 
         // change of privilege, regenerate session id to prevent session fixation attacks

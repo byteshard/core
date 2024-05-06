@@ -28,31 +28,31 @@ class DeprecatedLdapProviderWrapper implements LdapProviderInterface
             switch ($authenticationResult->action) {
                 case Action::OLD_PASSWORD_WRONG:
                 case Action::INVALID_CREDENTIALS:
-                    $result->setError(AuthenticationError::INVALID_CREDENTIALS);
+                    $result->setError(AuthenticationAction::INVALID_CREDENTIALS);
                     break;
                 case Action::CHANGE_PASSWORD:
-                    $result->setError(AuthenticationError::CHANGE_PASSWORD);
+                    $result->setError(AuthenticationAction::CHANGE_PASSWORD);
                     break;
                 case Action::DISPLAY_TOO_MANY_FAILED_ATTEMPS:
-                    $result->setError(AuthenticationError::DISPLAY_TOO_MANY_FAILED_ATTEMPTS);
+                    $result->setError(AuthenticationAction::DISPLAY_TOO_MANY_FAILED_ATTEMPTS);
                     break;
                 case Action::NEW_PASSWORD_REPEAT_FAILED:
-                    $result->setError(AuthenticationError::NEW_PASSWORD_REPEAT_FAILED);
+                    $result->setError(AuthenticationAction::NEW_PASSWORD_REPEAT_FAILED);
                     break;
                 case Action::NEW_PASSWORD_USED_IN_PAST:
-                    $result->setError(AuthenticationError::NEW_PASSWORD_USED_IN_PAST);
+                    $result->setError(AuthenticationAction::NEW_PASSWORD_USED_IN_PAST);
                     break;
                 case Action::NEW_PASSWORD_DOESNT_MATCH_POLICY:
-                    $result->setError(AuthenticationError::NEW_PASSWORD_DOESNT_MATCH_POLICY);
+                    $result->setError(AuthenticationAction::NEW_PASSWORD_DOESNT_MATCH_POLICY);
                     break;
                 case Action::PASSWORD_EXPIRED:
-                    $result->setError(AuthenticationError::PASSWORD_EXPIRED);
+                    $result->setError(AuthenticationAction::PASSWORD_EXPIRED);
                     break;
                 case Action::AUTHENTICATION_TARGET_UNREACHABLE:
-                    $result->setError(AuthenticationError::AUTHENTICATION_TARGET_UNREACHABLE);
+                    $result->setError(AuthenticationAction::AUTHENTICATION_TARGET_UNREACHABLE);
                     break;
                 default:
-                    $result->setError(AuthenticationError::UNEXPECTED_ERROR);
+                    $result->setError(AuthenticationAction::UNEXPECTED_ERROR);
                     break;
             }
         }

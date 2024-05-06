@@ -6,7 +6,7 @@
 
 namespace byteShard\Internal\Login;
 
-use byteShard\Internal\Authentication\AuthenticationError;
+use byteShard\Internal\Authentication\AuthenticationAction;
 use byteShard\Internal\Authentication\Providers;
 use byteShard\Internal\ByteShard\Css;
 use byteShard\Internal\ByteShard\Javascript;
@@ -67,10 +67,10 @@ class UnifiedTemplate implements LoginFormInterface
         return $head;
     }
 
-    protected function getAuthenticationError(): ?AuthenticationError
+    protected function getAuthenticationError(): ?AuthenticationAction
     {
         if (array_key_exists('error', $_GET)) {
-            return AuthenticationError::tryFrom($_GET['error']);
+            return AuthenticationAction::tryFrom($_GET['error']);
         }
         return null;
     }
@@ -114,7 +114,7 @@ class UnifiedTemplate implements LoginFormInterface
     {
         $error = $this->getAuthenticationError();
         switch ($error) {
-            case AuthenticationError::INVALID_CREDENTIALS:
+            case AuthenticationAction::INVALID_CREDENTIALS:
                 return [];
         }
         return [];
