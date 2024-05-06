@@ -41,10 +41,10 @@ use byteShard\Internal\TabParentInterface;
  */
 abstract class Environment implements ParametersInterface, JsonSerializable
 {
-    const DRIVER_MySQL_mysqli = 'mysql_mysqli';
-    const DRIVER_MYSQL_PDO = 'mysql_pdo';
-    const DRIVER_PGSQL_PDO = 'pgsql_pdo';
-    const DRIVER_MSSQL_ado = 'mssql_ado';
+    const DRIVER_MySQL_mysqli   = 'mysql_mysqli';
+    const DRIVER_MYSQL_PDO      = 'mysql_pdo';
+    const DRIVER_PGSQL_PDO      = 'pgsql_pdo';
+    const DRIVER_MSSQL_ado      = 'mssql_ado';
     const DRIVER_SQLITE_sqlite3 = 'sqlite_sqlite3';
 
     /* Example:
@@ -229,6 +229,8 @@ abstract class Environment implements ParametersInterface, JsonSerializable
      * TODO: create functionality to implement different authentications in Config
      */
     private string $localAuthentication = 'enabled';
+
+    private Config $config;
 
     public function hideLocalAuthentication(): void
     {
@@ -490,13 +492,9 @@ abstract class Environment implements ParametersInterface, JsonSerializable
 
     protected function construct(Config $config)
     {
+        $this->config      = $config;
         $this->environment = $config->getEnvironment();
         $this->initializeFrameworkGlobals($config->getLogLevel(), $config->getUrlContext());
-        $this->db_parameters_admin = $config->getDbParameters(ConnectionType::ADMIN);
-        $this->db_parameters_login = $config->getDbParameters(ConnectionType::LOGIN);
-        $this->db_parameters_read  = $config->getDbParameters(ConnectionType::READ);
-        $this->db_parameters_write = $config->getDbParameters(ConnectionType::WRITE);
-        $this->database            = $this->db_parameters_read->database;
     }
 
     /**
@@ -764,16 +762,42 @@ abstract class Environment implements ParametersInterface, JsonSerializable
 
     public function getDatabase(string $name = null): string
     {
+        if (isset($this->database)) {
+            return $this->database;
+        }
+        $this->database = $this->config->getDbParameters(ConnectionType::READ)->database;
         return $this->database;
     }
 
     public function getDbParameters(ConnectionType $type, string $name = null): Parameters
     {
+        switch ($type) {
+            case ConnectionType::LOGIN:
+                if (!isset($this->db_parameters_login)) {
+                    $this->db_parameters_login = $this->config->getDbParameters(ConnectionType::LOGIN);
+                }
+                break;
+            case ConnectionType::READ:
+                if (!isset($this->db_parameters_read)) {
+                    $this->db_parameters_read = $this->config->getDbParameters(ConnectionType::READ);
+                }
+                break;
+            case ConnectionType::WRITE:
+                if (!isset($this->db_parameters_write)) {
+                    $this->db_parameters_write = $this->config->getDbParameters(ConnectionType::WRITE);
+                }
+                break;
+            case ConnectionType::ADMIN:
+                if (!isset($this->db_parameters_admin)) {
+                    $this->db_parameters_admin = $this->config->getDbParameters(ConnectionType::ADMIN);
+                }
+                break;
+        }
         return match ($type) {
-            ConnectionType::LOGIN => $this->db_parameters_login,
-            ConnectionType::READ  => $this->db_parameters_read,
-            ConnectionType::WRITE => $this->db_parameters_write,
-            ConnectionType::ADMIN => $this->db_parameters_admin
+            ConnectionType::LOGIN => $this->db_parameters_login ?? $this->config->getDbParameters(ConnectionType::LOGIN),
+            ConnectionType::READ  => $this->db_parameters_read ?? $this->config->getDbParameters(ConnectionType::READ),
+            ConnectionType::WRITE => $this->db_parameters_write ?? $this->config->getDbParameters(ConnectionType::WRITE),
+            ConnectionType::ADMIN => $this->db_parameters_admin ?? $this->config->getDbParameters(ConnectionType::ADMIN)
         };
     }
 
