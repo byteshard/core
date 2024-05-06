@@ -5,6 +5,7 @@ namespace byteShard\Internal\Authentication;
 use BackedEnum;
 use byteShard\Config\OauthInterface;
 use byteShard\DataModelInterface;
+use byteShard\Debug;
 use byteShard\Environment;
 use byteShard\Internal\Authentication\Provider\Ldap;
 use byteShard\Internal\Authentication\Provider\Local;
@@ -22,8 +23,7 @@ class Authentication
         private readonly int                $sessionTimeoutInMinutes,
         private readonly string             $logoffButtonName,
         private readonly DataModelInterface $dataModel
-    )
-    {
+    ) {
     }
 
     private function getIdentityProvider(): ?ProviderInterface
@@ -77,7 +77,7 @@ class Authentication
             self::logout();
         }
         if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === $this->logoffButtonName) {
-            self::logout($identityProvider);
+            self::logout($identityProvider, AuthenticationAction::LOGOUT);
         }
 
         $activeSession = $identityProvider->userHasValidAndNotExpiredSession($this->sessionTimeoutInMinutes);
@@ -98,7 +98,7 @@ class Authentication
             self::logout($identityProvider);
         }
         if ($activeSession === false) {
-            self::logout($identityProvider);
+            self::logout($identityProvider, AuthenticationAction::SESSION_EXPIRED);
         }
 
         $this->environment->initializeUserCallback();
@@ -116,18 +116,31 @@ class Authentication
         }
     }
 
-    public static function logout($identityProvider = null, array $parameters = []): never
+    /**
+     * @param $identityProvider
+     * @param AuthenticationAction|null $action
+     * @param array<string, BackedEnum|int|float|string|bool> $additionalParameters
+     * @return never
+     */
+    public static function logout($identityProvider = null, ?AuthenticationAction $action = null, array $additionalParameters = []): never
     {
         $getParameters = '';
-        if (!empty($parameters)) {
-            $params = [];
-            foreach ($parameters as $parameter => $value) {
+        $params        = [];
+        if ($action !== null) {
+            $params = $action->getParameter();
+        }
+        foreach ($additionalParameters as $parameter => $value) {
+            if (array_key_exists($parameter, $params)) {
+                Debug::debug('AdditionalParameters tried to override an existing AuthenticationAction key '.$parameter);
+            } else {
                 if ($value instanceof BackedEnum) {
                     $params[$parameter] = $value->value;
                 } elseif (is_scalar($value)) {
                     $params[$parameter] = $value;
                 }
             }
+        }
+        if (!empty($params)) {
             $getParameters = '/?'.http_build_query($params);
         }
         if (session_status() === PHP_SESSION_ACTIVE) {

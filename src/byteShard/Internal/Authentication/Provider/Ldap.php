@@ -3,7 +3,7 @@
 namespace byteShard\Internal\Authentication\Provider;
 
 use byteShard\Internal\Authentication\Authentication;
-use byteShard\Internal\Authentication\AuthenticationError;
+use byteShard\Internal\Authentication\AuthenticationAction;
 use byteShard\Internal\Authentication\LdapProviderInterface;
 use byteShard\Internal\Authentication\ProviderInterface;
 use byteShard\Internal\Login\Struct\Credentials;
@@ -25,8 +25,8 @@ class Ldap implements ProviderInterface
     public function authenticate(?Credentials $credentials = null): bool
     {
         if ($credentials === null) {
-            $error = AuthenticationError::INVALID_CREDENTIALS;
-            $error->processError($this);
+            $error = AuthenticationAction::INVALID_CREDENTIALS;
+            $error->processAction($this);
         }
         if ($this->authenticationObject !== null) {
             return $this->authenticateAgainstAppProvider($credentials);
@@ -62,9 +62,9 @@ class Ldap implements ProviderInterface
                 }
             }
             // either the user hasn't been found or the ldap bind was not successful
-            Authentication::logout(parameters: ['error' => 'credentials']);
+            Authentication::logout(action: AuthenticationAction::INVALID_CREDENTIALS);
         }
-        Authentication::logout(parameters: ['error' => 'noLdapConfig']);
+        Authentication::logout();
     }
 
     private function getLdapInstance(string $host, int $port = 389, string $method = ''): \byteShard\Ldap
@@ -84,11 +84,11 @@ class Ldap implements ProviderInterface
             $this->username = $credentials->getUsername();
             return true;
         }
-        $error = $result->getError();
-        if ($error === null) {
-            $error = AuthenticationError::UNEXPECTED_ERROR;
+        $action = $result->getAction();
+        if ($action === null) {
+            $action = AuthenticationAction::UNEXPECTED_ERROR;
         }
-        $error->processError($this);
+        $action->processAction($this);
     }
 
     public function getUsername(): string
