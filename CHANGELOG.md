@@ -1,3 +1,11 @@
+## [1.8.2](https://github.com/byteshard/core/compare/v1.8.1...v1.8.2) (2024-05-06)
+
+
+### Bug Fixes
+
+* don't try to access db parameters in case they're not used ([64ac8f0](https://github.com/byteshard/core/commit/64ac8f0114fd33ff6fc1429edd759ec5790b4ec7))
+* don't try to access db parameters in case they're not used ([b552b8c](https://github.com/byteshard/core/commit/b552b8c4e545e644600a98414992435d497cee09))
+
 ## [1.8.1](https://github.com/byteshard/core/compare/v1.8.0...v1.8.1) (2024-05-06)
 
 
