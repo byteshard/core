@@ -28,7 +28,8 @@ class Authentication
 
     private function getIdentityProvider(): ?ProviderInterface
     {
-        $referer = rtrim($_SERVER['HTTP_REFERER'], '/').'/';
+        # HTTP_REFERER is not available if the application runs with a context, SCRIPT_URI seems to be the replacement. If both are not set, we default to an empty string to avoid warnings
+        $referer = rtrim($_SERVER['HTTP_REFERER'] ?? $_SERVER['SCRIPT_URI'] ?? '', '/').'/';
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && str_contains($referer, '/login/')) {
             $loginTemplate = $this->environment->getLoginTemplate();
             // login button was clicked on the login page
