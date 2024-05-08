@@ -1,3 +1,10 @@
+## [1.8.3](https://github.com/byteshard/core/compare/v1.8.2...v1.8.3) (2024-05-08)
+
+
+### Bug Fixes
+
+* HTTP_REFERER is not available running within a context, SCRIPT_URI is ([6b007f6](https://github.com/byteshard/core/commit/6b007f690b5c8c8c82147b280d280a6f7ca2b526))
+
 ## [1.8.2](https://github.com/byteshard/core/compare/v1.8.1...v1.8.2) (2024-05-06)
 
 
