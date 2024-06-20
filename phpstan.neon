@@ -1,7 +1,6 @@
 parameters:
-	bootstrapFiles:
-		- phpstan-bootstrap.php
-	paths:
-		- src
-	level: 3
-	checkMissingIterableValueType: false
+    bootstrapFiles:
+        - phpstan-bootstrap.php
+    paths:
+        - src
+    level: 3

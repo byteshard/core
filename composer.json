@@ -29,7 +29,7 @@
     "ext-spl": "*",
     "ext-sqlite3": "*",
     "ezyang/htmlpurifier": "^4.14.0",
-    "monolog/monolog": "^2.0.2",
+    "monolog/monolog": "^3",
     "neitanod/forceutf8": "~2.0",
     "phpdocumentor/reflection-docblock": "^5.1.0",
     "phpoffice/phppresentation": "^0.9.0",
