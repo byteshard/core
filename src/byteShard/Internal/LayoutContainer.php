@@ -18,6 +18,7 @@ use byteShard\Layout\Separator;
 use byteShard\Popup;
 use byteShard\Tab;
 use byteShard\TabNew;
+use UnitEnum;
 
 /**
  * Class LayoutContainer
@@ -341,7 +342,7 @@ abstract class LayoutContainer implements TabParentInterface, ContainerInterface
      * @return $this
      * @throws Exception
      */
-    public function setPermission(string ...$permissions): self
+    public function setPermission(string|UnitEnum ...$permissions): self
     {
         $this->PermissionTrait_setPermission(...$permissions);
         $this->passAccessType();

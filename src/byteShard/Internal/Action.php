@@ -17,6 +17,7 @@ use byteShard\Tab;
 use byteShard\ID;
 use Closure;
 use DateTimeZone;
+use UnitEnum;
 
 /**
  * Class Action
@@ -308,13 +309,15 @@ abstract class Action
 
     /**
      * @API
-     * @param string ...$permissions
-     * @return $this
      */
-    public function setPermission(string ...$permissions): self
+    public function setPermission(string|UnitEnum ...$permissions): self
     {
         foreach ($permissions as $permission) {
-            $this->permissions[$permission] = $permission;
+            if ($permission instanceof UnitEnum) {
+                $this->permissions[$permission->name] = $permission->name;
+            } else {
+                $this->permissions[$permission] = $permission;
+            }
         }
         return $this;
     }

@@ -24,6 +24,7 @@ use byteShard\Internal\Struct;
 use byteShard\Internal\Toolbar\ToolbarContainer;
 use byteShard\Tree\TreeInterface;
 use byteShard\Utils\Strings;
+use UnitEnum;
 
 /**
  * Class Cell
@@ -1346,12 +1347,11 @@ class Cell implements CellInterface, EventStorageInterface, ContainerInterface, 
     }
 
     /**
-     * @param string $permissions
      * @return $this
      */
-    public function setPermission(string $permissions): self
+    public function setPermission(string|UnitEnum ...$permissions): self
     {
-        $this->PermissionTrait_setPermission($permissions);
+        $this->PermissionTrait_setPermission(...$permissions);
         $this->passAccessType();
         return $this;
     }

@@ -1,3 +1,17 @@
+# [1.10.0](https://github.com/byteshard/core/compare/v1.9.0...v1.10.0) (2024-06-20)
+
+
+### Features
+
+* implement pgsql classmap fetch ([113cab9](https://github.com/byteshard/core/commit/113cab9c229208115f4895c67b54ecb0f3c847f3))
+
+# [1.9.0](https://github.com/byteshard/core/compare/v1.8.3...v1.9.0) (2024-06-20)
+
+
+### Features
+
+* allow Enums for Permissions ([3ab1cf3](https://github.com/byteshard/core/commit/3ab1cf32b119c5f908e3c0fac4bdfd5ad1096c58))
+
 ## [1.8.3](https://github.com/byteshard/core/compare/v1.8.2...v1.8.3) (2024-05-08)
 
 
