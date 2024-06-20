@@ -680,12 +680,12 @@ class Session implements TabParentInterface, EncryptedIDStorageInterface
      */
     public function getPermissionAccessType(string $permission): int
     {
-        return ($this->permissions !== null) ? $this->permissions->getPermissionAccessType($permission) : 0;
+        return $this->permissions?->getPermissionAccessType($permission) ?? 0;
     }
 
     public function getPermissionIDArray($permission): array
     {
-        return ($this->permissions !== null) ? $this->permissions->getPermissionIDArray($permission) : [];
+        return $this->permissions?->getPermissionIDArray($permission) ?? [];
     }
 
     /**

@@ -6,6 +6,9 @@
 
 namespace byteShard;
 
+use byteShard\Enum\Access;
+use UnitEnum;
+
 /**
  * Class Permission
  * @package byteShard
@@ -15,6 +18,11 @@ class Permission
     protected array $permissions = [];
 
     protected array $permissionIdArray = [];
+
+    protected function setPermissionAccess(UnitEnum $permission, Access $access): void
+    {
+        $this->permissions[$permission->name] = $access->value;
+    }
 
     /**
      * @API
