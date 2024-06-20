@@ -84,7 +84,16 @@ class Recordset implements GetArrayInterface, GetSingleInterface, InsertInterfac
                 /** @var PDO $tempConnection */
                 $stmt = $tempConnection->prepare($query);
                 $stmt->execute($parameters);
-                $result = $stmt->fetch(PDO::FETCH_OBJ);
+                if ($classMap !== null) {
+                    if ($fetchPropsLate === true) {
+                        $stmt->setFetchMode(PDO::FETCH_CLASS|PDO::FETCH_PROPS_LATE, $classMap);
+                    } else {
+                        $stmt->setFetchMode(PDO::FETCH_CLASS, $classMap);
+                    }
+                    $result = $stmt->fetch();
+                } else {
+                    $result = $stmt->fetch(PDO::FETCH_OBJ);
+                }
             } catch (PDOException $e) {
                 throw new Exception($e->getMessage(), 110600002);
             }
@@ -121,7 +130,15 @@ class Recordset implements GetArrayInterface, GetSingleInterface, InsertInterfac
                 /** @var PDO $tempConnection */
                 $stmt = $tempConnection->prepare($query);
                 $stmt->execute($parameters);
-                $result = $stmt->fetchAll(PDO::FETCH_OBJ);
+                if ($classMap !== null) {
+                    if ($fetchPropsLate === true) {
+                        $result = $stmt->fetchAll(PDO::FETCH_CLASS|PDO::FETCH_PROPS_LATE, $classMap);
+                    } else {
+                        $result = $stmt->fetchAll(PDO::FETCH_CLASS, $classMap);
+                    }
+                } else {
+                    $result = $stmt->fetchAll(PDO::FETCH_OBJ);
+                }
             } catch (PDOException $e) {
                 throw new Exception($e->getMessage(), 110600005);
             }
