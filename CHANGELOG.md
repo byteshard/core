@@ -1,3 +1,10 @@
+# [1.9.0](https://github.com/byteshard/core/compare/v1.8.3...v1.9.0) (2024-06-20)
+
+
+### Features
+
+* allow Enums for Permissions ([3ab1cf3](https://github.com/byteshard/core/commit/3ab1cf32b119c5f908e3c0fac4bdfd5ad1096c58))
+
 ## [1.8.3](https://github.com/byteshard/core/compare/v1.8.2...v1.8.3) (2024-05-08)
 
 
