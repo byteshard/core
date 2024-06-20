@@ -11,6 +11,7 @@ use byteShard\Enum\AccessType;
 use byteShard\Exception;
 use byteShard\Internal\Debug;
 use byteShard\Session;
+use UnitEnum;
 
 trait PermissionImplementation
 {
@@ -25,10 +26,14 @@ trait PermissionImplementation
      * @session write (Cell, LayoutContainer, Toolbar)
      * @session none (Node, CellContent, SharedParent, Column, ToolbarObject)
      */
-    public function setPermission(string ...$permissions): self
+    public function setPermission(string|UnitEnum ...$permissions): self
     {
         foreach ($permissions as $permission) {
-            $this->permissions[] = $permission;
+            if ($permission instanceof UnitEnum) {
+                $this->permissions[] = $permission->name;
+            } else {
+                $this->permissions[] = $permission;
+            }
         }
         $this->calculatePermissionAccessType();
         return $this;
