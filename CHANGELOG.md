@@ -1,3 +1,10 @@
+## [1.10.1](https://github.com/byteshard/core/compare/v1.10.0...v1.10.1) (2024-06-20)
+
+
+### Bug Fixes
+
+* upgrade monolog to v3 ([f72c0c5](https://github.com/byteshard/core/commit/f72c0c5d5d9e4a5feeb2f8e25809c70d0b692f3f))
+
 # [1.10.0](https://github.com/byteshard/core/compare/v1.9.0...v1.10.0) (2024-06-20)
 
 
