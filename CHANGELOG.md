@@ -1,3 +1,10 @@
+# [1.10.0](https://github.com/byteshard/core/compare/v1.9.0...v1.10.0) (2024-06-20)
+
+
+### Features
+
+* implement pgsql classmap fetch ([113cab9](https://github.com/byteshard/core/commit/113cab9c229208115f4895c67b54ecb0f3c847f3))
+
 # [1.9.0](https://github.com/byteshard/core/compare/v1.8.3...v1.9.0) (2024-06-20)
 
 
