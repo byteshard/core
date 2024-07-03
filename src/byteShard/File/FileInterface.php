@@ -21,7 +21,7 @@ interface FileInterface {
      * the default name for the downloaded file
      * @param string $name
      */
-    public function setName(string $name);
+    public function setName(string $name): void;
 
     /**
      * @return string

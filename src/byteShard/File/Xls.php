@@ -23,7 +23,7 @@ class Xls implements FileInterface
      * set the contents of the file
      * @param Spreadsheet $content
      */
-    public function setContent(Spreadsheet $content)
+    public function setContent(Spreadsheet $content): void
     {
         $this->fileContent = $content;
     }
@@ -32,7 +32,7 @@ class Xls implements FileInterface
      * the default name for the downloaded file
      * @param string $name
      */
-    public function setName(string $name)
+    public function setName(string $name): void
     {
         $this->fileName = $name;
     }
@@ -44,7 +44,7 @@ class Xls implements FileInterface
 
     public function getName(): string
     {
-        return (!empty($this->fileName)) ? $this->fileName : 'byteShard.xlsx';
+        return (!empty($this->fileName)) ? $this->fileName : 'byteShard';
     }
 
     public function getContentLength(): ?int

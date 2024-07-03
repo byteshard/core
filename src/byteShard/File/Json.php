@@ -21,7 +21,7 @@ class Json implements FileInterface
      * set the contents of the file
      * @param string $content
      */
-    public function setContent(string $content)
+    public function setContent(string $content): void
     {
         $this->fileContent = $content;
     }
@@ -30,7 +30,7 @@ class Json implements FileInterface
      * the default name for the downloaded file
      * @param string $name
      */
-    public function setName(string $name)
+    public function setName(string $name): void
     {
         $this->fileName = $name;
     }
@@ -48,7 +48,7 @@ class Json implements FileInterface
      */
     public function getName(): string
     {
-        return (!empty($this->fileName)) ? $this->fileName : 'byteShard.json';
+        return (!empty($this->fileName)) ? $this->fileName : 'byteShard';
     }
 
     /**
