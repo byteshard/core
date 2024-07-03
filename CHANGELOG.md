@@ -1,3 +1,15 @@
+# [1.11.0](https://github.com/byteshard/core/compare/v1.10.1...v1.11.0) (2024-07-03)
+
+
+### Bug Fixes
+
+* remove file extension from name ([218a60e](https://github.com/byteshard/core/commit/218a60eceb0ceddb20cfab021fa9a3e9c763ecd6))
+
+
+### Features
+
+* add shell utils ([8c17c32](https://github.com/byteshard/core/commit/8c17c32adad6987f115b76123f1119b9d359cf40))
+
 ## [1.10.1](https://github.com/byteshard/core/compare/v1.10.0...v1.10.1) (2024-06-20)
 
 
