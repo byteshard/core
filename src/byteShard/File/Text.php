@@ -48,7 +48,7 @@ class Text implements FileInterface
      */
     public function getName(): string
     {
-        return (!empty($this->fileName)) ? $this->fileName : 'byteShard.txt';
+        return (!empty($this->fileName)) ? $this->fileName : 'byteShard';
     }
 
     /**

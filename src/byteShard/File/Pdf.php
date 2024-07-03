@@ -19,7 +19,7 @@ class Pdf implements FileInterface
     /**
      * set the contents of the file
      */
-    public function setContent(string $content)
+    public function setContent(string $content): void
     {
         $this->fileContent = $content;
     }
@@ -28,7 +28,7 @@ class Pdf implements FileInterface
      * the default name for the downloaded file
      * @param string $name
      */
-    public function setName(string $name)
+    public function setName(string $name): void
     {
         $this->fileName = $name;
     }
@@ -46,7 +46,7 @@ class Pdf implements FileInterface
      */
     public function getName(): string
     {
-        return (!empty($this->fileName)) ? $this->fileName : 'byteShard.pdf';
+        return (!empty($this->fileName)) ? $this->fileName : 'byteShard';
     }
 
     /**

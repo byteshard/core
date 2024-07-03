@@ -19,7 +19,7 @@ class Ppt implements FileInterface
      * set the contents of the file
      * @param PhpPresentation $content
      */
-    public function setContent(PhpPresentation $content)
+    public function setContent(PhpPresentation $content): void
     {
         $this->fileContent = $content;
     }
@@ -28,7 +28,7 @@ class Ppt implements FileInterface
      * the default name for the downloaded file
      * @param string $name
      */
-    public function setName(string $name)
+    public function setName(string $name): void
     {
         $this->fileName = $name;
     }
@@ -46,7 +46,7 @@ class Ppt implements FileInterface
      */
     public function getName(): string
     {
-        return (!empty($this->fileName)) ? $this->fileName : 'byteShard.xlsx';
+        return (!empty($this->fileName)) ? $this->fileName : 'byteShard';
     }
 
     /**
