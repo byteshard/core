@@ -10,7 +10,6 @@ use byteShard\Cell;
 use byteShard\Internal\Action;
 use byteShard\Internal\Action\ActionResultInterface;
 use byteShard\Internal\Action\CellActionResult;
-use ForceUTF8\Encoding;
 
 /**
  * Class SetCellHeader
@@ -45,8 +44,8 @@ class SetCellHeader extends Action
 
     protected function runAction(): ActionResultInterface
     {
-        $label  = $this->label ?? '';
+        $label  = mb_convert_encoding($this->label ?? '', 'UTF-8', 'auto');
         $result = new CellActionResult('layout');
-        return $result->addCellCommand([$this->cell], 'setCellHeaderText', Encoding::fixUTF8($label));
+        return $result->addCellCommand([$this->cell], 'setCellHeaderText', $label);
     }
 }
