@@ -1,3 +1,13 @@
+# [2.0.0](https://github.com/byteshard/core/compare/v1.11.0...v2.0.0) (2024-07-08)
+
+
+* Merge pull request #31 from byteshard/lhennig_fixFileSanitationDeprecationWarning ([048b4c1](https://github.com/byteshard/core/commit/048b4c1cc169b1c2e8eb8d1f305d69589b401afd)), closes [#31](https://github.com/byteshard/core/issues/31)
+
+
+### BREAKING CHANGES
+
+* ext-mbstring needed from now on in favour of neitano…
+
 # [1.11.0](https://github.com/byteshard/core/compare/v1.10.1...v1.11.0) (2024-07-03)
 
 
