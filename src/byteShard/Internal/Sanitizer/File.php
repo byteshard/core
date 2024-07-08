@@ -9,7 +9,6 @@ namespace byteShard\Internal\Sanitizer;
 use byteShard\Enum\FileType;
 use byteShard\Exception;
 use byteShard\Internal\Debug;
-use ForceUTF8\Encoding;
 
 /**
  * Class File
@@ -144,11 +143,24 @@ class File
 
     private function sanitizeFileName($filename): string
     {
-        $filename = Encoding::fixUTF8($filename);
+        // Convert the filename to UTF-8
+        $filename = mb_convert_encoding($filename, 'UTF-8', 'auto');
         // replace invalid characters with underscores
         $filename = preg_replace('/[^a-zA-Z0-9_.-]/', '_', $filename);
         // replace underscore or blank repetitions
-        return preg_replace('/([_ ])\1+/', '\1', $filename);
+        $filename = preg_replace('/([_ ])\1+/', '\1', $filename);
+
+        // Get the file extension
+        $pathInfo                 = pathinfo($filename);
+        $extension                = isset($pathInfo['extension']) ? '.'.$pathInfo['extension'] : '';
+        $filenameWithoutExtension = $pathInfo['filename'];
+
+        // Limit the length of the filename, keeping the extension
+        $maxLength = 255 - strlen($extension);
+        if (strlen($filenameWithoutExtension) > $maxLength) {
+            $filenameWithoutExtension = substr($filenameWithoutExtension, 0, $maxLength);
+        }
+        return $filenameWithoutExtension.$extension;
     }
 
     /**
