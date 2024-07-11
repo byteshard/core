@@ -1,3 +1,10 @@
+# [2.1.0](https://github.com/byteshard/core/compare/v2.0.0...v2.1.0) (2024-07-11)
+
+
+### Features
+
+* new way (again) to select combo option (sigh) ([a78c79f](https://github.com/byteshard/core/commit/a78c79ff0bfb5f8e11ef97ff1a00442f30e0b6b3))
+
 # [2.0.0](https://github.com/byteshard/core/compare/v1.11.0...v2.0.0) (2024-07-08)
 
 
