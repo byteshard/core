@@ -61,7 +61,6 @@ class Combo extends Form\FormObject implements Form\InputWidthInterface, Encrypt
      * @var mixed
      */
     private mixed  $selectedId;
-    private string $dedicatedComboClass = '';
 
     public function __construct(?string $id, string $comboClass = '')
     {
@@ -98,6 +97,7 @@ class Combo extends Form\FormObject implements Form\InputWidthInterface, Encrypt
             if (!empty($this->comboParameters)) {
                 $id['!p'] = serialize($this->comboParameters);
             }
+            //TODO: remove this once all consuming combos have been updated
             if (!empty($this->selectedOption)) {
                 $id['!s'] = $this->selectedOption;
             }
@@ -180,6 +180,8 @@ class Combo extends Form\FormObject implements Form\InputWidthInterface, Encrypt
     }
 
     /**
+     * key value array like [projectId => 5]
+     * @param array<string, string|int> $id
      * @API
      */
     public function setSelectedOption(array $id): self
@@ -194,5 +196,26 @@ class Combo extends Form\FormObject implements Form\InputWidthInterface, Encrypt
     public function getSelectedOption(): array
     {
         return $this->selectedOption;
+    }
+
+    private ?string $selectedClientOption = null;
+
+    public function setSelectedClientOption(string|int|array $optionId): void
+    {
+        if (is_string($optionId)) {
+            $this->selectedClientOption = $optionId;
+        } elseif (is_int($optionId)) {
+            $this->selectedClientOption = (string)$optionId;
+        } else {
+            $json = json_encode($optionId);
+            if (is_string($json)) {
+                $this->selectedClientOption = $json;
+            }
+        }
+    }
+
+    public function getSelectedClientOption(): ?string
+    {
+        return $this->selectedClientOption;
     }
 }

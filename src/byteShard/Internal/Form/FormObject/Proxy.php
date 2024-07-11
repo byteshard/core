@@ -85,6 +85,7 @@ final class Proxy
     private string  $uploadTargetPath       = '';
     private bool    $uploadClearAfterUpload = false;
     private ?string $clientName;
+    private ?string $selectedComboOption = null;
 
     public function getClientName(): ?string
     {
@@ -132,6 +133,9 @@ final class Proxy
 
         $this->clientName         = self::getEncryptedClientName($this->getObjectId($formObject), $nonce);
         $this->objectProperties[] = self::getProperties($formObject, $this->getObjectId($formObject), $this->getClientLabel(), $this->getAccessType());
+        if ($formObject instanceof Control\Combo) {
+            $this->selectedComboOption = $formObject->getSelectedClientOption() !== null ? Session::encrypt($formObject->getSelectedClientOption(), $nonce) : null;
+        }
 
         $this->controlTypeSpecificImplementation($formObject);
         $this->createNestedProxies($formObject, $cell, $defaultInputWidth, $nonce, $parentName, $parentValue);
@@ -691,26 +695,25 @@ final class Proxy
 
     /**
      * @param Cell $cell
-     * @return array
+     * @return FormAlterations
      * @throws Exception
      */
-    public function register(Cell $cell): array
+    public function register(Cell $cell): FormAlterations
     {
-        $events          = [];
-        $helpObject      = '';
-        $setOptions      = false;
-        $clientExecution = [];
+        $formAlterations = new FormAlterations($this->parameters, $this->selectedComboOption);
         if (array_key_exists('clientClose', $this->userdata)) {
-            $events[] = 'event_on_close_button_click';
+            $formAlterations->addEvent('event_on_close_button_click');
         }
         if ($this->info === true) {
-            $events[] = 'event_on_info';
+            $formAlterations->addEvent('event_on_info');
         }
         if ($this->hasDependencyValidation === true) {
-            $events[] = 'has_dependency_validation';
+            //todo: this is no event
+            $formAlterations->addEvent('has_dependency_validation');
         }
         if ($this->hasPlaceholder === true) {
-            $events[] = 'has_placeholders';
+            //todo: this is no event
+            $formAlterations->addEvent('has_placeholders');
         }
         if ($this->formObjectType === Control\Radio::class) {
             $this->encryptValue();
@@ -718,7 +721,8 @@ final class Proxy
 
         if ($this->getAccessType() === Enum\AccessType::RW) {
             if ($this->liveValidation === true) {
-                $events[] = 'liveValidation';
+                //todo: this is no event
+                $formAlterations->addEvent('liveValidation');
             }
             if (!empty($this->events)) {
                 $tmpName          = $cell->getEventIDForInteractiveObject($this->getFormObjectName(), true, $this->clientName);
@@ -732,28 +736,28 @@ final class Proxy
                         if ($action instanceof Action\ClientExecutionInterface && $action->getClientExecution() === true) {
                             $method = $action->getClientExecutionMethod();
                             if ($method !== '') {
-                                $clientExecution[$event->getEventType()][$this->clientName][$method] = $action->getClientExecutionItems($cell->getNewId());
+                                $formAlterations->addClientExecution($event->getEventType(), $this->clientName, $method, $action->getClientExecutionItems($cell->getNewId()));
                             }
                         }
                     }
                     if ($event instanceof Form\Event\OnInputChange) {
-                        $events[]                             = 'event_on_input_change';
+                        $formAlterations->addEvent('event_on_input_change');
                         $this->userdata['getAllDataOnChange'] = $event->getGetAllFormObjects();
                     }
                     if ($event instanceof Form\Event\OnButtonClick) {
-                        $events[] = 'event_on_button_click';
+                        $formAlterations->addEvent('event_on_button_click');
                     }
                     if (($event instanceof Form\Event\OnChange) || ($event instanceof Form\Event\OnCheck) || ($event instanceof Form\Event\OnUnCheck)) {
                         $this->userdata['actionOnChange'] = true;
                         if (($event instanceof Form\Event\OnCheck) || ($event instanceof Form\Event\OnUnCheck)) {
                             $this->userdata[$event->getEventType()] = true;
                         }
-                        $events[] = 'event_on_change';
+                        $formAlterations->addEvent('event_on_change');
                         //TODO: test if all on change usages can be used with this new option and make it the default
                         $this->userdata['getAllDataOnChange'] = (($event instanceof Form\Event\OnChange) && $event->getGetAllFormObjects() === true);
                     }
                     if ($event instanceof Form\Event\OnBlur) {
-                        $events[] = 'event_on_blur';
+                        $formAlterations->addEvent('event_on_blur');
                     }
 
                     if (!empty($event->getActionArray())) {
@@ -771,12 +775,12 @@ final class Proxy
                 $this->setName($this->clientName);
             }
             if ($this->formObjectType === Control\Upload::class) {
-                $events[] = 'event_on_upload_file';
+                $formAlterations->addEvent('event_on_upload_file');
                 $uploadId = UploadId::getUploadId($cell, $this->clientName, $this->uploadFileTypes, $this->uploadMethod, $this->uploadTargetFilename, $this->uploadTargetPath, $this->uploadClearAfterUpload);
                 $this->setUploadUrlType($uploadId);
             }
             if (empty($this->options) && $this->formObjectType === Control\Combo::class) {
-                $setOptions = true;
+                $formAlterations->setOptions(true);
             }
         } else {
             $this->setName($this->clientName);
@@ -784,13 +788,15 @@ final class Proxy
         if ($this->getUnrestrictedAccess() === true) {
             foreach ($this->events as $event) {
                 if ($event instanceof Form\Event\OnButtonClick) {
-                    $events[] = 'eventOnUnrestrictedButtonClick';
+                    //todo: this is no event
+                    $formAlterations->addEvent('eventOnUnrestrictedButtonClick');
+                    break;
                 }
             }
         }
         if ($this->showHelp === true) {
-            $events[]   = 'event_on_show_help';
-            $helpObject = $this->clientName;
+            $formAlterations->addEvent('event_on_show_help');
+            $formAlterations->setHelpObject($this->clientName);
         }
 
         switch ($this->formObjectType) {
@@ -821,15 +827,8 @@ final class Proxy
                 $cell->setContentControlType($this->clientName, $this->internalName, $this->getAccessType(), $this->dbColumnType, $this->formObjectType, ($this->attributes['label'] ?? null), [], $this->getDateFormat(), null, null, $this->encryptOptionValues);
                 break;
         }
-
-        return [
-            'Events'           => $events,
-            'HelpObject'       => $helpObject,
-            'ClientExecution'  => $clientExecution,
-            'SetOptions'       => $setOptions,
-            'Name'             => $this->getFormObjectName(),
-            'Parameters'       => $this->parameters,
-            'ObjectProperties' => $this->objectProperties
-        ];
+        $formAlterations->setProperties($this->objectProperties);
+        $formAlterations->setName($this->getFormObjectName() ?? '');
+        return $formAlterations;
     }
 }
