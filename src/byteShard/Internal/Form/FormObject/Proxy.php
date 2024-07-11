@@ -85,6 +85,7 @@ final class Proxy
     private string  $uploadTargetPath       = '';
     private bool    $uploadClearAfterUpload = false;
     private ?string $clientName;
+    private ?string $selectedComboOption = null;
 
     public function getClientName(): ?string
     {
@@ -132,6 +133,9 @@ final class Proxy
 
         $this->clientName         = self::getEncryptedClientName($this->getObjectId($formObject), $nonce);
         $this->objectProperties[] = self::getProperties($formObject, $this->getObjectId($formObject), $this->getClientLabel(), $this->getAccessType());
+        if ($formObject instanceof Control\Combo) {
+            $this->selectedComboOption = $formObject->getSelectedClientOption() !== null ? Session::encrypt($formObject->getSelectedClientOption(), $nonce) : null;
+        }
 
         $this->controlTypeSpecificImplementation($formObject);
         $this->createNestedProxies($formObject, $cell, $defaultInputWidth, $nonce, $parentName, $parentValue);
@@ -696,7 +700,7 @@ final class Proxy
      */
     public function register(Cell $cell): FormAlterations
     {
-        $formAlterations = new FormAlterations($this->parameters);
+        $formAlterations = new FormAlterations($this->parameters, $this->selectedComboOption);
         if (array_key_exists('clientClose', $this->userdata)) {
             $formAlterations->addEvent('event_on_close_button_click');
         }

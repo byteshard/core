@@ -197,4 +197,25 @@ class Combo extends Form\FormObject implements Form\InputWidthInterface, Encrypt
     {
         return $this->selectedOption;
     }
+
+    private ?string $selectedClientOption = null;
+
+    public function setSelectedClientOption(string|int|array $optionId): void
+    {
+        if (is_string($optionId)) {
+            $this->selectedClientOption = $optionId;
+        } elseif (is_int($optionId)) {
+            $this->selectedClientOption = (string)$optionId;
+        } else {
+            $json = json_encode($optionId);
+            if (is_string($json)) {
+                $this->selectedClientOption = $json;
+            }
+        }
+    }
+
+    public function getSelectedClientOption(): ?string
+    {
+        return $this->selectedClientOption;
+    }
 }

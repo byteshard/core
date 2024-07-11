@@ -11,7 +11,13 @@ class FormAlterations
     private string $name            = '';
     private array  $properties      = [];
 
-    public function __construct(private readonly array $parameters)
+
+    public function getSelectedClientOption(): ?string
+    {
+        return $this->selectedClientOption;
+    }
+
+    public function __construct(private readonly array $parameters, private readonly ?string $selectedClientOption = null)
     {
 
     }
