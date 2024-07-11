@@ -13,5 +13,10 @@ interface ClientExecutionInterface
     public function getClientExecution(): bool;
     public function setClientExecution(bool $bool = true): self;
     public function getClientExecutionMethod(): string;
+
+    /**
+     * @param ID $containerId
+     * @return array<string> form object IDs
+     */
     public function getClientExecutionItems(ID $containerId): array;
 }
