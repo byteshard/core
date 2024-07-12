@@ -706,7 +706,7 @@ final class Proxy
      */
     public function register(Cell $cell): FormAlterations
     {
-        $formAlterations = new FormAlterations($this->parameters, $this->selectedComboOption);
+        $formAlterations = new FormAlterations($this->parameters, $this->selectedComboOption, $this->asynchronous);
         if (array_key_exists('clientClose', $this->userdata)) {
             $formAlterations->addEvent('event_on_close_button_click');
         }
