@@ -1,3 +1,11 @@
+# [2.2.0](https://github.com/byteshard/core/compare/v2.1.0...v2.2.0) (2024-07-12)
+
+
+### Features
+
+* backend implementation for asynchronous combo options ([5c8ef93](https://github.com/byteshard/core/commit/5c8ef9334123465df309e7971fe3c118c78bc074))
+* option to set upload to single file mode ([53309ba](https://github.com/byteshard/core/commit/53309ba17c75fcd3dafc70d7a19c47cc57083e5e))
+
 # [2.1.0](https://github.com/byteshard/core/compare/v2.0.0...v2.1.0) (2024-07-11)
 
 
