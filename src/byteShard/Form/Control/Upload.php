@@ -23,6 +23,7 @@ class Upload extends Form\FormObject implements Form\InputWidthInterface
     private string $targetFilename   = '';
     private string $targetPath       = '';
     private bool   $clearAfterUpload = false;
+    private bool   $singleFileMode   = false;
     use Form\ClassName;
     use Form\Disabled;
     use Form\Hidden;
@@ -69,6 +70,18 @@ class Upload extends Form\FormObject implements Form\InputWidthInterface
             $this->fileTypes[] = $fileType->value;
         }
         return $this;
+    }
+
+    public function setSingleFileMode(): self
+    {
+        $this->attributes['multiple'] = false;
+        $this->singleFileMode = true;
+        return $this;
+    }
+
+    public function getSingleFileMode(): bool
+    {
+        return $this->singleFileMode;
     }
 
     /**

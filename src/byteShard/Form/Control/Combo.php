@@ -66,6 +66,7 @@ class Combo extends Form\FormObject implements Form\InputWidthInterface, Encrypt
     {
         parent::__construct($id);
         if ($comboClass !== '' && is_subclass_of($comboClass, \byteShard\Combo::class)) {
+            $this->setAsynchronous(true);
             $this->comboClass = $comboClass;
         }
     }
@@ -76,6 +77,7 @@ class Combo extends Form\FormObject implements Form\InputWidthInterface, Encrypt
     public function setComboClass(string $comboClass): self
     {
         if (is_subclass_of($comboClass, \byteShard\Combo::class)) {
+            $this->setAsynchronous(true);
             $this->comboClass = $comboClass;
         }
         return $this;

@@ -17,9 +17,17 @@ class FormAlterations
         return $this->selectedClientOption;
     }
 
-    public function __construct(private readonly array $parameters, private readonly ?string $selectedClientOption = null)
+    public function __construct(
+        private readonly array   $parameters,
+        private readonly ?string $selectedClientOption = null,
+        private readonly bool    $asynchronous = false
+    )
     {
-
+    }
+    
+    public function isAsynchronous(): bool
+    {
+        return $this->asynchronous;
     }
 
     public function getParameters(): array

@@ -85,7 +85,7 @@ final class Proxy
     private string  $uploadTargetPath       = '';
     private bool    $uploadClearAfterUpload = false;
     private ?string $clientName;
-    private ?string $selectedComboOption = null;
+    private ?string $selectedComboOption    = null;
 
     public function getClientName(): ?string
     {
@@ -108,6 +108,8 @@ final class Proxy
     private string $id;
     private string $clientLabel;
     private array  $objectProperties       = [];
+    private bool   $asynchronous;
+    private bool   $singleFileMode         = false;
 
     /**
      * Proxy constructor.
@@ -121,7 +123,11 @@ final class Proxy
      */
     public function __construct(FormObject $formObject, Cell $cell, int $parentAccessType, ?string $defaultInputWidth = null, string $nonce = '', string $parentName = '', $parentValue = null)
     {
-        $this->cellNonce = $nonce;
+        $this->cellNonce    = $nonce;
+        $this->asynchronous = $formObject->isAsynchronous();
+        if ($formObject instanceof Control\Upload) {
+            $this->singleFileMode = $formObject->getSingleFileMode();
+        }
         $this->initializeProxyWithAttributesOfFormObject($formObject, $cell);
         $this->initializeValidations($formObject);
         $this->initializeAccessType($formObject, $parentAccessType);
@@ -700,7 +706,7 @@ final class Proxy
      */
     public function register(Cell $cell): FormAlterations
     {
-        $formAlterations = new FormAlterations($this->parameters, $this->selectedComboOption);
+        $formAlterations = new FormAlterations($this->parameters, $this->selectedComboOption, $this->asynchronous);
         if (array_key_exists('clientClose', $this->userdata)) {
             $formAlterations->addEvent('event_on_close_button_click');
         }
@@ -710,6 +716,10 @@ final class Proxy
         if ($this->hasDependencyValidation === true) {
             //todo: this is no event
             $formAlterations->addEvent('has_dependency_validation');
+        }
+        if ($this->singleFileMode === true) {
+            //todo: this is no event
+            $formAlterations->addEvent('use_single_file_mode');
         }
         if ($this->hasPlaceholder === true) {
             //todo: this is no event

@@ -47,6 +47,18 @@ abstract class FormObject
     protected static Enum\Cast $cast               = Enum\Cast::STRING;
     private string             $randomId;
     private string             $objectId;
+    private bool               $asynchronous       = false;
+
+    public function isAsynchronous(): bool
+    {
+        return $this->asynchronous;
+    }
+
+    protected function setAsynchronous(bool $asynchronous): self
+    {
+        $this->asynchronous = $asynchronous;
+        return $this;
+    }
 
     /**
      * FormObject constructor.
@@ -54,7 +66,7 @@ abstract class FormObject
      */
     public function __construct(?string $id)
     {
-        $this->objectId                 = $id ?? '';
+        $this->objectId           = $id ?? '';
         $this->attributes['name'] = $id;
     }
 
