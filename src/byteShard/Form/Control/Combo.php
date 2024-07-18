@@ -92,20 +92,25 @@ class Combo extends Form\FormObject implements Form\InputWidthInterface, Encrypt
     {
         $attributes = $this->attributes;
         if ($this->comboClass !== '') {
-            $id['!c'] = $this->comboClass;
-            if ($cell !== null) {
-                $id['!i'] = $cell->getNewId()?->getEncodedCellId();
-            }
-            if (!empty($this->comboParameters)) {
-                $id['!p'] = serialize($this->comboParameters);
-            }
-            //TODO: remove this once all consuming combos have been updated
-            if (!empty($this->selectedOption)) {
-                $id['!s'] = $this->selectedOption;
-            }
-            $attributes['connector'] = 'bs/bs_combo.php?i='.urlencode(Session::encrypt(json_encode($id)));
+            $attributes['connector'] = $this->getUrl($cell);
         }
         return $attributes;
+    }
+    
+    public function getUrl(?Cell $cell): string
+    {
+        $id['!c'] = $this->comboClass;
+        if ($cell !== null) {
+            $id['!i'] = $cell->getNewId()?->getEncodedCellId();
+        }
+        if (!empty($this->comboParameters)) {
+            $id['!p'] = serialize($this->comboParameters);
+        }
+        //TODO: remove these once all consuming combos have been updated
+        if (!empty($this->selectedOption)) {
+            $id['!s'] = $this->selectedOption;
+        }
+        return 'bs/bs_combo.php?i='.urlencode(Session::encrypt(json_encode($id)));
     }
 
     /**

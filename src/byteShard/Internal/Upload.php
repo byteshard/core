@@ -16,6 +16,7 @@ use byteShard\Internal\Sanitizer\File;
 use byteShard\Enum;
 use byteShard\Internal\Struct\ClientData;
 use byteShard\Session;
+use Throwable;
 
 class Upload
 {
@@ -179,7 +180,7 @@ class Upload
                         unlink(rtrim(rtrim($sanitizer->getServerFilepath(), '/'), '\\').DIRECTORY_SEPARATOR.$sanitizer->getServerFilename());
                     }
                     return $result;
-                } catch (\Exception $e) {
+                } catch (Throwable $e) {
                     $exception = new Exception($e->getMessage(), 14345005, __METHOD__, $e);
                     $exception->setLocaleToken('byteShard.upload.generic.error');
                     $exception->setUploadFileName($file['name']);
