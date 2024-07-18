@@ -1,3 +1,10 @@
+## [2.2.1](https://github.com/byteshard/core/compare/v2.2.0...v2.2.1) (2024-07-18)
+
+
+### Bug Fixes
+
+* public function in combo to get the url which will be used in ReloadFormObject ([5d77d18](https://github.com/byteshard/core/commit/5d77d1842734c5bf9474fb1632ba5fd54676668e))
+
 # [2.2.0](https://github.com/byteshard/core/compare/v2.1.0...v2.2.0) (2024-07-12)
 
 
