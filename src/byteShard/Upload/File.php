@@ -33,7 +33,7 @@ class File
             $pathInfo        = pathinfo($fqfn);
             $this->path      = $pathInfo['dirname'];
             $this->fileName  = $pathInfo['basename'];
-            $this->extension = $pathInfo['extension'];
+            $this->extension = $pathInfo['extension'] ?? '';
             $this->name      = $pathInfo['filename'];
             $this->fqfn      = $fqfn;
         } else {
