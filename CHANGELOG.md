@@ -1,3 +1,10 @@
+## [2.2.2](https://github.com/byteshard/core/compare/v2.2.1...v2.2.2) (2024-07-23)
+
+
+### Bug Fixes
+
+* files without extension could not be processed by the file object ([bb2323f](https://github.com/byteshard/core/commit/bb2323f7055313fad0829afb0493f767ba776764))
+
 ## [2.2.1](https://github.com/byteshard/core/compare/v2.2.0...v2.2.1) (2024-07-18)
 
 
