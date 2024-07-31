@@ -51,7 +51,7 @@ abstract class Event
         $this->addActions(...$actions);
     }
 
-    private function checkDeprecation(Action ...$actions): void
+    private function checkDeprecation(ClientExecutionInterface|Action ...$actions): void
     {
         $deprecatedCallIn = '';
         $line             = 0;

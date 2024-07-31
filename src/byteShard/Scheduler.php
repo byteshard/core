@@ -115,8 +115,9 @@ abstract class Scheduler extends CellContent implements OnEmptyClickInterface, O
             $entries        = [];
             $clientTimeZone = $this->getClientTimeZone();
             if ($clientTimeZone !== null) {
+                $nonce = $this->cell->getNonce();
                 foreach ($this->entries as $entry) {
-                    $entries[] = $entry->getEntry($clientTimeZone);
+                    $entries[] = $entry->getEntry($clientTimeZone, $nonce);
                 }
             }
             return $entries;
