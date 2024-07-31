@@ -1,3 +1,10 @@
+## [2.2.3](https://github.com/byteshard/core/compare/v2.2.2...v2.2.3) (2024-07-31)
+
+
+### Bug Fixes
+
+* scheduler entry was not implemented correctly ([d5aefff](https://github.com/byteshard/core/commit/d5aefff94878f404488cc0c4c0da2a416e2d1c72))
+
 ## [2.2.2](https://github.com/byteshard/core/compare/v2.2.1...v2.2.2) (2024-07-23)
 
 
