@@ -6,32 +6,38 @@
 
 namespace byteShard\Scheduler;
 
+use byteShard\Session;
 use DateTime;
 use DateTimeInterface;
 use DateTimeZone;
 
 class Entry
 {
-    private DateTimeInterface $start;
-    private DateTimeInterface $end;
-    private string $subject;
-    public function __construct(string $subject, DateTimeInterface $start, DateTimeInterface $end) {
-        $this->subject = $subject;
-        $this->start = $start;
-        $this->end = $end;
+    public function __construct(
+        private readonly array             $id,
+        private readonly string            $subject,
+        private readonly DateTimeInterface $start,
+        private readonly DateTimeInterface $end,
+        private readonly string            $class = ''
+    )
+    {
+
     }
 
-    public function getEntry(DateTimeZone $clientTimeZone): array
+    public function getEntry(DateTimeZone $clientTimeZone, string $nonce): array
     {
-        $start = DateTime::createFromInterface($this->start);
-        $end = DateTime::createFromInterface($this->end);
-        //$start->setTimezone($clientTimeZone);
-        //$end->setTimezone($clientTimeZone);
-        return [
-            'id' => 1,
-            'text' => $this->subject,
+        $start  = DateTime::createFromInterface($this->start);
+        $end    = DateTime::createFromInterface($this->end);
+        $id     = Session::encrypt(json_encode($this->id), $nonce);
+        $result = [
+            'id'         => $id,
+            'text'       => $this->subject,
             'start_date' => $start->format('Y-m-d H:i'),
-            'end_date' => $end->format('Y-m-d H:i')
+            'end_date'   => $end->format('Y-m-d H:i')
         ];
+        if ($this->class !== '') {
+            $result['class'] = $this->class;
+        }
+        return $result;
     }
 }
