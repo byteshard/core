@@ -77,10 +77,16 @@ class Upload
         $resultActions = $eventResult->getResultActions($objectId, '');
         $mergeArray    = [];
         $actionData    = [];
+        $clearUpload   = false;
         foreach ($resultActions as $action) {
+            if (is_a($action, '\\byteShard\\Action\\Form\\ClearUpload')) {
+                $clearUpload = true;
+            }
             $mergeArray[] = $action->getResult($cell, $actionData);
         }
-        return array_merge_recursive([], ...$mergeArray);
+        $resultArray          = array_merge_recursive([], ...$mergeArray);
+        $resultArray['clear'] = $clearUpload;
+        return $resultArray;
     }
 
     /**
@@ -140,9 +146,9 @@ class Upload
                     'id'   => $objectName
                 ];
                 try {
-                    $cell     = Session::getCell($cellId);
-                    $class    = new $className($cell, null);
-                    $extra    = null;
+                    $cell  = Session::getCell($cellId);
+                    $class = new $className($cell, null);
+                    $extra = null;
                     if (isset(class_implements($className)[OnUploadInterface::class])) {
                         $extra = $this->eventCallback($class, $cell, $objectName, $sanitizer->getServerFileFQFN(), $file['name']);
                     } elseif ($method !== null && method_exists($class, $method)) {
@@ -155,7 +161,7 @@ class Upload
                     $result['state']                 = true;
                     $result['name']                  = urlencode(Session::encrypt($sanitizer->getServerFilename()));
                     $result['extra']['state']        = 2;
-                    $result['extra']['clear']        = $clearAfterUpdate;
+                    $result['extra']['clear']        = isset($result['extra']['clear']) && $result['extra']['clear'] ? true : $clearAfterUpdate;
                     $result['extra']['uploaderName'] = $encryptedObjectName;
                     $hidden                          = new Hidden(
                         '!#up='.json_encode(
