@@ -1,3 +1,10 @@
+## [2.2.4](https://github.com/byteshard/core/compare/v2.2.3...v2.2.4) (2024-08-02)
+
+
+### Bug Fixes
+
+* add check for ClearUpload action during upload evaluation ([387ef54](https://github.com/byteshard/core/commit/387ef54c21bff784e3388f30b1c0e56a39aeb94d))
+
 ## [2.2.3](https://github.com/byteshard/core/compare/v2.2.2...v2.2.3) (2024-07-31)
 
 
