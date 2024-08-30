@@ -5,6 +5,7 @@
  */
 
 namespace byteShard\Form\Control;
+
 use byteShard\Internal\Form;
 
 /**
@@ -13,7 +14,7 @@ use byteShard\Internal\Form;
  */
 class ClosePopupButton extends Form\FormObject implements Form\ButtonInterface, Form\ValueInterface
 {
-    protected string $type = 'button';
+    protected string $type                   = 'button';
     protected string $displayedTextAttribute = 'value';
     use Form\ClassName;
     use Form\Disabled;
@@ -29,7 +30,20 @@ class ClosePopupButton extends Form\FormObject implements Form\ButtonInterface, 
     use Form\Value;
     use Form\Width;
 
-    public function __construct($id = 'close') {
+    public function __construct($id = 'close')
+    {
         parent::__construct($id);
+    }
+
+    public function setRequiresSuccessfulValidation(): static
+    {
+        $this->setUserdata(['requiresSuccessfulValidation' => 'true']);
+        return $this;
+    }
+
+    public function showLoader(): static
+    {
+        $this->setUserdata(['showLoader' => 'this']);
+        return $this;
     }
 }

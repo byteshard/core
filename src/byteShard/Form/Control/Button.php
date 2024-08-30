@@ -14,7 +14,7 @@ use byteShard\Internal\Form;
  */
 class Button extends Form\FormObject implements Form\ButtonInterface, Form\ValueInterface
 {
-    protected string $type                     = 'button';
+    protected string $type                   = 'button';
     protected string $displayedTextAttribute = 'value';
     use Form\ClassName;
     use Form\Disabled;
@@ -30,22 +30,13 @@ class Button extends Form\FormObject implements Form\ButtonInterface, Form\Value
     use Form\Value;
     use Form\Width;
 
-    /**
-     * @param bool $bool
-     * @return $this
-     */
-    public function setRequiresSuccessfulValidation(bool $bool = true): self
+    public function setRequiresSuccessfulValidation(): static
     {
-        if ($bool === true) {
-            $this->setUserdata(['requiresSuccessfulValidation' => 'true']);
-        }
+        $this->setUserdata(['requiresSuccessfulValidation' => 'true']);
         return $this;
     }
 
-    /**
-     * @return $this
-     */
-    public function showLoader(): self
+    public function showLoader(): static
     {
         $this->setUserdata(['showLoader' => 'this']);
         return $this;

@@ -13,4 +13,8 @@ interface ButtonInterface
     public function addEvents(Event ...$events): static;
 
     public function setClassName(string $className): self;
+
+    public function setRequiresSuccessfulValidation(): static;
+
+    public function showLoader(): static;
 }
