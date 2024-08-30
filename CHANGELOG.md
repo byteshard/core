@@ -1,3 +1,10 @@
+## [2.2.5](https://github.com/byteshard/core/compare/v2.2.4...v2.2.5) (2024-08-30)
+
+
+### Bug Fixes
+
+* insufficient implementation of button interface ([03c065f](https://github.com/byteshard/core/commit/03c065f0a2c88240407e7359a818f239b02ac1cb))
+
 ## [2.2.4](https://github.com/byteshard/core/compare/v2.2.3...v2.2.4) (2024-08-02)
 
 
