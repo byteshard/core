@@ -1,3 +1,10 @@
+## [2.2.7](https://github.com/byteshard/core/compare/v2.2.6...v2.2.7) (2024-09-11)
+
+
+### Bug Fixes
+
+* trying to access property before initialization ([7b19512](https://github.com/byteshard/core/commit/7b195128839222af374fd7c1f02546538886f662))
+
 ## [2.2.6](https://github.com/byteshard/core/compare/v2.2.5...v2.2.6) (2024-09-11)
 
 
