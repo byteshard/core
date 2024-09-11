@@ -37,7 +37,6 @@ class SessionTabs
                 }
             }
         }
-//        $this->selectedTabs[] = false;
     }
 
     public function setSelectedTab(string $selectedTab): void
