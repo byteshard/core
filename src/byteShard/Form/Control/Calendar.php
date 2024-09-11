@@ -113,10 +113,13 @@ class Calendar extends Form\FormObject implements Form\InputWidthInterface, Form
 
     public function getValue(string $format = ''): string
     {
+        if (!isset($this->initialValue)) {
+            return '';
+        }
         if ($this->initialValue instanceof DateTime) {
             return $this->initialValue->format($format);
         }
-        return $this->initialValue ?? '';
+        return $this->initialValue;
     }
 
     public function setDate(DateTime $date): self
