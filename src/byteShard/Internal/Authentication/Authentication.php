@@ -10,6 +10,7 @@ use byteShard\Environment;
 use byteShard\Internal\Authentication\Provider\Ldap;
 use byteShard\Internal\Authentication\Provider\Local;
 use byteShard\Internal\Authentication\Provider\Oauth;
+use byteShard\Internal\Deeplink\Deeplink;
 use byteShard\Internal\ErrorHandler;
 use byteShard\Internal\Server;
 use byteShard\Internal\Session;
@@ -88,6 +89,7 @@ class Authentication
             if ($activeSession === true) {
                 //TODO: check if this can be done another way. it only needs to be executed once after successful login, but for example oauth does it's initial authenticate on public/login/oauth.php
                 $this->environment->processSuccessfulLogin($identityProvider->getUsername());
+                Deeplink::checkReferrer();
             }
         }
 
@@ -102,6 +104,10 @@ class Authentication
             self::logout($identityProvider, AuthenticationAction::SESSION_EXPIRED);
         }
 
+        Deeplink::selectTab();
+        if (!empty($_GET)) {
+            header('Location: '.Server::getBaseUrl());
+        }
         $this->environment->initializeUserCallback();
     }
 
@@ -130,6 +136,14 @@ class Authentication
         if ($action !== null) {
             $params = $action->getParameter();
         }
+        $getParams = $_GET;
+        if (is_array($getParams) && array_key_exists(AuthenticationAction::ACTION_KEY, $getParams)) {
+            unset($getParams[AuthenticationAction::ACTION_KEY]);
+        }
+        if (is_array($getParams)) {
+            $params = array_merge($params, $getParams);
+        }
+
         foreach ($additionalParameters as $parameter => $value) {
             if (array_key_exists($parameter, $params)) {
                 Debug::debug('AdditionalParameters tried to override an existing AuthenticationAction key '.$parameter);
