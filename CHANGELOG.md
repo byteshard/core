@@ -1,3 +1,10 @@
+## [2.2.6](https://github.com/byteshard/core/compare/v2.2.5...v2.2.6) (2024-09-11)
+
+
+### Bug Fixes
+
+* better implementation for date values in form calendars ([29736c1](https://github.com/byteshard/core/commit/29736c1acf77400c5b49a0e579fede506908fde8))
+
 ## [2.2.5](https://github.com/byteshard/core/compare/v2.2.4...v2.2.5) (2024-08-30)
 
 
