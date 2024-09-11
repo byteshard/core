@@ -16,7 +16,7 @@ use DateTime;
  * Class Calendar
  * @package byteShard\Form\Control
  */
-class Calendar extends Form\FormObject implements Form\InputWidthInterface, Form\OnlyReadInterface
+class Calendar extends Form\FormObject implements Form\InputWidthInterface, Form\OnlyReadInterface, Form\DateValueInterface
 {
     use Form\CalendarPosition;
     use Form\ClassName;
@@ -50,12 +50,12 @@ class Calendar extends Form\FormObject implements Form\InputWidthInterface, Form
     use Form\Validate;
     use Form\WeekStart;
 
-    protected string                  $type                   = 'calendar';
-    protected string                  $displayedTextAttribute = 'label';
-    private string|int|float|DateTime $initial_value;
-    protected array                   $objectParameter        = [];
-    protected static Enum\Cast        $cast                   = Enum\Cast::DATE;
-    private bool                      $monthSelector          = false;
+    protected string             $type                   = 'calendar';
+    protected string             $displayedTextAttribute = 'label';
+    private null|string|DateTime $initialValue;
+    protected array              $objectParameter        = [];
+    protected static Enum\Cast   $cast                   = Enum\Cast::DATE;
+    private bool                 $monthSelector          = false;
 
     /**
      * db_column_type is empty string instead of null or specific type
@@ -63,7 +63,7 @@ class Calendar extends Form\FormObject implements Form\InputWidthInterface, Form
      */
     // TODO: figure out a way how to handle default column types. Probably not needed anymore anyway due to the change of prepared statements in PDO vs mysqli
     //protected ?Enum\DB\ColumnType $dbColumnType = '';
-    protected string  $localization = 'de';
+    protected string $localization = 'de';
 
     public function __construct($id)
     {
@@ -105,15 +105,18 @@ class Calendar extends Form\FormObject implements Form\InputWidthInterface, Form
     /**
      * the initial value of the Form Object
      */
-    public function setValue(string|int|float|DateTime $stringOrInt): self
+    public function setValue(null|string|DateTime $value): static
     {
-        $this->initial_value = $stringOrInt;
+        $this->initialValue = $value;
         return $this;
     }
 
-    public function getInitialValue(): string|int|float|DateTime
+    public function getValue(string $format = ''): string
     {
-        return $this->initial_value ?? '';
+        if ($this->initialValue instanceof DateTime) {
+            return $this->initialValue->format($format);
+        }
+        return $this->initialValue ?? '';
     }
 
     public function setDate(DateTime $date): self
