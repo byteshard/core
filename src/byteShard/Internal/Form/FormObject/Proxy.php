@@ -391,67 +391,33 @@ final class Proxy
 
     private function controlTypeSpecificImplementation(FormObject $formObject): void
     {
-        switch ($this->formObjectType) {
-            case Control\Link::class:
-                /** @phpstan-ignore-next-line */
-                $this->attributes['value'] = $formObject->getValue();
-                /** @phpstan-ignore-next-line */
-                $this->attributes['format'] = $formObject->getFormat();
-                break;
-            case Control\Combo::class:
-                /* @var $formObject Control\Combo */
-                if ($this->getAccessType() === Enum\AccessType::R) {
-                    $this->attributes['disabled'] = true;
-                }
-                /** @phpstan-ignore-next-line */
-                $this->encryptOptionValues = $formObject->getEncryptOptionValues();
-                /** @phpstan-ignore-next-line */
-                $this->comboAllowsNewEntries = $formObject->getAllowNewEntries();
-                break;
-            case Control\Upload::class:
-                if (isset($this->attributes['url'])) {
-                    //TODO: trigger notice?
-                } elseif ($formObject instanceof Control\Upload) {
-                    $this->attributes['url'] = $formObject->getUrl();
-                }
-                /** @phpstan-ignore-next-line */
-                $this->uploadMethod = $formObject->getMethod();
-                /** @phpstan-ignore-next-line */
-                $this->uploadFileTypes = $formObject->getFileTypes();
-                /** @phpstan-ignore-next-line */
-                $this->uploadTargetFilename = $formObject->getTargetFilename();
-                /** @phpstan-ignore-next-line */
-                $this->uploadTargetPath = $formObject->getTargetPath();
-                /** @phpstan-ignore-next-line */
-                $this->uploadClearAfterUpload = $formObject->getClearAfterUpload();
-                $this->dbColumnType           = 'form_upload';
-                break;
-            case Control\Calendar::class:
-                /* @var $formObject Control\Calendar */
-                if (array_key_exists('enableTime', $this->attributes) && $this->attributes['enableTime'] === true) {
-                    if (array_key_exists('serverDateFormat', $this->attributes) === false || $this->attributes['serverDateFormat'] === '') {
-                        $this->attributes['serverDateFormat'] = Locale::get('byteShard.date.form.date_time.server');
-                    }
-                    if (array_key_exists('dateFormat', $this->attributes) === false || $this->attributes['dateFormat'] === '') {
-                        $this->attributes['dateFormat'] = Locale::get('byteShard.date.form.date_time.client');
-                    }
-                } else {
-                    if (array_key_exists('serverDateFormat', $this->attributes) === false || $this->attributes['serverDateFormat'] === '') {
-                        $this->attributes['serverDateFormat'] = Locale::get('byteShard.date.form.date.server');
-                    }
-                    if (array_key_exists('dateFormat', $this->attributes) === false || $this->attributes['dateFormat'] === '') {
-                        $this->attributes['dateFormat'] = Locale::get('byteShard.date.form.date.client');
-                    }
-                }
-                //TODO: test different date / datetime formats
-                /** @phpstan-ignore-next-line */
-                $initial_value = $formObject->getInitialValue();
-                if ($initial_value instanceof DateTime) {
-                    $this->attributes['value'] = $initial_value->format(str_replace('%', '', $this->attributes['serverDateFormat']));
-                } else {
-                    $this->attributes['value'] = $initial_value;
-                }
-                break;
+        if ($formObject instanceof Control\Link) {
+            $this->attributes['value']  = $formObject->getValue();
+            $this->attributes['format'] = $formObject->getFormat();
+        } elseif ($formObject instanceof Control\Combo) {
+            if ($this->getAccessType() === Enum\AccessType::R) {
+                $this->attributes['disabled'] = true;
+            }
+            $this->encryptOptionValues   = $formObject->getEncryptOptionValues();
+            $this->comboAllowsNewEntries = $formObject->getAllowNewEntries();
+        } elseif ($formObject instanceof Control\Upload) {
+            $this->attributes['url']      = $formObject->getUrl();
+            $this->uploadMethod           = $formObject->getMethod();
+            $this->uploadFileTypes        = $formObject->getFileTypes();
+            $this->uploadTargetFilename   = $formObject->getTargetFilename();
+            $this->uploadTargetPath       = $formObject->getTargetPath();
+            $this->uploadClearAfterUpload = $formObject->getClearAfterUpload();
+            $this->dbColumnType           = 'form_upload';
+        } elseif ($formObject instanceof Control\Calendar) {
+            $dateLocale = (isset($this->attributes['enableTime']) && $this->attributes['enableTime'] === true) ? 'date_time' : 'date';
+            if (empty($this->attributes['serverDateFormat'])) {
+                $this->attributes['serverDateFormat'] = Locale::get('byteShard.date.form.'.$dateLocale.'.server');
+            }
+            if (empty($this->attributes['dateFormat'])) {
+                $this->attributes['dateFormat'] = Locale::get('byteShard.date.form.'.$dateLocale.'.client');
+            }
+            //TODO: test different date / datetime formats
+            $this->attributes['value'] = $formObject->getValue(str_replace('%', '', $this->attributes['serverDateFormat']));
         }
     }
 
