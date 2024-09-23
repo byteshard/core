@@ -33,8 +33,9 @@ class Deeplink
             match ($key) {
                 // list of allowed keys
                 // Replace all non classname characters and reduce multiple backslashes to one
-                'tab'   => $result[$key] = preg_replace('/\\\\+/', '\\', preg_replace('/[^a-zA-Z0-9_\\\\]/', '', $value)),
-                default => null
+                'tab', 'cell', 'column' => $result[$key] = preg_replace('/\\\\+/', '\\', preg_replace('/[^a-zA-Z0-9_\\\\]/', '', $value)),
+                'filter'                => $result[$key] = htmlspecialchars($value),
+                default                 => null
             };
         }
         return $result;
