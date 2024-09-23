@@ -48,8 +48,8 @@ class Deeplink
             if (isset($getParams['tab'])) {
                 Session::setSelectedTab(ID::factory(new TabIDElement($getParams['tab'])));
                 unset($getParams['tab']);
+                self::setCookie($getParams);
             }
-            self::setCookie($getParams);
         }
     }
 
@@ -63,7 +63,13 @@ class Deeplink
 
     public static function cleanupCookie(): void
     {
-        setcookie(self::COOKIE, '', time() - 3600);
+        setcookie(self::COOKIE, '', [
+            'expires'  => time() - 3600,
+            'secure'   => true,
+            'httponly' => true,
+            'path'     => '/',
+            'sameSite' => 'Strict'
+        ]);
         unset($_COOKIE[self::COOKIE]);
     }
 
@@ -77,7 +83,8 @@ class Deeplink
                 'expires'  => 0,
                 'secure'   => true,
                 'httponly' => true,
-                'path'     => '/'
+                'path'     => '/',
+                'sameSite' => 'Strict'
             ]);
         }
     }
