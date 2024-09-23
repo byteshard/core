@@ -20,13 +20,22 @@ class Deeplink
             if (isset($urlComponents['query'])) {
                 parse_str($urlComponents['query'], $params);
                 if (!empty($params)) {
-                    self::setCookie($params);
+                    self::setCookie(self::sanitizeParameters($params));
                 }
             }
         }
     }
 
-    private static function sanitizeParameters(array $params)
+    /**
+     * @param array<string, string|array<mixed>> $params
+     * @return array{
+     *   tab?: string,
+     *   cell?: string,
+     *   column?: string,
+     *   filter?: array<string, string>
+     * }
+     */
+    private static function sanitizeParameters(array $params): array
     {
         $result = [];
         foreach ($params as $key => $value) {
@@ -34,9 +43,32 @@ class Deeplink
                 // list of allowed keys
                 // Replace all non classname characters and reduce multiple backslashes to one
                 'tab', 'cell', 'column' => $result[$key] = preg_replace('/\\\\+/', '\\', preg_replace('/[^a-zA-Z0-9_\\\\]/', '', $value)),
-                'filter'                => $result[$key] = htmlspecialchars($value),
+                'filter'                => $result[$key] = is_array($value) ? self::sanitizeFilterArray($value) : htmlspecialchars($value),
                 default                 => null
             };
+        }
+        if (isset($result['column'], $result['filter']) && !is_array($result['filter'])) {
+            $result['filter'] = [
+                $result['column'] => $result['filter']
+            ];
+            unset($result['column']);
+        }
+        return $result;
+    }
+
+    /**
+     * @param array<string, string> $filters
+     * @return array<string, string>
+     */
+    private static function sanitizeFilterArray(array $filters): array
+    {
+        $result = [];
+        foreach ($filters as $key => $value) {
+            if (!is_string($key) || !is_string($value)) {
+                continue;
+            }
+            $sanitizedKey          = preg_replace('/\\\\+/', '\\', preg_replace('/[^a-zA-Z0-9_\\\\]/', '', $key));
+            $result[$sanitizedKey] = htmlspecialchars($value);
         }
         return $result;
     }
@@ -45,7 +77,7 @@ class Deeplink
     {
         $getParams = !empty($_GET) ? $_GET : self::getCookie();
         $getParams = self::sanitizeParameters($getParams);
-        if (is_array($getParams) && !empty($getParams)) {
+        if (!empty($getParams)) {
             if (isset($getParams['tab'])) {
                 Session::setSelectedTab(ID::factory(new TabIDElement($getParams['tab'])));
                 unset($getParams['tab']);
@@ -54,6 +86,9 @@ class Deeplink
         }
     }
 
+    /**
+     * @return array<mixed>|null
+     */
     public static function getCookie(): ?array
     {
         if (array_key_exists(self::COOKIE, $_COOKIE)) {
@@ -74,9 +109,12 @@ class Deeplink
         unset($_COOKIE[self::COOKIE]);
     }
 
-    public static function setCookie(array $params): void
+    /**
+     * @param array<mixed> $params
+     * @return void
+     */
+    private static function setCookie(array $params): void
     {
-        $params = self::sanitizeParameters($params);
         if (empty($params)) {
             self::cleanupCookie();
         } else {
