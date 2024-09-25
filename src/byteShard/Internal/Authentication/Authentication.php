@@ -89,7 +89,6 @@ class Authentication
             if ($activeSession === true) {
                 //TODO: check if this can be done another way. it only needs to be executed once after successful login, but for example oauth does it's initial authenticate on public/login/oauth.php
                 $this->environment->processSuccessfulLogin($identityProvider->getUsername());
-                Deeplink::checkReferrer();
             }
         }
 
