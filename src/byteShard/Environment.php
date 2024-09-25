@@ -20,6 +20,7 @@ use byteShard\Internal\Authentication\AuthenticationInterface;
 use byteShard\Internal\Authentication\DeprecatedLdapProviderWrapper;
 use byteShard\Internal\Authentication\LdapProviderInterface;
 use byteShard\Internal\Authentication\LocalProviderInterface;
+use byteShard\Internal\Authentication\ProviderInterface;
 use byteShard\Internal\Config;
 use byteShard\Internal\ByteShard\Css;
 use byteShard\Internal\ByteShard\Javascript;
@@ -676,6 +677,11 @@ abstract class Environment implements ParametersInterface, JsonSerializable
         $this->setApplicationLoginFormSchema();
 
         $auth->authenticate();
+    }
+
+    public function getCustomIdentityProvider(): ?ProviderInterface
+    {
+        return null;
     }
 
     public function processSuccessfulLogin(string $username): void
