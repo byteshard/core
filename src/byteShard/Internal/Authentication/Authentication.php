@@ -28,9 +28,11 @@ class Authentication
 
     private function getIdentityProvider(): ?ProviderInterface
     {
-        $customIdentityProvider = $this->environment->getCustomIdentityProvider();
-        if ($customIdentityProvider !== null) {
-            return $customIdentityProvider;
+        if ($this->environment instanceof CustomIdentityProvider) {
+            $customIdentityProvider = $this->environment->getCustomIdentityProvider();
+            if ($customIdentityProvider !== null) {
+                return $customIdentityProvider;
+            }
         }
         # HTTP_REFERER is not available if the application runs with a context, SCRIPT_URI seems to be the replacement. If both are not set, we default to an empty string to avoid warnings
         $referer = rtrim($_SERVER['HTTP_REFERER'] ?? $_SERVER['SCRIPT_URI'] ?? '', '/').'/';

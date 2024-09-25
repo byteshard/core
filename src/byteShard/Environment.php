@@ -679,11 +679,6 @@ abstract class Environment implements ParametersInterface, JsonSerializable
         $auth->authenticate();
     }
 
-    public function getCustomIdentityProvider(): ?ProviderInterface
-    {
-        return null;
-    }
-
     public function processSuccessfulLogin(string $username): void
     {
         $userId     = null;
