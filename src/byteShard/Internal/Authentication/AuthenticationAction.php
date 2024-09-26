@@ -17,7 +17,7 @@ enum AuthenticationAction: string
     case LOGOUT                            = 'logout';
     case SESSION_EXPIRED                   = 'session_expired';
 
-    public const ACTION_KEY = 'action';
+    private const ACTION_KEY = 'action';
 
     public function processAction(?ProviderInterface $provider): never
     {
