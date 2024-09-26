@@ -127,4 +127,21 @@ class Deeplink
             ]);
         }
     }
+
+    /**
+     * @return array{
+     *   tab?: string,
+     *   cell?: string,
+     *   column?: string,
+     *   filter?: array<string, string>
+     * }
+     */
+    public static function getPassThroughParameters(): array
+    {
+        $getParams = $_GET;
+        if (is_array($getParams)) {
+            return self::sanitizeParameters($getParams);
+        }
+        return [];
+    }
 }

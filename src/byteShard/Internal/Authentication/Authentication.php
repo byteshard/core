@@ -76,7 +76,7 @@ class Authentication
         $GLOBALS['error_handler']->setResultObject(ErrorHandler::RESULT_OBJECT_LOGIN); //in case of error display a cell content error and don't redirect to log in
         $identityProvider = $this->getIdentityProvider();
         if ($identityProvider === null) {
-            self::logout();
+            self::logout(additionalParameters: Deeplink::getPassThroughParameters());
         }
         if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === $this->logoffButtonName) {
             self::logout($identityProvider, AuthenticationAction::LOGOUT);
@@ -125,7 +125,7 @@ class Authentication
     /**
      * @param $identityProvider
      * @param AuthenticationAction|null $action
-     * @param array<string, BackedEnum|int|float|string|bool> $additionalParameters
+     * @param array<string, BackedEnum|int|float|string|bool|array<string, string>> $additionalParameters
      * @return never
      */
     public static function logout($identityProvider = null, ?AuthenticationAction $action = null, array $additionalParameters = []): never
@@ -135,13 +135,6 @@ class Authentication
         if ($action !== null) {
             $params = $action->getParameter();
         }
-        $getParams = $_GET;
-        if (is_array($getParams) && array_key_exists(AuthenticationAction::ACTION_KEY, $getParams)) {
-            unset($getParams[AuthenticationAction::ACTION_KEY]);
-        }
-        if (is_array($getParams)) {
-            $params = array_merge($params, $getParams);
-        }
 
         foreach ($additionalParameters as $parameter => $value) {
             if (array_key_exists($parameter, $params)) {
@@ -149,7 +142,7 @@ class Authentication
             } else {
                 if ($value instanceof BackedEnum) {
                     $params[$parameter] = $value->value;
-                } elseif (is_scalar($value)) {
+                } elseif (is_scalar($value) || is_array($value)) {
                     $params[$parameter] = $value;
                 }
             }
