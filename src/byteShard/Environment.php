@@ -20,20 +20,19 @@ use byteShard\Internal\Authentication\AuthenticationInterface;
 use byteShard\Internal\Authentication\DeprecatedLdapProviderWrapper;
 use byteShard\Internal\Authentication\LdapProviderInterface;
 use byteShard\Internal\Authentication\LocalProviderInterface;
-use byteShard\Internal\Config;
 use byteShard\Internal\ByteShard\Css;
 use byteShard\Internal\ByteShard\Javascript;
+use byteShard\Internal\Config;
 use byteShard\Internal\Database\ParametersInterface;
 use byteShard\Internal\Deeplink\Deeplink;
-use byteShard\Internal\Schema\DB\UserTable;
+use byteShard\Internal\ErrorHandler;
+use byteShard\Internal\Login;
+use byteShard\Internal\Server;
 use byteShard\Internal\Session;
+use byteShard\Internal\TabParentInterface;
 use JsonSerializable;
 use Monolog\Formatter\FormatterInterface;
 use stdClass;
-use byteShard\Internal\Login;
-use byteShard\Internal\ErrorHandler;
-use byteShard\Internal\Server;
-use byteShard\Internal\TabParentInterface;
 
 /**
  * Class Environment
