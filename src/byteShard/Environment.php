@@ -24,6 +24,7 @@ use byteShard\Internal\Config;
 use byteShard\Internal\ByteShard\Css;
 use byteShard\Internal\ByteShard\Javascript;
 use byteShard\Internal\Database\ParametersInterface;
+use byteShard\Internal\Deeplink\Deeplink;
 use byteShard\Internal\Schema\DB\UserTable;
 use byteShard\Internal\Session;
 use JsonSerializable;
@@ -704,6 +705,7 @@ abstract class Environment implements ParametersInterface, JsonSerializable
 
         \byteShard\Session::setUserData($userId, $username, $this->getLastTab($userId));
         $this->successfulLoginCallback($userId, $username);
+        Deeplink::checkReferrer();
         header('Location: '.BS_WEB_ROOT_DIR.'/');
     }
 

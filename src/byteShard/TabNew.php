@@ -38,7 +38,9 @@ abstract class TabNew implements TabLegacyInterface
     public function addTab(TabNew ...$tabs): void
     {
         foreach ($tabs as $tab) {
-            $this->tabs[] = $tab;
+            if (!array_key_exists($tab->getId(), $this->tabs)) {
+                $this->tabs[$tab->getId()] = $tab;
+            }
         }
     }
 
