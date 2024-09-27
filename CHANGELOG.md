@@ -1,3 +1,21 @@
+# [2.3.0](https://github.com/bespin-studios/byteshard-core/compare/v2.2.7...v2.3.0) (2024-09-27)
+
+
+### Bug Fixes
+
+* adjust sameSite cookie settings ([36178bc](https://github.com/bespin-studios/byteshard-core/commit/36178bc1adc53b04b18a78977b8aba0693a47da5))
+* formatting ([e2a30e0](https://github.com/bespin-studios/byteshard-core/commit/e2a30e0d675c9872bbbf9b145fb2cc9696c7cff2))
+* move Deeplink::checkReferrer() to where it is called with either auth once after login ([738cb92](https://github.com/bespin-studios/byteshard-core/commit/738cb92a30790145c8b198138fedbc4887a874a5))
+* remove unused commented out code ([1a55420](https://github.com/bespin-studios/byteshard-core/commit/1a55420be835a8609aecfd4fc5cfdc115644217e))
+* revert making authentication action key public ([98a102a](https://github.com/bespin-studios/byteshard-core/commit/98a102ab65e4c7884a3ef518db031edf5fb7b0d3))
+
+
+### Features
+
+* add support for multiple filters in the same cell ([e99ad5c](https://github.com/bespin-studios/byteshard-core/commit/e99ad5c07c8321254e65a2fb96193f91158f4f60))
+* add the possibility to deeplink to an tab via a "tab" get parameter ([e896e2d](https://github.com/bespin-studios/byteshard-core/commit/e896e2da81ee5b7f1174792fb99836998ff08bb6))
+* allow additional cell, column and filter parameter ([1766dfb](https://github.com/bespin-studios/byteshard-core/commit/1766dfb65aa8485ba05fedbc73eb5d339cc121d1))
+
 ## [2.2.7](https://github.com/byteshard/core/compare/v2.2.6...v2.2.7) (2024-09-11)
 
 
