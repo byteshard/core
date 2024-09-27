@@ -1,3 +1,16 @@
+# [2.4.0](https://github.com/bespin-studios/byteshard-core/compare/v2.3.0...v2.4.0) (2024-09-27)
+
+
+### Bug Fixes
+
+* cleanup imports in Environment ([3ac1bb5](https://github.com/bespin-studios/byteshard-core/commit/3ac1bb55d3d8f7eade31ced0f53337fc5abde9bd))
+* use interface instead of already existing dummy function in environment for custom provider ([06c096e](https://github.com/bespin-studios/byteshard-core/commit/06c096e17c2fdf4b4977432868767ca99083863a))
+
+
+### Features
+
+* introduce the possibility to provide custom identity providers ([86646f9](https://github.com/bespin-studios/byteshard-core/commit/86646f91e8d3af74c3c58e64bbfd5c0fd4abd319))
+
 # [2.3.0](https://github.com/bespin-studios/byteshard-core/compare/v2.2.7...v2.3.0) (2024-09-27)
 
 
