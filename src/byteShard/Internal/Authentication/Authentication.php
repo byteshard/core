@@ -10,6 +10,7 @@ use byteShard\Environment;
 use byteShard\Internal\Authentication\Provider\Ldap;
 use byteShard\Internal\Authentication\Provider\Local;
 use byteShard\Internal\Authentication\Provider\Oauth;
+use byteShard\Internal\Deeplink\Deeplink;
 use byteShard\Internal\ErrorHandler;
 use byteShard\Internal\Server;
 use byteShard\Internal\Session;
@@ -81,7 +82,7 @@ class Authentication
         $GLOBALS['error_handler']->setResultObject(ErrorHandler::RESULT_OBJECT_LOGIN); //in case of error display a cell content error and don't redirect to log in
         $identityProvider = $this->getIdentityProvider();
         if ($identityProvider === null) {
-            self::logout();
+            self::logout(additionalParameters: Deeplink::getPassThroughParameters());
         }
         if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === $this->logoffButtonName) {
             self::logout($identityProvider, AuthenticationAction::LOGOUT);
@@ -108,6 +109,10 @@ class Authentication
             self::logout($identityProvider, AuthenticationAction::SESSION_EXPIRED);
         }
 
+        Deeplink::selectTab();
+        if (!empty($_GET)) {
+            header('Location: '.Server::getBaseUrl());
+        }
         $this->environment->initializeUserCallback();
     }
 
@@ -126,7 +131,7 @@ class Authentication
     /**
      * @param $identityProvider
      * @param AuthenticationAction|null $action
-     * @param array<string, BackedEnum|int|float|string|bool> $additionalParameters
+     * @param array<string, BackedEnum|int|float|string|bool|array<string, string>> $additionalParameters
      * @return never
      */
     public static function logout($identityProvider = null, ?AuthenticationAction $action = null, array $additionalParameters = []): never
@@ -136,13 +141,14 @@ class Authentication
         if ($action !== null) {
             $params = $action->getParameter();
         }
+
         foreach ($additionalParameters as $parameter => $value) {
             if (array_key_exists($parameter, $params)) {
                 Debug::debug('AdditionalParameters tried to override an existing AuthenticationAction key '.$parameter);
             } else {
                 if ($value instanceof BackedEnum) {
                     $params[$parameter] = $value->value;
-                } elseif (is_scalar($value)) {
+                } elseif (is_scalar($value) || is_array($value)) {
                     $params[$parameter] = $value;
                 }
             }

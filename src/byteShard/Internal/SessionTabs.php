@@ -7,6 +7,7 @@
 namespace byteShard\Internal;
 
 use byteShard\Cell;
+use byteShard\ID\TabIDElement;
 use byteShard\Layout\Enum\Pattern;
 use byteShard\Locale;
 use byteShard\Tab;
@@ -17,8 +18,8 @@ class SessionTabs
 {
     private const PARENT_TAB_ID = 0;
 
-    private array $tabs         = [];
-    /** @var Tab[]  */
+    private array $tabs = [];
+    /** @var Tab[] */
     private array $legacyTabs   = [];
     private array $selectedTabs = [];
 
@@ -36,7 +37,6 @@ class SessionTabs
                 }
             }
         }
-        $this->selectedTabs[] = false;
     }
 
     public function setSelectedTab(string $selectedTab): void
@@ -147,6 +147,7 @@ class SessionTabs
         foreach ($tabs as $id => $tab) {
             if ($tab !== null) {
                 $tabs[$id] = new $tab();
+                $tabs[$id]->defineTabContent();
             } else {
                 // legacy tabs
                 $tabs[$id] = $this->legacyTabs[$id];
@@ -158,7 +159,7 @@ class SessionTabs
         $found = false;
         // first select all tabs which were previously selected by the user
         foreach ($this->selectedTabs as $selectedTab => $selected) {
-            $split = explode('\\', $selectedTab);
+            $split    = explode('\\', $selectedTab);
             $tabDepth = count($split);
             if ($tabDepth === 1) {
                 if (array_key_exists($selectedTab, $tabs)) {
@@ -174,17 +175,22 @@ class SessionTabs
                 } else {
                     // if any multi level tab was selected but is not active, mark it as selected,
                     // so it will be selected once the user switched to the top level tab
-                    $tabPath = '';
+                    $tabPath    = '';
                     $currentTab = $tabs;
                     foreach ($split as $index => $item) {
                         $tabPath .= $index === 0 ? $item : '\\'.$item;
-                        if (isset($currentTab) && array_key_exists($tabPath, $currentTab)) {
+                        if (isset($currentTab) && is_array($currentTab) && array_key_exists($tabPath, $currentTab)) {
                             $currentTab = $currentTab[$tabPath];
                             if ($currentTab instanceof Tab) {
                                 if ($index > 0) {
                                     $currentTab->setSelected();
                                 }
                                 $currentTab = $currentTab->getDirectChildren();
+                            }
+                        } elseif (isset($currentTab) && $currentTab instanceof TabNew) {
+                            $currentTab = $currentTab->getTabNew(ID::factory(new TabIDElement($tabPath)));
+                            if ($index > 0 && $currentTab instanceof TabNew) {
+                                $currentTab->setSelected();
                             }
                         }
                     }
