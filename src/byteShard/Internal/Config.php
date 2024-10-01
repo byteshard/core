@@ -120,10 +120,9 @@ abstract class Config implements JsonSerializable
         return $this->useSVG;
     }
 
-    private function identifyUrlContext(): string
+    public static function getInternalEndpoints(): array
     {
-        $scriptName = strtolower($_SERVER['SCRIPT_NAME']);
-        $endpoints  = [
+        return [
             'bs/bs_cellcontent.php',
             'bs/bs_event.php',
             'bs/bs_parameters.php',
@@ -135,11 +134,17 @@ abstract class Config implements JsonSerializable
             'bs/bs_locale.php',
             'bs/bs_queue.php',
             'bs/bs_upload.php',
-            'login/index.php',
-            'index.php',
-            'setup.php',
             'bs/bs_async.php',
         ];
+    }
+
+    private function identifyUrlContext(): string
+    {
+        $scriptName  = strtolower($_SERVER['SCRIPT_NAME']);
+        $endpoints   = self::getInternalEndpoints();
+        $endpoints[] = 'login/index.php';
+        $endpoints[] = 'index.php';
+        $endpoints[] = 'setup.php';
         foreach ($endpoints as $endpoint) {
             if (str_contains($scriptName, $endpoint)) {
                 return '/'.trim(str_replace($endpoint, '', $scriptName), '/');

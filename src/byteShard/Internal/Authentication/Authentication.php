@@ -110,9 +110,6 @@ class Authentication
         }
 
         Deeplink::selectTab();
-        if (!empty($_GET)) {
-            header('Location: '.Server::getBaseUrl());
-        }
         $this->environment->initializeUserCallback();
     }
 
