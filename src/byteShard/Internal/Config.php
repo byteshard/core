@@ -119,7 +119,7 @@ abstract class Config implements JsonSerializable
     {
         return $this->useSVG;
     }
-    
+
     public static function getInternalEndpoints(): array
     {
         return [
@@ -140,8 +140,8 @@ abstract class Config implements JsonSerializable
 
     private function identifyUrlContext(): string
     {
-        $scriptName = strtolower($_SERVER['SCRIPT_NAME']);
-        $endpoints = self::getInternalEndpoints();
+        $scriptName  = strtolower($_SERVER['SCRIPT_NAME']);
+        $endpoints   = self::getInternalEndpoints();
         $endpoints[] = 'login/index.php';
         $endpoints[] = 'index.php';
         $endpoints[] = 'setup.php';
