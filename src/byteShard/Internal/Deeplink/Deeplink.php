@@ -4,6 +4,8 @@ namespace byteShard\Internal\Deeplink;
 
 use byteShard\ID\ID;
 use byteShard\ID\TabIDElement;
+use byteShard\Internal\Config;
+use byteShard\Internal\Server;
 use byteShard\Session;
 
 class Deeplink
@@ -75,13 +77,23 @@ class Deeplink
 
     public static function selectTab(): void
     {
-        $getParams = !empty($_GET) ? $_GET : self::getCookie();
-        $getParams = self::sanitizeParameters($getParams);
-        if (!empty($getParams)) {
-            if (isset($getParams['tab'])) {
-                Session::setSelectedTab(ID::factory(new TabIDElement($getParams['tab'])));
-                unset($getParams['tab']);
-                self::setCookie($getParams);
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            $endpoint          = trim($_SERVER['SCRIPT_NAME'], "/ \n\r\t\v\0");
+            $internalEndpoints = Config::getInternalEndpoints();
+            if (in_array($endpoint, $internalEndpoints, true)) {
+                return;
+            }
+            $getParams = !empty($_GET) ? $_GET : self::getCookie();
+            $getParams = self::sanitizeParameters($getParams);
+            if (!empty($getParams)) {
+                if (isset($getParams['tab'])) {
+                    Session::setSelectedTab(ID::factory(new TabIDElement($getParams['tab'])));
+                    unset($getParams['tab']);
+                    self::setCookie($getParams);
+                }
+            }
+            if (!empty($_GET)) {
+                header('Location: '.Server::getBaseUrl());
             }
         }
     }
