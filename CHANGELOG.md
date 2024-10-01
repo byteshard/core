@@ -1,3 +1,10 @@
+## [2.4.1](https://github.com/bespin-studios/byteshard-core/compare/v2.4.0...v2.4.1) (2024-10-01)
+
+
+### Bug Fixes
+
+* deep links should not redirect on internal endpoints ([dd49e46](https://github.com/bespin-studios/byteshard-core/commit/dd49e468002c430a2a828eb6877d957bba9dc852))
+
 # [2.4.0](https://github.com/bespin-studios/byteshard-core/compare/v2.3.0...v2.4.0) (2024-09-27)
 
 
