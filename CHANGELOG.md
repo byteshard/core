@@ -1,3 +1,11 @@
+## [2.31.2](https://github.com/bespin-studios/byteshard-core/compare/v2.31.1...v2.31.2) (2026-09-13)
+
+
+### Bug Fixes
+
+* remove some unnecessary exception paths ([cee85b0](https://github.com/bespin-studios/byteshard-core/commit/cee85b036cabc63e8cac0d73c55d2cab151f3b6c))
+* update ID of bs form image ([87e34ac](https://github.com/bespin-studios/byteshard-core/commit/87e34ac52a98c26ade7125169105b0a56f65baec))
+
 ## [2.31.1](https://github.com/bespin-studios/byteshard-core/compare/v2.31.0...v2.31.1) (2026-09-05)
 
 
