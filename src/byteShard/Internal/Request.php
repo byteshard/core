@@ -35,8 +35,11 @@ class Request
         } catch (Exception) {
             return;
         }
-
-        $this->id               = ID::decryptFinalImplementation($request['xid'] ?? '');
+        if (empty($request['xid'])) {
+            $this->id = null;
+        } else {
+            $this->id = ID::decryptFinalImplementation($request['xid']);
+        }
         $this->cellNonce        = isset($request['cn']) ? base64_decode($request['cn']) : '';
         $this->clientTimeZone   = $this->setClientTimeZone($request['tz']);
         $this->event            = EventType::tryFrom($request['ev'] ?? '');
@@ -45,7 +48,7 @@ class Request
         $this->affectedId       = $request['id'] ?? '';
         $this->data             = isset($request['dat']) ? Sanitizer::sanitize($request['dat']) : null;
         $this->objectProperties = $this->decryptObjectProperties($request['op'] ?? '');
-        $this->context          = isset($request['ctx']) ? Session::decrypt($request['ctx']) : '';
+        $this->context          = !empty($request['ctx']) ? Session::decrypt($request['ctx']) : '';
         $this->mapLegacyRequestData($request);
     }
 
@@ -57,6 +60,9 @@ class Request
     private function decryptObjectProperties(string $objectProperties): array
     {
         $result = [];
+        if ($objectProperties === '') {
+            return $result;
+        }
         try {
             if (extension_loaded('zlib') === true) {
                 $decrypted = json_decode(gzuncompress(Session::decrypt($objectProperties)));
